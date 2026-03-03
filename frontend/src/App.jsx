@@ -6,6 +6,9 @@ import POSScreen from "./pages/POSScreen";
 import KitchenScreen from "./pages/KitchenScreen";
 import MenuManagement from "./pages/MenuManagement";
 import Reports from "./pages/Reports";
+import Inventory from "./pages/Inventory";
+import TableManagement from "./pages/TableManagement";
+import UserManagement from "./pages/UserManagement";
 import Layout from "./components/Layout";
 
 const PrivateRoute = ({ children, roles }) => {
@@ -60,6 +63,30 @@ function App() {
             element={
               <PrivateRoute roles={["admin", "manager"]}>
                 <Reports />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="tables"
+            element={
+              <PrivateRoute roles={["admin", "manager"]}>
+                <TableManagement />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="inventory"
+            element={
+              <PrivateRoute roles={["admin", "manager"]}>
+                <Inventory />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="users"
+            element={
+              <PrivateRoute roles={["admin"]}>
+                <UserManagement />
               </PrivateRoute>
             }
           />

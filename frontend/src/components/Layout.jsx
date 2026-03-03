@@ -47,11 +47,28 @@ export default function Layout() {
                     Menu
                   </Link>
                   <Link
+                    to="/tables"
+                    className="text-gray-800 dark:text-white hover:text-blue-600">
+                    Tables
+                  </Link>
+                  <Link
+                    to="/inventory"
+                    className="text-gray-800 dark:text-white hover:text-blue-600">
+                    Inventory
+                  </Link>
+                  <Link
                     to="/reports"
                     className="text-gray-800 dark:text-white hover:text-blue-600">
                     Reports
                   </Link>
                 </>
+              )}
+              {user?.role === "admin" && (
+                <Link
+                  to="/users"
+                  className="text-gray-800 dark:text-white hover:text-blue-600">
+                  Users
+                </Link>
               )}
             </div>
             <div className="flex items-center space-x-4">

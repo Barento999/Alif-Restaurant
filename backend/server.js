@@ -12,6 +12,8 @@ import orderRoutes from "./routes/orderRoutes.js";
 import tableRoutes from "./routes/tableRoutes.js";
 import reportRoutes from "./routes/reportRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import inventoryRoutes from "./routes/inventoryRoutes.js";
 
 dotenv.config();
 
@@ -43,6 +45,8 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/tables", tableRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/inventory", inventoryRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "Server is running" });
