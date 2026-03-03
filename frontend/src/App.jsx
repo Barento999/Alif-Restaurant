@@ -9,7 +9,7 @@ import Reports from "./pages/Reports";
 import Inventory from "./pages/Inventory";
 import TableManagement from "./pages/TableManagement";
 import UserManagement from "./pages/UserManagement";
-import Layout from "./components/Layout";
+import LayoutWithSidebar from "./components/LayoutWithSidebar";
 
 const PrivateRoute = ({ children, roles }) => {
   const { user, token } = useSelector((state) => state.auth);
@@ -29,7 +29,7 @@ function App() {
           path="/"
           element={
             <PrivateRoute>
-              <Layout />
+              <LayoutWithSidebar />
             </PrivateRoute>
           }>
           <Route index element={<Navigate to="/dashboard" />} />
