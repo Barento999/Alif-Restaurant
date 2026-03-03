@@ -1,0 +1,72 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import POSScreen from "./pages/POSScreen";
+import KitchenScreen from "./pages/KitchenScreen";
+import MenuManagement from "./pages/MenuManagement";
+import Reports from "./pages/Reports";
+import Layout from "./components/Layout";
+
+const PrivateRoute = ({ children, roles }) => {
+  const { user, token } = useSelector((state) => state.auth);
+
+  if (!token) return <Navigate to="/login" />;
+  if (roles && !roles.includes(user?.role)) return <Navigate to="/dashboard" />;
+
+  return children;
+};
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Layout />
+            </PrivateRoute>
+          }>
+          <Route index element={<Navigate to="/dashboard" />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route
+            path="pos"
+            element={
+              <PrivateRoute roles={["admin", "manager", "cashier", "waiter"]}>
+                <POSScreen />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="kitchen"
+            element={
+              <PrivateRoute roles={["admin", "kitchen"]}>
+                <KitchenScreen />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="menu"
+            element={
+              <PrivateRoute roles={["admin", "manager"]}>
+                <MenuManagement />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="reports"
+            element={
+              <PrivateRoute roles={["admin", "manager"]}>
+                <Reports />
+              </PrivateRoute>
+            }
+          />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
