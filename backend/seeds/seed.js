@@ -31,6 +31,12 @@ const seedData = async () => {
         role: "manager",
       },
       {
+        name: "Sarah Cashier",
+        email: "cashier@rms.com",
+        password: "cashier123",
+        role: "cashier",
+      },
+      {
         name: "John Waiter",
         email: "waiter@rms.com",
         password: "waiter123",
