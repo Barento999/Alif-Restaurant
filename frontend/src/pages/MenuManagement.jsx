@@ -88,9 +88,7 @@ export default function MenuManagement() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-          Menu Management
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-800">Menu Management</h1>
         <button
           onClick={() => {
             setShowForm(!showForm);
@@ -103,14 +101,14 @@ export default function MenuManagement() {
               isAvailable: true,
             });
           }}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          className="bg-[#0d5f4e] text-white px-4 py-2 rounded-xl hover:bg-[#0f7a62]">
           {showForm ? "Cancel" : "Add Item"}
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded shadow mb-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+        <div className="bg-white p-6 rounded-xl shadow-lg mb-6">
+          <h2 className="text-xl font-bold mb-4 text-gray-800">
             {editingItem ? "Edit Item" : "Add New Item"}
           </h2>
           <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
@@ -121,7 +119,7 @@ export default function MenuManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="p-2 border rounded dark:bg-gray-700 dark:text-white"
+              className="p-2 border rounded-lg focus:ring-2 focus:ring-[#0d5f4e]"
               required
             />
             <select
@@ -129,7 +127,7 @@ export default function MenuManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="p-2 border rounded dark:bg-gray-700 dark:text-white"
+              className="p-2 border rounded-lg focus:ring-2 focus:ring-[#0d5f4e]"
               required>
               <option value="">Select Category</option>
               {categories.map((cat) => (
@@ -146,7 +144,7 @@ export default function MenuManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, price: Number(e.target.value) })
               }
-              className="p-2 border rounded dark:bg-gray-700 dark:text-white"
+              className="p-2 border rounded-lg focus:ring-2 focus:ring-[#0d5f4e]"
               required
             />
             <div className="flex items-center">
@@ -158,7 +156,7 @@ export default function MenuManagement() {
                 }
                 className="mr-2"
               />
-              <label className="text-gray-800 dark:text-white">Available</label>
+              <label className="text-gray-800">Available</label>
             </div>
             <textarea
               placeholder="Description (optional)"
@@ -166,12 +164,12 @@ export default function MenuManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="col-span-2 p-2 border rounded dark:bg-gray-700 dark:text-white"
+              className="col-span-2 p-2 border rounded-lg focus:ring-2 focus:ring-[#0d5f4e]"
               rows="3"
             />
             <button
               type="submit"
-              className="col-span-2 bg-green-600 text-white p-2 rounded hover:bg-green-700">
+              className="col-span-2 bg-[#0d5f4e] text-white p-2 rounded-xl hover:bg-[#0f7a62]">
               {editingItem ? "Update Item" : "Add Item"}
             </button>
           </form>
@@ -180,43 +178,35 @@ export default function MenuManagement() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {items.map((item) => (
-          <div
-            key={item._id}
-            className="bg-white dark:bg-gray-800 p-6 rounded shadow">
+          <div key={item._id} className="bg-white p-6 rounded-xl shadow-lg">
             <div className="flex justify-between items-start mb-2">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white">
-                {item.name}
-              </h3>
+              <h3 className="text-xl font-bold text-gray-800">{item.name}</h3>
               <span
-                className={`px-2 py-1 rounded text-sm ${item.isAvailable ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                className={`px-2 py-1 rounded-lg text-sm ${item.isAvailable ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
                 {item.isAvailable ? "Available" : "Unavailable"}
               </span>
             </div>
-            <p className="text-green-600 text-2xl font-bold mb-2">
+            <p className="text-[#d4a843] text-2xl font-bold mb-2">
               ${item.price.toFixed(2)}
             </p>
-            <p className="text-gray-600 dark:text-gray-300 mb-2">
-              {item.category?.name}
-            </p>
+            <p className="text-gray-600 mb-2">{item.category?.name}</p>
             {item.description && (
-              <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
-                {item.description}
-              </p>
+              <p className="text-gray-500 text-sm mb-4">{item.description}</p>
             )}
             <div className="flex gap-2">
               <button
                 onClick={() => handleEdit(item)}
-                className="flex-1 bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+                className="flex-1 bg-[#0d5f4e] text-white p-2 rounded-lg hover:bg-[#0f7a62]">
                 Edit
               </button>
               <button
                 onClick={() => toggleAvailability(item)}
-                className="flex-1 bg-yellow-600 text-white p-2 rounded hover:bg-yellow-700">
+                className="flex-1 bg-[#d4a843] text-white p-2 rounded-lg hover:bg-[#c09838]">
                 Toggle
               </button>
               <button
                 onClick={() => handleDelete(item._id)}
-                className="flex-1 bg-red-600 text-white p-2 rounded hover:bg-red-700">
+                className="flex-1 bg-red-600 text-white p-2 rounded-lg hover:bg-red-700">
                 Delete
               </button>
             </div>

@@ -70,18 +70,16 @@ export default function TableManagement() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-          Table Management
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-800">Table Management</h1>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          className="bg-[#0d5f4e] text-white px-4 py-2 rounded-xl hover:bg-[#0f7a62]">
           {showForm ? "Cancel" : "Add Table"}
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded shadow mb-6">
+        <div className="bg-white p-6 rounded-xl shadow-lg mb-6">
           <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-4">
             <input
               type="text"
@@ -90,7 +88,7 @@ export default function TableManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, tableNumber: e.target.value })
               }
-              className="p-2 border rounded dark:bg-gray-700 dark:text-white"
+              className="p-2 border rounded-lg focus:ring-2 focus:ring-[#0d5f4e]"
               required
             />
             <input
@@ -100,7 +98,7 @@ export default function TableManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, capacity: Number(e.target.value) })
               }
-              className="p-2 border rounded dark:bg-gray-700 dark:text-white"
+              className="p-2 border rounded-lg focus:ring-2 focus:ring-[#0d5f4e]"
               required
             />
             <input
@@ -110,11 +108,11 @@ export default function TableManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, location: e.target.value })
               }
-              className="p-2 border rounded dark:bg-gray-700 dark:text-white"
+              className="p-2 border rounded-lg focus:ring-2 focus:ring-[#0d5f4e]"
             />
             <button
               type="submit"
-              className="col-span-3 bg-green-600 text-white p-2 rounded hover:bg-green-700">
+              className="col-span-3 bg-[#0d5f4e] text-white p-2 rounded-xl hover:bg-[#0f7a62]">
               Add Table
             </button>
           </form>
@@ -123,38 +121,34 @@ export default function TableManagement() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {tables.map((table) => (
-          <div
-            key={table._id}
-            className="bg-white dark:bg-gray-800 p-6 rounded shadow">
+          <div key={table._id} className="bg-white p-6 rounded-xl shadow-lg">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="text-2xl font-bold text-gray-800 dark:text-white">
+              <h3 className="text-2xl font-bold text-gray-800">
                 {table.tableNumber}
               </h3>
               <span
-                className={`${getStatusColor(table.status)} text-white px-3 py-1 rounded text-sm`}>
+                className={`${getStatusColor(table.status)} text-white px-3 py-1 rounded-lg text-sm`}>
                 {table.status}
               </span>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mb-2">
+            <p className="text-gray-600 mb-2">
               Capacity: {table.capacity} people
             </p>
             {table.location && (
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Location: {table.location}
-              </p>
+              <p className="text-gray-600 mb-4">Location: {table.location}</p>
             )}
             <div className="space-y-2">
               <select
                 value={table.status}
                 onChange={(e) => updateStatus(table._id, e.target.value)}
-                className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-[#0d5f4e]">
                 <option value="available">Available</option>
                 <option value="occupied">Occupied</option>
                 <option value="reserved">Reserved</option>
               </select>
               <button
                 onClick={() => deleteTable(table._id)}
-                className="w-full bg-red-600 text-white p-2 rounded hover:bg-red-700">
+                className="w-full bg-red-600 text-white p-2 rounded-lg hover:bg-red-700">
                 Delete
               </button>
             </div>
