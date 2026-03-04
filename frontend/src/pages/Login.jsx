@@ -31,6 +31,12 @@ export default function Login() {
       color: "bg-blue-500",
     },
     {
+      role: "Cashier",
+      email: "cashier@rms.com",
+      password: "cashier123",
+      color: "bg-purple-500",
+    },
+    {
       role: "Waiter",
       email: "waiter@rms.com",
       password: "waiter123",
