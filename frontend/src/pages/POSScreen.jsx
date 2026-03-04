@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { fetchMenu } from "../features/menu/menuSlice";
 import { createOrder } from "../features/orders/orderSlice";
 import api from "../services/api";
 
 export default function POSScreen() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { items } = useSelector((state) => state.menu);
+  const { user } = useSelector((state) => state.auth);
   const [tables, setTables] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedTable, setSelectedTable] = useState("");
@@ -84,6 +87,11 @@ export default function POSScreen() {
       setNotes("");
       alert("Order created successfully!");
       loadData();
+
+      // Navigate to My Orders page if user is a waiter
+      if (user?.role === "waiter") {
+        navigate("/my-orders");
+      }
     } catch (error) {
       alert("Error creating order");
     }

@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchOrders, updateOrderStatus } from "../features/orders/orderSlice";
+import {
+  fetchOrders,
+  updateOrderStatus,
+  addOrderRealtime,
+  updateOrderRealtime,
+} from "../features/orders/orderSlice";
+import { io } from "socket.io-client";
 
 export default function WaiterOrders() {
   const dispatch = useDispatch();
@@ -10,7 +16,26 @@ export default function WaiterOrders() {
 
   useEffect(() => {
     dispatch(fetchOrders());
-  }, [dispatch]);
+
+    // Setup Socket.io for real-time updates
+    const socket = io("http://localhost:5000");
+
+    socket.on("newOrder", (order) => {
+      // Only add if it's assigned to this waiter
+      if (order.waiter?._id === user?._id) {
+        dispatch(addOrderRealtime(order));
+      }
+    });
+
+    socket.on("orderStatusUpdate", (order) => {
+      // Update if it's assigned to this waiter
+      if (order.waiter?._id === user?._id) {
+        dispatch(updateOrderRealtime(order));
+      }
+    });
+
+    return () => socket.disconnect();
+  }, [dispatch, user?._id]);
 
   // Filter orders assigned to this waiter
   const myOrders = orders.filter((order) => order.waiter?._id === user?._id);
