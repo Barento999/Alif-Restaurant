@@ -24,7 +24,7 @@ export default function LayoutWithSidebar() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-cream-100 dark:bg-gray-900">
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
@@ -113,8 +113,8 @@ export default function LayoutWithSidebar() {
               <div className="relative">
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center space-x-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                  className="flex items-center space-x-3 px-3 py-2 hover:bg-cream-200 dark:hover:bg-gray-700 rounded-lg transition">
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-gold-500 rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">
                       {user?.name?.charAt(0)}
                     </span>
@@ -156,7 +156,7 @@ export default function LayoutWithSidebar() {
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           {user?.email}
                         </p>
-                        <span className="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 text-xs rounded-full capitalize">
+                        <span className="inline-block mt-2 px-2 py-1 bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200 text-xs rounded-full capitalize">
                           {user?.role}
                         </span>
                       </div>

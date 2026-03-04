@@ -232,12 +232,12 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         />
       )}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
+        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-gradient-to-b from-emerald-800 to-emerald-900 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
+        <div className="flex items-center justify-between h-16 px-6 border-b border-emerald-700">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center">
               <svg
-                className="w-6 h-6 text-white"
+                className="w-6 h-6 text-emerald-900"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24">
@@ -249,13 +249,14 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                 />
               </svg>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Alif Restaurant
-            </span>
+            <div>
+              <p className="text-lg font-bold text-white">Alif Restaurant</p>
+              <p className="text-xs text-emerald-300">Management Suite</p>
+            </div>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+            className="lg:hidden text-emerald-300 hover:text-white">
             <svg
               className="w-6 h-6"
               fill="none"
@@ -270,18 +271,18 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             </svg>
           </button>
         </div>
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-b border-emerald-700">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-lg">
+            <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center">
+              <span className="text-emerald-900 font-bold text-lg">
                 {user?.name?.charAt(0)}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-800 dark:text-white truncate">
+              <p className="text-sm font-semibold text-white truncate">
                 {user?.name}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+              <p className="text-xs text-emerald-300 capitalize">
                 {user?.role}
               </p>
             </div>
@@ -293,19 +294,19 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               key={item.path}
               to={item.path}
               onClick={() => setIsOpen(false)}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive(item.path) ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive(item.path) ? "bg-yellow-400 text-emerald-900 shadow-lg font-semibold" : "text-emerald-100 hover:bg-emerald-700"}`}>
               {item.icon}
               <span className="font-medium">{item.name}</span>
             </Link>
           ))}
         </nav>
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-t border-emerald-700">
           <button
             onClick={() => {
               setIsOpen(false);
               window.dispatchEvent(new CustomEvent("logout"));
             }}
-            className="w-full flex items-center justify-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg transition-all font-medium">
+            className="w-full flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition-all font-medium">
             <svg
               className="w-5 h-5"
               fill="none"
