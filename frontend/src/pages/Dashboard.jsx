@@ -71,22 +71,22 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+        <h1 className="text-3xl font-bold text-gray-800">
           Welcome, {user?.name}!
         </h1>
-        <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full font-semibold">
+        <span className="px-4 py-2 bg-[#d4a843] text-white rounded-xl font-semibold">
           {user?.role.toUpperCase()}
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg text-white">
+        <div className="bg-[#0d5f4e] p-6 rounded-xl shadow-lg text-white">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-blue-100 text-sm">Today's Orders</p>
+              <p className="text-[#8fb8ad] text-sm">Today's Orders</p>
               <p className="text-4xl font-bold mt-2">{stats.todayOrders}</p>
             </div>
-            <div className="bg-blue-400 bg-opacity-30 p-3 rounded-lg">
+            <div className="bg-white bg-opacity-10 p-3 rounded-lg">
               <svg
                 className="w-8 h-8"
                 fill="none"
@@ -104,15 +104,17 @@ export default function Dashboard() {
         </div>
 
         {canAccessReports && (
-          <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-lg shadow-lg text-white">
+          <div className="bg-[#d4a843] p-6 rounded-xl shadow-lg text-white">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-green-100 text-sm">Today's Revenue</p>
+                <p className="text-white text-opacity-80 text-sm">
+                  Today's Revenue
+                </p>
                 <p className="text-4xl font-bold mt-2">
                   ${stats.todayRevenue.toFixed(2)}
                 </p>
               </div>
-              <div className="bg-green-400 bg-opacity-30 p-3 rounded-lg">
+              <div className="bg-white bg-opacity-20 p-3 rounded-lg">
                 <svg
                   className="w-8 h-8"
                   fill="none"
@@ -130,13 +132,13 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-lg shadow-lg text-white">
+        <div className="bg-[#0f7a62] p-6 rounded-xl shadow-lg text-white">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-purple-100 text-sm">Active Tables</p>
+              <p className="text-[#8fb8ad] text-sm">Active Tables</p>
               <p className="text-4xl font-bold mt-2">{stats.activeTables}</p>
             </div>
-            <div className="bg-purple-400 bg-opacity-30 p-3 rounded-lg">
+            <div className="bg-white bg-opacity-10 p-3 rounded-lg">
               <svg
                 className="w-8 h-8"
                 fill="none"
@@ -153,13 +155,13 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-lg shadow-lg text-white">
+        <div className="bg-orange-500 p-6 rounded-xl shadow-lg text-white">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-orange-100 text-sm">Pending Orders</p>
               <p className="text-4xl font-bold mt-2">{stats.pendingOrders}</p>
             </div>
-            <div className="bg-orange-400 bg-opacity-30 p-3 rounded-lg">
+            <div className="bg-white bg-opacity-20 p-3 rounded-lg">
               <svg
                 className="w-8 h-8"
                 fill="none"
@@ -178,7 +180,7 @@ export default function Dashboard() {
       </div>
 
       {canAccessReports && stats.lowStockItems > 0 && (
-        <div className="bg-red-50 dark:bg-red-900 border-l-4 border-red-500 p-4 rounded">
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl">
           <div className="flex items-center">
             <svg
               className="w-6 h-6 text-red-500 mr-3"
@@ -193,10 +195,8 @@ export default function Dashboard() {
               />
             </svg>
             <div>
-              <p className="font-semibold text-red-800 dark:text-red-200">
-                Low Stock Alert!
-              </p>
-              <p className="text-red-700 dark:text-red-300">
+              <p className="font-semibold text-red-800">Low Stock Alert!</p>
+              <p className="text-red-700">
                 {stats.lowStockItems} items are running low on stock.
               </p>
             </div>
@@ -204,15 +204,13 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">
-          Quick Actions
-        </h2>
+      <div className="bg-white p-6 rounded-xl shadow-lg">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {["admin", "manager", "cashier", "waiter"].includes(user?.role) && (
             <a
               href="/pos"
-              className="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-lg text-center transition">
+              className="bg-[#0d5f4e] hover:bg-[#0f7a62] text-white p-4 rounded-xl text-center transition">
               <svg
                 className="w-8 h-8 mx-auto mb-2"
                 fill="none"
@@ -231,7 +229,7 @@ export default function Dashboard() {
           {["admin", "kitchen"].includes(user?.role) && (
             <a
               href="/kitchen"
-              className="bg-orange-500 hover:bg-orange-600 text-white p-4 rounded-lg text-center transition">
+              className="bg-orange-500 hover:bg-orange-600 text-white p-4 rounded-xl text-center transition">
               <svg
                 className="w-8 h-8 mx-auto mb-2"
                 fill="none"
@@ -251,7 +249,7 @@ export default function Dashboard() {
             <>
               <a
                 href="/menu"
-                className="bg-green-500 hover:bg-green-600 text-white p-4 rounded-lg text-center transition">
+                className="bg-[#d4a843] hover:bg-[#c09838] text-white p-4 rounded-xl text-center transition">
                 <svg
                   className="w-8 h-8 mx-auto mb-2"
                   fill="none"
@@ -268,7 +266,7 @@ export default function Dashboard() {
               </a>
               <a
                 href="/reports"
-                className="bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-lg text-center transition">
+                className="bg-[#0f7a62] hover:bg-[#0d5f4e] text-white p-4 rounded-xl text-center transition">
                 <svg
                   className="w-8 h-8 mx-auto mb-2"
                   fill="none"
