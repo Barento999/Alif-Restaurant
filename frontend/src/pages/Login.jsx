@@ -22,25 +22,25 @@ export default function Login() {
       role: "Admin",
       email: "admin@rms.com",
       password: "admin123",
-      color: "bg-red-500",
+      color: "bg-[#0d5f4e]",
     },
     {
       role: "Manager",
       email: "manager@rms.com",
       password: "manager123",
-      color: "bg-blue-500",
+      color: "bg-[#0f7a62]",
     },
     {
       role: "Cashier",
       email: "cashier@rms.com",
       password: "cashier123",
-      color: "bg-purple-500",
+      color: "bg-[#d4a843]",
     },
     {
       role: "Waiter",
       email: "waiter@rms.com",
       password: "waiter123",
-      color: "bg-green-500",
+      color: "bg-[#0d5f4e]",
     },
     {
       role: "Kitchen",
@@ -56,15 +56,15 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-cream-100 via-cream-50 to-cream-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex bg-[#f5f5f0]">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-purple-700 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-[#0d5f4e] p-12 flex-col justify-between relative overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-10"></div>
         <div className="relative z-10">
           <div className="flex items-center space-x-3 mb-8">
-            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-[#d4a843] rounded-xl flex items-center justify-center">
               <svg
-                className="w-8 h-8 text-blue-600"
+                className="w-8 h-8 text-[#0d5f4e]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24">
@@ -81,14 +81,14 @@ export default function Login() {
           <h2 className="text-4xl font-bold text-white mb-4">
             Modern Restaurant Management
           </h2>
-          <p className="text-blue-100 text-lg">
+          <p className="text-[#8fb8ad] text-lg">
             Experience authentic flavors with modern service excellence.
           </p>
         </div>
 
         <div className="relative z-10 space-y-6">
           <div className="flex items-start space-x-4">
-            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 bg-[#d4a843] rounded-lg flex items-center justify-center flex-shrink-0">
               <svg
                 className="w-6 h-6 text-white"
                 fill="none"
@@ -106,13 +106,13 @@ export default function Login() {
               <h3 className="text-white font-semibold text-lg">
                 Real-Time Kitchen Updates
               </h3>
-              <p className="text-blue-100">
+              <p className="text-[#8fb8ad]">
                 Live order tracking and instant notifications
               </p>
             </div>
           </div>
           <div className="flex items-start space-x-4">
-            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 bg-[#d4a843] rounded-lg flex items-center justify-center flex-shrink-0">
               <svg
                 className="w-6 h-6 text-white"
                 fill="none"
@@ -130,13 +130,13 @@ export default function Login() {
               <h3 className="text-white font-semibold text-lg">
                 Advanced Analytics
               </h3>
-              <p className="text-blue-100">
+              <p className="text-[#8fb8ad]">
                 Comprehensive reports and insights
               </p>
             </div>
           </div>
           <div className="flex items-start space-x-4">
-            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 bg-[#d4a843] rounded-lg flex items-center justify-center flex-shrink-0">
               <svg
                 className="w-6 h-6 text-white"
                 fill="none"
@@ -154,7 +154,7 @@ export default function Login() {
               <h3 className="text-white font-semibold text-lg">
                 Secure & Reliable
               </h3>
-              <p className="text-blue-100">
+              <p className="text-[#8fb8ad]">
                 Enterprise-grade security and uptime
               </p>
             </div>
@@ -168,9 +168,9 @@ export default function Login() {
       {/* Right Side - Login Form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8">
+          <div className="bg-white rounded-2xl shadow-2xl p-8">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#0d5f4e] rounded-2xl mb-4">
                 <svg
                   className="w-10 h-10 text-white"
                   fill="none"
@@ -184,17 +184,17 @@ export default function Login() {
                   />
                 </svg>
               </div>
-              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">
                 Welcome Back
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-gray-600">
                 Sign in to your account to continue
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Email Address
                 </label>
                 <div className="relative">
@@ -216,7 +216,7 @@ export default function Login() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent transition"
                     placeholder="you@example.com"
                     required
                   />
@@ -224,7 +224,7 @@ export default function Login() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Password
                 </label>
                 <div className="relative">
@@ -246,7 +246,7 @@ export default function Login() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition"
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent transition"
                     placeholder="••••••••"
                     required
                   />
@@ -280,7 +280,7 @@ export default function Login() {
               </div>
 
               {error && (
-                <div className="bg-red-50 dark:bg-red-900 border-l-4 border-red-500 p-4 rounded">
+                <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
                   <div className="flex">
                     <svg
                       className="h-5 w-5 text-red-400"
@@ -294,9 +294,7 @@ export default function Login() {
                         d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    <p className="ml-3 text-sm text-red-700 dark:text-red-200">
-                      {error}
-                    </p>
+                    <p className="ml-3 text-sm text-red-700">{error}</p>
                   </div>
                 </div>
               )}
@@ -304,7 +302,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02]">
+                className="w-full bg-[#0d5f4e] text-white py-3 rounded-lg font-semibold hover:bg-[#0f7a62] focus:outline-none focus:ring-2 focus:ring-[#0d5f4e] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02]">
                 {loading ? (
                   <span className="flex items-center justify-center">
                     <svg
@@ -334,10 +332,10 @@ export default function Login() {
             <div className="mt-8">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                  <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">
+                  <span className="px-2 bg-white text-gray-500">
                     Quick Demo Login
                   </span>
                 </div>
@@ -349,10 +347,10 @@ export default function Login() {
                     key={account.role}
                     type="button"
                     onClick={() => quickLogin(account.email, account.password)}
-                    className="flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                     <span
                       className={`w-2 h-2 ${account.color} rounded-full mr-2`}></span>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="text-sm font-medium text-gray-700">
                       {account.role}
                     </span>
                   </button>
@@ -361,7 +359,7 @@ export default function Login() {
             </div>
           </div>
 
-          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
+          <p className="text-center text-sm text-gray-600 mt-6">
             © 2024 Alif Restaurant. All rights reserved.
           </p>
         </div>
