@@ -232,7 +232,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         />
       )}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-[#0d5f4e] transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
+        className={`fixed top-0 left-0 z-50 h-screen w-56 bg-[#0d5f4e] transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
         <div className="flex items-center justify-between h-24 px-6">
           <div className="flex items-center space-x-3">
             <div className="w-14 h-14 bg-[#d4a843] rounded-2xl flex items-center justify-center">

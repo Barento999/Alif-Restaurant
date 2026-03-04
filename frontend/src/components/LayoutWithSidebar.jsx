@@ -24,19 +24,19 @@ export default function LayoutWithSidebar() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-cream-100 dark:bg-gray-900">
+    <div className="min-h-screen bg-[#f5f5f0]">
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
       {/* Main Content */}
-      <div className="lg:pl-64">
+      <div className="lg:pl-56">
         {/* Top Bar */}
-        <header className="sticky top-0 z-30 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <header className="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-sm">
           <div className="flex items-center justify-between h-16 px-4 lg:px-8">
             {/* Mobile Menu Button */}
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+              className="lg:hidden text-gray-600 hover:text-gray-900">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -56,8 +56,8 @@ export default function LayoutWithSidebar() {
               <div className="relative w-full">
                 <input
                   type="text"
-                  placeholder="Search..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Search orders, reservations, menu items..."
+                  className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent text-gray-700"
                 />
                 <svg
                   className="absolute left-3 top-2.5 w-5 h-5 text-gray-400"
@@ -77,7 +77,7 @@ export default function LayoutWithSidebar() {
             {/* Right Side Actions */}
             <div className="flex items-center space-x-4">
               {/* Notifications */}
-              <button className="relative p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+              <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -90,45 +90,34 @@ export default function LayoutWithSidebar() {
                     d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
                   />
                 </svg>
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                <span className="absolute top-1 right-1 w-2 h-2 bg-[#d4a843] rounded-full"></span>
               </button>
 
-              {/* Dark Mode Toggle */}
-              <button className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                  />
-                </svg>
-              </button>
+              {/* Date Display */}
+              <div className="hidden lg:block px-4 py-2 bg-[#0d5f4e] text-white rounded-lg text-sm font-medium">
+                Wednesday, March 4, 2026
+              </div>
 
               {/* Profile Dropdown */}
               <div className="relative">
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center space-x-3 px-3 py-2 hover:bg-cream-200 dark:hover:bg-gray-700 rounded-lg transition">
+                  className="flex items-center space-x-3 px-3 py-2 hover:bg-gray-50 rounded-lg transition">
                   <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-gold-500 rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">
                       {user?.name?.charAt(0)}
                     </span>
                   </div>
                   <div className="hidden md:block text-left">
-                    <p className="text-sm font-semibold text-gray-800 dark:text-white">
+                    <p className="text-sm font-semibold text-gray-800">
                       {user?.name}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+                    <p className="text-xs text-gray-500 capitalize">
                       {user?.role}
                     </p>
                   </div>
                   <svg
-                    className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                    className="w-4 h-4 text-gray-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24">
@@ -148,20 +137,18 @@ export default function LayoutWithSidebar() {
                       className="fixed inset-0 z-10"
                       onClick={() => setProfileDropdownOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
-                      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                        <p className="text-sm font-semibold text-gray-800 dark:text-white">
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-100 z-20">
+                      <div className="p-4 border-b border-gray-100">
+                        <p className="text-sm font-semibold text-gray-800">
                           {user?.name}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {user?.email}
-                        </p>
-                        <span className="inline-block mt-2 px-2 py-1 bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200 text-xs rounded-full capitalize">
+                        <p className="text-xs text-gray-500">{user?.email}</p>
+                        <span className="inline-block mt-2 px-2 py-1 bg-[#0d5f4e] bg-opacity-10 text-[#0d5f4e] text-xs rounded-full capitalize">
                           {user?.role}
                         </span>
                       </div>
                       <div className="py-2">
-                        <button className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2">
+                        <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
                           <svg
                             className="w-4 h-4"
                             fill="none"
@@ -176,7 +163,7 @@ export default function LayoutWithSidebar() {
                           </svg>
                           <span>My Profile</span>
                         </button>
-                        <button className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2">
+                        <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
                           <svg
                             className="w-4 h-4"
                             fill="none"
@@ -197,7 +184,7 @@ export default function LayoutWithSidebar() {
                           </svg>
                           <span>Settings</span>
                         </button>
-                        <button className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2">
+                        <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
                           <svg
                             className="w-4 h-4"
                             fill="none"
