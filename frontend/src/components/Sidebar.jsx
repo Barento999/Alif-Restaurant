@@ -44,7 +44,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           />
         </svg>
       ),
-      roles: ["admin", "manager", "cashier", "waiter"],
+      roles: ["manager", "cashier", "waiter"],
     },
     {
       name: "Kitchen",
@@ -63,7 +63,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           />
         </svg>
       ),
-      roles: ["admin", "kitchen"],
+      roles: ["kitchen"],
     },
     {
       name: "Menu",

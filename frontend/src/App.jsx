@@ -38,7 +38,7 @@ function App() {
           <Route
             path="pos"
             element={
-              <PrivateRoute roles={["admin", "manager", "cashier", "waiter"]}>
+              <PrivateRoute roles={["manager", "cashier", "waiter"]}>
                 <POSScreen />
               </PrivateRoute>
             }
@@ -46,7 +46,7 @@ function App() {
           <Route
             path="kitchen"
             element={
-              <PrivateRoute roles={["admin", "kitchen"]}>
+              <PrivateRoute roles={["kitchen"]}>
                 <KitchenScreen />
               </PrivateRoute>
             }
