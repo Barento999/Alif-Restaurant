@@ -13,7 +13,8 @@ export default function KitchenScreen() {
   const { orders } = useSelector((state) => state.orders);
 
   useEffect(() => {
-    dispatch(fetchOrders("pending,preparing"));
+    // Fetch all orders and filter on frontend
+    dispatch(fetchOrders());
 
     const socket = io("http://localhost:5000");
     socket.on("newOrder", (order) => dispatch(addOrderRealtime(order)));
@@ -30,6 +31,14 @@ export default function KitchenScreen() {
 
   const activeOrders = orders.filter((o) =>
     ["pending", "preparing"].includes(o.status),
+  );
+
+  console.log("=== KITCHEN SCREEN DEBUG ===");
+  console.log("Total orders in Redux:", orders.length);
+  console.log("Active orders (pending/preparing):", activeOrders.length);
+  console.log(
+    "Orders:",
+    orders.map((o) => ({ orderNumber: o.orderNumber, status: o.status })),
   );
 
   const pendingOrders = activeOrders.filter((o) => o.status === "pending");
