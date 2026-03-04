@@ -28,9 +28,14 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 
+// Rate limiting - more permissive in development
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.NODE_ENV === "production" ? 100 : 1000, // 1000 in dev, 100 in prod
+  message: {
+    success: false,
+    message: "Too many requests, please try again later.",
+  },
 });
 app.use("/api/", limiter);
 
