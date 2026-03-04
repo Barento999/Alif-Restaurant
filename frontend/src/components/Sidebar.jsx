@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useState } from "react";
 
 export default function Sidebar({ isOpen, setIsOpen }) {
   const location = useLocation();
@@ -124,6 +123,25 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       roles: ["admin", "manager"],
     },
     {
+      name: "Orders",
+      path: "/orders",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+      ),
+      roles: ["admin", "manager"],
+    },
+    {
       name: "Reports",
       path: "/reports",
       icon: (
@@ -169,20 +187,14 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
   return (
     <>
-      {/* Mobile Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
-
-      {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}>
-        {/* Logo */}
+        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
@@ -220,8 +232,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             </svg>
           </button>
         </div>
-
-        {/* User Info */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
@@ -239,31 +249,22 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             </div>
           </div>
         </div>
-
-        {/* Navigation */}
         <nav className="flex-1 overflow-y-auto p-4 space-y-1">
           {visibleMenuItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
               onClick={() => setIsOpen(false)}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
-                isActive(item.path)
-                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
-                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              }`}>
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive(item.path) ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
               {item.icon}
               <span className="font-medium">{item.name}</span>
             </Link>
           ))}
         </nav>
-
-        {/* Footer - Logout Button */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
           <button
             onClick={() => {
               setIsOpen(false);
-              // Logout will be handled by parent component
               window.dispatchEvent(new CustomEvent("logout"));
             }}
             className="w-full flex items-center justify-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg transition-all font-medium">

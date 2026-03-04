@@ -9,6 +9,7 @@ import Reports from "./pages/Reports";
 import Inventory from "./pages/Inventory";
 import TableManagement from "./pages/TableManagement";
 import UserManagement from "./pages/UserManagement";
+import OrderManagement from "./pages/OrderManagement";
 import LayoutWithSidebar from "./components/LayoutWithSidebar";
 
 const PrivateRoute = ({ children, roles }) => {
@@ -87,6 +88,14 @@ function App() {
             element={
               <PrivateRoute roles={["admin"]}>
                 <UserManagement />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="orders"
+            element={
+              <PrivateRoute roles={["admin", "manager"]}>
+                <OrderManagement />
               </PrivateRoute>
             }
           />
