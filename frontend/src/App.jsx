@@ -10,6 +10,7 @@ import Inventory from "./pages/Inventory";
 import TableManagement from "./pages/TableManagement";
 import UserManagement from "./pages/UserManagement";
 import OrderManagement from "./pages/OrderManagement";
+import WaiterOrders from "./pages/WaiterOrders";
 import LayoutWithSidebar from "./components/LayoutWithSidebar";
 
 const PrivateRoute = ({ children, roles }) => {
@@ -40,6 +41,14 @@ function App() {
             element={
               <PrivateRoute roles={["manager", "cashier", "waiter"]}>
                 <POSScreen />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="my-orders"
+            element={
+              <PrivateRoute roles={["waiter"]}>
+                <WaiterOrders />
               </PrivateRoute>
             }
           />
