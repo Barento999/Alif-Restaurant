@@ -76,14 +76,13 @@ export default function Login() {
                 />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-white">RestaurantOS</h1>
+            <h1 className="text-3xl font-bold text-white">Alif Restaurant</h1>
           </div>
           <h2 className="text-4xl font-bold text-white mb-4">
             Modern Restaurant Management
           </h2>
           <p className="text-blue-100 text-lg">
-            Streamline your restaurant operations with our comprehensive
-            management system.
+            Experience authentic flavors with modern service excellence.
           </p>
         </div>
 
@@ -363,7 +362,7 @@ export default function Login() {
           </div>
 
           <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
-            © 2024 RestaurantOS. All rights reserved.
+            © 2024 Alif Restaurant. All rights reserved.
           </p>
         </div>
       </div>

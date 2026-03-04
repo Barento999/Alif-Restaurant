@@ -65,7 +65,8 @@ export default function CashierOrders() {
         </head>
         <body>
           <div class="header">
-            <h1>RestaurantOS</h1>
+            <h1>Alif Restaurant</h1>
+            <p>Hararghe, Ethiopia</p>
             <p>Receipt</p>
           </div>
           <div class="line"></div>

@@ -250,7 +250,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               </svg>
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              RestaurantOS
+              Alif Restaurant
             </span>
           </div>
           <button
