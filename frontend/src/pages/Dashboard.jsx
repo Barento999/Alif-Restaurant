@@ -20,21 +20,39 @@ export default function Dashboard() {
 
   const loadStats = async () => {
     try {
-      const [ordersRes, tablesRes, dailyRes, inventoryRes] = await Promise.all([
+      // Waiters and kitchen staff don't have access to reports/inventory
+      const canAccessReports = ["admin", "manager"].includes(user?.role);
+      const canAccessInventory = ["admin", "manager"].includes(user?.role);
+
+      const promises = [
         api.get("/orders"),
-        api.get("/tables"),
-        api.get("/reports/daily"),
-        api.get("/inventory").catch(() => ({ data: { data: [] } })),
-      ]);
+        api.get("/tables").catch(() => ({ data: { data: [] } })),
+      ];
+
+      if (canAccessReports) {
+        promises.push(api.get("/reports/daily"));
+      }
+
+      if (canAccessInventory) {
+        promises.push(api.get("/inventory"));
+      }
+
+      const results = await Promise.all(promises);
+      const ordersRes = results[0];
+      const tablesRes = results[1];
+      const dailyRes = canAccessReports ? results[2] : null;
+      const inventoryRes = canAccessInventory
+        ? results[canAccessReports ? 3 : 2]
+        : null;
 
       const orders = ordersRes.data.data;
       const tables = tablesRes.data.data;
-      const daily = dailyRes.data.data;
-      const inventory = inventoryRes.data.data;
+      const daily = dailyRes?.data.data;
+      const inventory = inventoryRes?.data.data || [];
 
       setStats({
-        todayOrders: daily.totalOrders || 0,
-        todayRevenue: daily.revenue || 0,
+        todayOrders: daily?.totalOrders || orders.length,
+        todayRevenue: daily?.revenue || 0,
         activeTables: tables.filter((t) => t.status === "occupied").length,
         pendingOrders: orders.filter((o) =>
           ["pending", "preparing"].includes(o.status),
@@ -47,6 +65,8 @@ export default function Dashboard() {
       console.error("Error loading stats:", error);
     }
   };
+
+  const canAccessReports = ["admin", "manager"].includes(user?.role);
 
   return (
     <div className="space-y-6">
@@ -83,30 +103,32 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-lg shadow-lg text-white">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-green-100 text-sm">Today's Revenue</p>
-              <p className="text-4xl font-bold mt-2">
-                ${stats.todayRevenue.toFixed(2)}
-              </p>
-            </div>
-            <div className="bg-green-400 bg-opacity-30 p-3 rounded-lg">
-              <svg
-                className="w-8 h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+        {canAccessReports && (
+          <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-lg shadow-lg text-white">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-green-100 text-sm">Today's Revenue</p>
+                <p className="text-4xl font-bold mt-2">
+                  ${stats.todayRevenue.toFixed(2)}
+                </p>
+              </div>
+              <div className="bg-green-400 bg-opacity-30 p-3 rounded-lg">
+                <svg
+                  className="w-8 h-8"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-lg shadow-lg text-white">
           <div className="flex justify-between items-start">
@@ -155,7 +177,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {stats.lowStockItems > 0 && (
+      {canAccessReports && stats.lowStockItems > 0 && (
         <div className="bg-red-50 dark:bg-red-900 border-l-4 border-red-500 p-4 rounded">
           <div className="flex items-center">
             <svg

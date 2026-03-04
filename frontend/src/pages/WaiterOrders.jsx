@@ -22,23 +22,44 @@ export default function WaiterOrders() {
 
     socket.on("newOrder", (order) => {
       // Only add if it's assigned to this waiter
-      if (order.waiter?._id === user?._id) {
+      if (order.waiter?._id === user?.id) {
         dispatch(addOrderRealtime(order));
       }
     });
 
     socket.on("orderStatusUpdate", (order) => {
       // Update if it's assigned to this waiter
-      if (order.waiter?._id === user?._id) {
+      if (order.waiter?._id === user?.id) {
         dispatch(updateOrderRealtime(order));
       }
     });
 
     return () => socket.disconnect();
-  }, [dispatch, user?._id]);
+  }, [dispatch, user?.id]);
 
   // Filter orders assigned to this waiter
-  const myOrders = orders.filter((order) => order.waiter?._id === user?._id);
+  // Use 'id' field from user object (backend returns 'id' not '_id')
+  const myOrders = orders.filter((order) => {
+    const orderWaiterId =
+      order.waiter?._id?.toString() || order.waiter?.toString();
+    const currentUserId = user?.id?.toString();
+    console.log("Comparing:", {
+      orderWaiterId,
+      currentUserId,
+      match: orderWaiterId === currentUserId,
+    });
+    return orderWaiterId === currentUserId;
+  });
+
+  console.log("=== WAITER ORDERS DEBUG ===");
+  console.log("Current User:", user);
+  console.log("Current User ID:", user?.id);
+  console.log("Total Orders:", orders.length);
+  console.log("My Orders:", myOrders.length);
+  if (orders.length > 0) {
+    console.log("Sample Order:", orders[0]);
+    console.log("Sample Order Waiter:", orders[0]?.waiter);
+  }
 
   const filteredOrders =
     selectedStatus === "all"
