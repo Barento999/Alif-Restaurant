@@ -3,6 +3,8 @@ import {
   getDailyReport,
   getMonthlyReport,
   getBestSellers,
+  getWeeklyReport,
+  getDashboardStats,
 } from "../controllers/reportController.js";
 import { protect, authorize } from "../middlewares/auth.js";
 
@@ -15,6 +17,8 @@ router.get(
   authorize("admin", "manager"),
   getMonthlyReport,
 );
+router.get("/weekly", protect, authorize("admin", "manager"), getWeeklyReport);
+router.get("/dashboard", protect, getDashboardStats);
 router.get(
   "/best-sellers",
   protect,

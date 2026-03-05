@@ -2,6 +2,100 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import api from "../services/api";
 
+function WeeklyChart({ data }) {
+  if (!data || data.length === 0) return null;
+
+  const maxRevenue = Math.max(...data.map((d) => d.revenue));
+  const chartHeight = 200;
+  const chartWidth = 700;
+  const padding = 20;
+  const stepX = (chartWidth - padding * 2) / (data.length - 1);
+
+  const points = data.map((item, i) => {
+    const x = padding + i * stepX;
+    const y = chartHeight - (item.revenue / maxRevenue) * (chartHeight - 40);
+    return { x, y, ...item };
+  });
+
+  const pathData = points
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
+    .join(" ");
+  const areaData = `${pathData} L ${points[points.length - 1].x} ${chartHeight} L ${points[0].x} ${chartHeight} Z`;
+
+  return (
+    <div className="relative h-64">
+      <svg
+        className="w-full h-full"
+        viewBox={`0 0 ${chartWidth} 250`}
+        preserveAspectRatio="xMidYMid meet">
+        {/* Grid lines */}
+        {[0, 1, 2, 3, 4].map((i) => (
+          <line
+            key={i}
+            x1="0"
+            y1={50 * i}
+            x2={chartWidth}
+            y2={50 * i}
+            stroke="#f0f0f0"
+            strokeWidth="1"
+          />
+        ))}
+
+        {/* Revenue area gradient */}
+        <defs>
+          <linearGradient
+            id="revenueGradient"
+            x1="0%"
+            y1="0%"
+            x2="0%"
+            y2="100%">
+            <stop offset="0%" stopColor="#d4a843" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#d4a843" stopOpacity="0.05" />
+          </linearGradient>
+        </defs>
+
+        {/* Area fill */}
+        <path d={areaData} fill="url(#revenueGradient)" />
+
+        {/* Line */}
+        <path d={pathData} fill="none" stroke="#d4a843" strokeWidth="3" />
+
+        {/* Data points */}
+        {points.map((point, i) => (
+          <g key={i}>
+            <circle cx={point.x} cy={point.y} r="5" fill="#d4a843" />
+            <title>{`${point.day}: $${point.revenue} (${point.orders} orders)`}</title>
+          </g>
+        ))}
+
+        {/* Day labels */}
+        {points.map((point, i) => (
+          <text
+            key={i}
+            x={point.x}
+            y="240"
+            textAnchor="middle"
+            className="text-xs fill-gray-500">
+            {point.day}
+          </text>
+        ))}
+
+        {/* Revenue labels */}
+        {points.map((point, i) => (
+          <text
+            key={i}
+            x={point.x}
+            y={point.y - 10}
+            textAnchor="middle"
+            className="text-xs fill-gray-700 font-semibold">
+            ${point.revenue}
+          </text>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { user } = useSelector((state) => state.auth);
   const [stats, setStats] = useState({
@@ -10,17 +104,12 @@ export default function Dashboard() {
     activeTables: 0,
     pendingOrders: 0,
     lowStockItems: 0,
+    revenueChange: 0,
+    ordersChange: 0,
   });
   const [tables, setTables] = useState([]);
-  const [weeklyData, setWeeklyData] = useState([
-    { day: "Mon", revenue: 4200, orders: 45 },
-    { day: "Tue", revenue: 5800, orders: 62 },
-    { day: "Wed", revenue: 7100, orders: 78 },
-    { day: "Thu", revenue: 6800, orders: 71 },
-    { day: "Fri", revenue: 9500, orders: 95 },
-    { day: "Sat", revenue: 12800, orders: 128 },
-    { day: "Sun", revenue: 11200, orders: 112 },
-  ]);
+  const [weeklyData, setWeeklyData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadStats();
@@ -30,17 +119,17 @@ export default function Dashboard() {
 
   const loadStats = async () => {
     try {
-      // Waiters and kitchen staff don't have access to reports/inventory
+      setLoading(true);
       const canAccessReports = ["admin", "manager"].includes(user?.role);
       const canAccessInventory = ["admin", "manager"].includes(user?.role);
 
       const promises = [
-        api.get("/orders"),
         api.get("/tables").catch(() => ({ data: { data: [] } })),
       ];
 
       if (canAccessReports) {
-        promises.push(api.get("/reports/daily"));
+        promises.push(api.get("/reports/dashboard"));
+        promises.push(api.get("/reports/weekly"));
       }
 
       if (canAccessInventory) {
@@ -48,32 +137,35 @@ export default function Dashboard() {
       }
 
       const results = await Promise.all(promises);
-      const ordersRes = results[0];
-      const tablesRes = results[1];
-      const dailyRes = canAccessReports ? results[2] : null;
+      const tablesRes = results[0];
+      const dashboardRes = canAccessReports ? results[1] : null;
+      const weeklyRes = canAccessReports ? results[2] : null;
       const inventoryRes = canAccessInventory
-        ? results[canAccessReports ? 3 : 2]
+        ? results[canAccessReports ? 3 : 1]
         : null;
 
-      const orders = ordersRes.data.data;
       const tables = tablesRes.data.data;
-      const daily = dailyRes?.data.data;
+      const dashboard = dashboardRes?.data.data;
+      const weekly = weeklyRes?.data.data || [];
       const inventory = inventoryRes?.data.data || [];
 
       setTables(tables);
+      setWeeklyData(weekly);
       setStats({
-        todayOrders: daily?.totalOrders || orders.length,
-        todayRevenue: daily?.revenue || 0,
+        todayOrders: dashboard?.todayOrders || 0,
+        todayRevenue: dashboard?.todayRevenue || 0,
         activeTables: tables.filter((t) => t.status === "occupied").length,
-        pendingOrders: orders.filter((o) =>
-          ["pending", "preparing"].includes(o.status),
-        ).length,
+        pendingOrders: dashboard?.pendingOrders || 0,
         lowStockItems: inventory.filter(
           (i) => i.quantity <= i.lowStockThreshold,
         ).length,
+        revenueChange: dashboard?.revenueChange || 0,
+        ordersChange: dashboard?.ordersChange || 0,
       });
     } catch (error) {
       console.error("Error loading stats:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -107,9 +199,13 @@ export default function Dashboard() {
                 />
               </svg>
             </div>
-            <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded">
-              +23%
-            </span>
+            {stats.revenueChange !== 0 && (
+              <span
+                className={`px-2 py-1 ${stats.revenueChange > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"} text-xs font-semibold rounded`}>
+                {stats.revenueChange > 0 ? "+" : ""}
+                {stats.revenueChange}%
+              </span>
+            )}
           </div>
           <p className="text-gray-500 text-sm mb-1">Today's Revenue</p>
           <p className="text-2xl font-bold text-gray-900">
@@ -133,11 +229,15 @@ export default function Dashboard() {
                 />
               </svg>
             </div>
-            <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded">
-              +12%
-            </span>
+            {stats.ordersChange !== 0 && (
+              <span
+                className={`px-2 py-1 ${stats.ordersChange > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"} text-xs font-semibold rounded`}>
+                {stats.ordersChange > 0 ? "+" : ""}
+                {stats.ordersChange}%
+              </span>
+            )}
           </div>
-          <p className="text-gray-500 text-sm mb-1">Active Orders</p>
+          <p className="text-gray-500 text-sm mb-1">Today's Orders</p>
           <p className="text-2xl font-bold text-gray-900">
             {stats.todayOrders}
           </p>
@@ -155,15 +255,12 @@ export default function Dashboard() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
             </div>
-            <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded">
-              -5%
-            </span>
           </div>
-          <p className="text-gray-500 text-sm mb-1">Reservations</p>
+          <p className="text-gray-500 text-sm mb-1">Pending Orders</p>
           <p className="text-2xl font-bold text-gray-900">
             {stats.pendingOrders}
           </p>
@@ -181,18 +278,15 @@ export default function Dashboard() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                  d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
                 />
               </svg>
             </div>
-            <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded">
-              +8%
-            </span>
           </div>
           <p className="text-gray-500 text-sm mb-1">Table Occupancy</p>
           <p className="text-2xl font-bold text-gray-900">
-            {stats.activeTables > 0
-              ? Math.round((stats.activeTables / 10) * 100)
+            {tables.length > 0
+              ? Math.round((stats.activeTables / tables.length) * 100)
               : 0}
             %
           </p>
@@ -248,81 +342,13 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-          <div className="relative h-64">
-            <svg
-              className="w-full h-full"
-              viewBox="0 0 700 250"
-              preserveAspectRatio="none">
-              {/* Grid lines */}
-              <line
-                x1="0"
-                y1="50"
-                x2="700"
-                y2="50"
-                stroke="#f0f0f0"
-                strokeWidth="1"
-              />
-              <line
-                x1="0"
-                y1="100"
-                x2="700"
-                y2="100"
-                stroke="#f0f0f0"
-                strokeWidth="1"
-              />
-              <line
-                x1="0"
-                y1="150"
-                x2="700"
-                y2="150"
-                stroke="#f0f0f0"
-                strokeWidth="1"
-              />
-              <line
-                x1="0"
-                y1="200"
-                x2="700"
-                y2="200"
-                stroke="#f0f0f0"
-                strokeWidth="1"
-              />
-
-              {/* Revenue area */}
-              <defs>
-                <linearGradient
-                  id="revenueGradient"
-                  x1="0%"
-                  y1="0%"
-                  x2="0%"
-                  y2="100%">
-                  <stop offset="0%" stopColor="#d4a843" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#d4a843" stopOpacity="0.05" />
-                </linearGradient>
-              </defs>
-              <path
-                d="M 0 180 L 100 150 L 200 120 L 300 130 L 400 80 L 500 30 L 600 50 L 600 220 L 500 220 L 400 220 L 300 220 L 200 220 L 100 220 L 0 220 Z"
-                fill="url(#revenueGradient)"
-              />
-              <path
-                d="M 0 180 L 100 150 L 200 120 L 300 130 L 400 80 L 500 30 L 600 50"
-                fill="none"
-                stroke="#d4a843"
-                strokeWidth="3"
-              />
-
-              {/* Day labels */}
-              {weeklyData.map((day, i) => (
-                <text
-                  key={day.day}
-                  x={i * 100 + 50}
-                  y="240"
-                  textAnchor="middle"
-                  className="text-xs fill-gray-500">
-                  {day.day}
-                </text>
-              ))}
-            </svg>
-          </div>
+          {loading || weeklyData.length === 0 ? (
+            <div className="h-64 flex items-center justify-center text-gray-400">
+              {loading ? "Loading chart data..." : "No data available"}
+            </div>
+          ) : (
+            <WeeklyChart data={weeklyData} />
+          )}
         </div>
 
         {/* Table Status */}

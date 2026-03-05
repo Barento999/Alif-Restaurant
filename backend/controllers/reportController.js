@@ -75,3 +75,110 @@ export const getBestSellers = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const getWeeklyReport = async (req, res) => {
+  try {
+    const today = new Date();
+    const weekAgo = new Date(today);
+    weekAgo.setDate(today.getDate() - 6);
+    weekAgo.setHours(0, 0, 0, 0);
+
+    const orders = await Order.find({
+      createdAt: { $gte: weekAgo },
+      status: "paid",
+    });
+
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const weeklyData = [];
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(weekAgo);
+      date.setDate(weekAgo.getDate() + i);
+      const dayStart = new Date(date);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(date);
+      dayEnd.setHours(23, 59, 59, 999);
+
+      const dayOrders = orders.filter(
+        (order) => order.createdAt >= dayStart && order.createdAt <= dayEnd,
+      );
+
+      const revenue = dayOrders.reduce((sum, order) => sum + order.total, 0);
+
+      weeklyData.push({
+        day: dayNames[date.getDay()],
+        date: date.toISOString().split("T")[0],
+        revenue: Math.round(revenue),
+        orders: dayOrders.length,
+      });
+    }
+
+    res.json({ success: true, data: weeklyData });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getDashboardStats = async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Get today's orders
+    const todayOrders = await Order.find({
+      createdAt: { $gte: today },
+      status: "paid",
+    });
+
+    const todayRevenue = todayOrders.reduce(
+      (sum, order) => sum + order.total,
+      0,
+    );
+
+    // Get pending orders count
+    const pendingOrders = await Order.countDocuments({
+      status: { $in: ["pending", "preparing"] },
+    });
+
+    // Calculate yesterday's revenue for comparison
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const yesterdayOrders = await Order.find({
+      createdAt: { $gte: yesterday, $lt: today },
+      status: "paid",
+    });
+    const yesterdayRevenue = yesterdayOrders.reduce(
+      (sum, order) => sum + order.total,
+      0,
+    );
+
+    const revenueChange =
+      yesterdayRevenue > 0
+        ? Math.round(
+            ((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100,
+          )
+        : 0;
+
+    const ordersChange =
+      yesterdayOrders.length > 0
+        ? Math.round(
+            ((todayOrders.length - yesterdayOrders.length) /
+              yesterdayOrders.length) *
+              100,
+          )
+        : 0;
+
+    res.json({
+      success: true,
+      data: {
+        todayOrders: todayOrders.length,
+        todayRevenue: Math.round(todayRevenue),
+        pendingOrders,
+        revenueChange,
+        ordersChange,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
