@@ -68,10 +68,16 @@ export default function WaiterOrders() {
 
   const handleMarkServed = async (orderId) => {
     try {
-      await dispatch(updateOrderStatus({ id: orderId, status: "served" }));
-      dispatch(fetchOrders());
+      await dispatch(
+        updateOrderStatus({ id: orderId, status: "served" }),
+      ).unwrap();
+      // Refresh orders after successful update
+      await dispatch(fetchOrders());
     } catch (error) {
-      alert("Error updating order status");
+      console.error("Error updating order status:", error);
+      alert(
+        "Error updating order status: " + (error.message || "Unknown error"),
+      );
     }
   };
 
