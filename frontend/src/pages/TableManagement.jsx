@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import api from "../services/api";
 
 export default function TableManagement() {
@@ -9,10 +10,32 @@ export default function TableManagement() {
     capacity: 2,
     location: "",
   });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [highlightedTableId, setHighlightedTableId] = useState(null);
 
   useEffect(() => {
     loadTables();
   }, []);
+
+  useEffect(() => {
+    // Check if there's a table ID in the URL
+    const tableId = searchParams.get("table");
+    if (tableId && tables.length > 0) {
+      setHighlightedTableId(tableId);
+      // Scroll to the table after a short delay
+      setTimeout(() => {
+        const element = document.getElementById(`table-${tableId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          // Remove highlight after 3 seconds
+          setTimeout(() => {
+            setHighlightedTableId(null);
+            setSearchParams({});
+          }, 3000);
+        }
+      }, 300);
+    }
+  }, [searchParams, tables]);
 
   const loadTables = async () => {
     try {
@@ -123,7 +146,12 @@ export default function TableManagement() {
         {tables.map((table) => (
           <div
             key={table._id}
-            className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            id={`table-${table._id}`}
+            className={`bg-white p-5 rounded-2xl shadow-sm border overflow-hidden transition-all ${
+              highlightedTableId === table._id
+                ? "border-[#d4a843] border-4 ring-4 ring-[#d4a843] ring-opacity-30 animate-pulse"
+                : "border-gray-100"
+            }`}>
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-2xl font-bold text-gray-800">
                 {table.tableNumber}

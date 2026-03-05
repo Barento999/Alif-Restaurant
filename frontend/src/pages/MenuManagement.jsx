@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import api from "../services/api";
 
 export default function MenuManagement() {
@@ -9,10 +10,32 @@ export default function MenuManagement() {
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [highlightedItemId, setHighlightedItemId] = useState(null);
 
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    // Check if there's an item ID in the URL
+    const itemId = searchParams.get("item");
+    if (itemId && items.length > 0) {
+      setHighlightedItemId(itemId);
+      // Scroll to the item after a short delay to ensure it's rendered
+      setTimeout(() => {
+        const element = document.getElementById(`item-${itemId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          // Remove highlight after 3 seconds
+          setTimeout(() => {
+            setHighlightedItemId(null);
+            setSearchParams({});
+          }, 3000);
+        }
+      }, 300);
+    }
+  }, [searchParams, items]);
 
   const loadData = async () => {
     setLoading(true);
@@ -116,6 +139,7 @@ export default function MenuManagement() {
               item={item}
               onToggle={toggleAvailability}
               onEdit={handleEdit}
+              isHighlighted={highlightedItemId === item._id}
             />
           ))}
         </div>
@@ -159,11 +183,17 @@ export default function MenuManagement() {
 }
 
 // Meal Card Component
-function MealCard({ item, onToggle, onEdit }) {
+function MealCard({ item, onToggle, onEdit, isHighlighted }) {
   const [showDetails, setShowDetails] = useState(false);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300">
+    <div
+      id={`item-${item._id}`}
+      className={`bg-white rounded-2xl shadow-sm border overflow-hidden hover:shadow-xl transition-all duration-300 ${
+        isHighlighted
+          ? "border-[#d4a843] border-4 ring-4 ring-[#d4a843] ring-opacity-30 animate-pulse"
+          : "border-gray-100"
+      }`}>
       {/* Image */}
       {item.image && (
         <div className="relative h-56 overflow-hidden group">

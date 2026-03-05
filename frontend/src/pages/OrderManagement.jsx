@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import { fetchOrders, updateOrderStatus } from "../features/orders/orderSlice";
 import api from "../services/api";
 
@@ -9,10 +10,32 @@ export default function OrderManagement() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [highlightedOrderId, setHighlightedOrderId] = useState(null);
 
   useEffect(() => {
     loadOrders();
   }, [selectedStatus]);
+
+  useEffect(() => {
+    // Check if there's an order ID in the URL
+    const orderId = searchParams.get("order");
+    if (orderId && orders.length > 0) {
+      setHighlightedOrderId(orderId);
+      // Scroll to the order after a short delay
+      setTimeout(() => {
+        const element = document.getElementById(`order-${orderId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          // Remove highlight after 3 seconds
+          setTimeout(() => {
+            setHighlightedOrderId(null);
+            setSearchParams({});
+          }, 3000);
+        }
+      }, 300);
+    }
+  }, [searchParams, orders]);
 
   const loadOrders = () => {
     if (selectedStatus === "all") {
@@ -168,7 +191,14 @@ export default function OrderManagement() {
                 </tr>
               ) : (
                 filteredOrders.map((order) => (
-                  <tr key={order._id} className="hover:bg-gray-50 transition">
+                  <tr
+                    key={order._id}
+                    id={`order-${order._id}`}
+                    className={`hover:bg-gray-50 transition ${
+                      highlightedOrderId === order._id
+                        ? "bg-[#d4a843] bg-opacity-20 animate-pulse"
+                        : ""
+                    }`}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="font-mono text-sm font-semibold text-gray-900">
                         {order.orderNumber}
