@@ -17,44 +17,6 @@ export default function Login() {
     if (result.type === "auth/login/fulfilled") navigate("/dashboard");
   };
 
-  const demoAccounts = [
-    {
-      role: "Admin",
-      email: "admin@rms.com",
-      password: "admin123",
-      color: "bg-[#0d5f4e]",
-    },
-    {
-      role: "Manager",
-      email: "manager@rms.com",
-      password: "manager123",
-      color: "bg-[#0f7a62]",
-    },
-    {
-      role: "Cashier",
-      email: "cashier@rms.com",
-      password: "cashier123",
-      color: "bg-[#d4a843]",
-    },
-    {
-      role: "Waiter",
-      email: "waiter@rms.com",
-      password: "waiter123",
-      color: "bg-[#0d5f4e]",
-    },
-    {
-      role: "Kitchen",
-      email: "kitchen@rms.com",
-      password: "kitchen123",
-      color: "bg-orange-500",
-    },
-  ];
-
-  const quickLogin = (email, password) => {
-    setEmail(email);
-    setPassword(password);
-  };
-
   return (
     <div className="min-h-screen flex bg-[#f5f5f0]">
       {/* Left Side - Branding */}
@@ -328,39 +290,10 @@ export default function Login() {
                 )}
               </button>
             </form>
-
-            <div className="mt-8">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
-                    Quick Demo Login
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                {demoAccounts.map((account) => (
-                  <button
-                    key={account.role}
-                    type="button"
-                    onClick={() => quickLogin(account.email, account.password)}
-                    className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
-                    <span
-                      className={`w-2 h-2 ${account.color} rounded-full mr-2`}></span>
-                    <span className="text-sm font-medium text-gray-700">
-                      {account.role}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
 
           <p className="text-center text-sm text-gray-600 mt-6">
-            © 2024 Alif Restaurant. All rights reserved.
+            © 2026 Alif Restaurant. All rights reserved.
           </p>
         </div>
       </div>
