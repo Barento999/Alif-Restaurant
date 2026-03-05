@@ -279,9 +279,22 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           </button>
         </div>
 
+        <nav className="flex-1 overflow-y-auto px-4 pt-8 space-y-2">
+          {visibleMenuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={() => setIsOpen(false)}
+              className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${isActive(item.path) ? "bg-[#d4a843] text-[#0d5f4e] font-semibold" : "text-white hover:bg-[#0f7a62]"}`}>
+              {item.icon}
+              <span className="text-base font-medium">{item.name}</span>
+            </Link>
+          ))}
+        </nav>
+
         {/* Profile Section */}
-        <div className="px-4 pb-6 border-b border-[#0f7a62]">
-          <div className="bg-[#0f7a62] rounded-xl p-4">
+        <div className="px-4 pb-4 border-t border-[#0f7a62] pt-4">
+          <div className="bg-[#0f7a62] rounded-xl p-4 mb-3">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-[#d4a843] rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-[#0d5f4e] font-bold text-lg">
@@ -298,22 +311,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               </div>
             </div>
           </div>
-        </div>
 
-        <nav className="flex-1 overflow-y-auto px-4 pt-6 space-y-2">
-          {visibleMenuItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={() => setIsOpen(false)}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${isActive(item.path) ? "bg-[#d4a843] text-[#0d5f4e] font-semibold" : "text-white hover:bg-[#0f7a62]"}`}>
-              {item.icon}
-              <span className="text-base font-medium">{item.name}</span>
-            </Link>
-          ))}
-        </nav>
-
-        <div className="p-4">
           <button
             onClick={() => {
               setIsOpen(false);
