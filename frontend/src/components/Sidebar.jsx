@@ -294,7 +294,10 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
         {/* Profile Section */}
         <div className="px-4 pb-4 border-t border-[#0f7a62] pt-4">
-          <div className="bg-[#0f7a62] rounded-xl p-4 mb-3">
+          <Link
+            to="/profile"
+            onClick={() => setIsOpen(false)}
+            className="block bg-[#0f7a62] hover:bg-[#0a4a3c] rounded-xl p-4 mb-3 transition-colors cursor-pointer">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-[#d4a843] rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-[#0d5f4e] font-bold text-lg">
@@ -309,8 +312,20 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                   {user?.role}
                 </p>
               </div>
+              <svg
+                className="w-5 h-5 text-[#8fb8ad]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
             </div>
-          </div>
+          </Link>
 
           <button
             onClick={() => {
