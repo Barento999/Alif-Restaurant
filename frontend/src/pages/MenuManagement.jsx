@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import api from "../services/api";
 
 export default function MenuManagement() {
   const [apiMeals, setApiMeals] = useState([]);
@@ -13,71 +14,25 @@ export default function MenuManagement() {
   const loadAllMealsFromAPI = async () => {
     setLoading(true);
     try {
-      // Fetch meals by different categories from TheMealDB
-      const categoryQueries = [
-        "chicken",
-        "beef",
-        "pasta",
-        "seafood",
-        "dessert",
-        "vegetarian",
-        "breakfast",
-        "lamb",
-        "pork",
-        "soup",
-      ];
+      // Fetch all meals from our backend (which caches TheMealDB data)
+      const response = await api.get("/menu/api/all");
 
-      const allMeals = [];
-      const categorySet = new Set();
+      if (response.data.success) {
+        const meals = response.data.data || [];
+        const apiCategories = response.data.categories || [];
 
-      // Fetch meals for each category
-      for (const query of categoryQueries) {
-        try {
-          const response = await fetch(
-            `https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`,
-          );
-          const data = await response.json();
+        // Add prices to meals
+        const mealsWithPrices = meals.map((meal) => ({
+          ...meal,
+          price: generatePrice(meal.category),
+        }));
 
-          if (data.meals) {
-            data.meals.forEach((meal) => {
-              // Extract ingredients
-              const ingredients = [];
-              for (let i = 1; i <= 20; i++) {
-                const ingredient = meal[`strIngredient${i}`];
-                if (ingredient && ingredient.trim()) {
-                  ingredients.push(ingredient);
-                }
-              }
-
-              categorySet.add(meal.strCategory);
-
-              allMeals.push({
-                id: meal.idMeal,
-                name: meal.strMeal,
-                category: meal.strCategory,
-                area: meal.strArea,
-                description: meal.strInstructions,
-                image: meal.strMealThumb,
-                ingredients: ingredients,
-                price: generatePrice(meal.strCategory),
-                tags: meal.strTags ? meal.strTags.split(",") : [],
-              });
-            });
-          }
-        } catch (error) {
-          console.error(`Error fetching ${query}:`, error);
-        }
+        setApiMeals(mealsWithPrices);
+        setCategories(["All", ...apiCategories]);
       }
-
-      // Remove duplicates based on meal ID
-      const uniqueMeals = Array.from(
-        new Map(allMeals.map((meal) => [meal.id, meal])).values(),
-      );
-
-      setApiMeals(uniqueMeals);
-      setCategories(["All", ...Array.from(categorySet).sort()]);
     } catch (error) {
       console.error("Error loading meals:", error);
+      alert("Error loading meals from API. Please try again.");
     } finally {
       setLoading(false);
     }

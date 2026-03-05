@@ -87,6 +87,107 @@ export const searchMealsFromAPI = async (req, res) => {
   }
 };
 
+// Get all meals from TheMealDB API (cached)
+let cachedMeals = null;
+let cachedCategories = null;
+let cacheTime = null;
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
+export const getAllMealsFromAPI = async (req, res) => {
+  try {
+    // Return cached data if available and fresh
+    if (
+      cachedMeals &&
+      cachedCategories &&
+      cacheTime &&
+      Date.now() - cacheTime < CACHE_DURATION
+    ) {
+      return res.json({
+        success: true,
+        data: cachedMeals,
+        categories: cachedCategories,
+        cached: true,
+      });
+    }
+
+    // Fetch meals by different categories
+    const categoryQueries = [
+      "chicken",
+      "beef",
+      "pasta",
+      "seafood",
+      "dessert",
+      "vegetarian",
+      "breakfast",
+      "lamb",
+      "pork",
+      "soup",
+    ];
+
+    const allMeals = [];
+    const categorySet = new Set();
+
+    // Fetch meals for each category
+    for (const query of categoryQueries) {
+      try {
+        const response = await fetch(
+          `https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`,
+        );
+        const data = await response.json();
+
+        if (data.meals) {
+          data.meals.forEach((meal) => {
+            // Extract ingredients
+            const ingredients = [];
+            for (let i = 1; i <= 20; i++) {
+              const ingredient = meal[`strIngredient${i}`];
+              if (ingredient && ingredient.trim()) {
+                ingredients.push(ingredient);
+              }
+            }
+
+            categorySet.add(meal.strCategory);
+
+            allMeals.push({
+              id: meal.idMeal,
+              name: meal.strMeal,
+              category: meal.strCategory,
+              area: meal.strArea,
+              description: meal.strInstructions,
+              image: meal.strMealThumb,
+              ingredients: ingredients,
+              tags: meal.strTags ? meal.strTags.split(",") : [],
+            });
+          });
+        }
+      } catch (error) {
+        console.error(`Error fetching ${query}:`, error);
+      }
+    }
+
+    // Remove duplicates based on meal ID
+    const uniqueMeals = Array.from(
+      new Map(allMeals.map((meal) => [meal.id, meal])).values(),
+    );
+
+    const categories = Array.from(categorySet).sort();
+
+    // Cache the results
+    cachedMeals = uniqueMeals;
+    cachedCategories = categories;
+    cacheTime = Date.now();
+
+    res.json({
+      success: true,
+      data: uniqueMeals,
+      categories: categories,
+      cached: false,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // Import meal from TheMealDB API
 export const importMealFromAPI = async (req, res) => {
   try {

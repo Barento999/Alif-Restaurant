@@ -6,6 +6,7 @@ import {
   deleteMenuItem,
   searchMealsFromAPI,
   importMealFromAPI,
+  getAllMealsFromAPI,
 } from "../controllers/menuController.js";
 import { protect, authorize } from "../middlewares/auth.js";
 
@@ -29,5 +30,6 @@ router.post(
   authorize("admin", "manager"),
   importMealFromAPI,
 );
+router.get("/api/all", protect, getAllMealsFromAPI);
 
 export default router;
