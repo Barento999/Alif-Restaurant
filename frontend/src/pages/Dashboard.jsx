@@ -188,36 +188,63 @@ export default function Dashboard() {
   const loadStats = async () => {
     try {
       setLoading(true);
-      const canAccessReports = ["admin", "manager"].includes(user?.role);
-      const canAccessInventory = ["admin", "manager"].includes(user?.role);
+      const role = user?.role;
 
-      const promises = [
-        api.get("/tables").catch(() => ({ data: { data: [] } })),
-        api.get("/orders?limit=5").catch(() => ({ data: { data: [] } })),
-      ];
+      // Define role permissions
+      const canAccessReports = ["admin", "manager"].includes(role);
+      const canAccessInventory = ["admin", "manager"].includes(role);
+      const canAccessTables = [
+        "admin",
+        "manager",
+        "waiter",
+        "cashier",
+      ].includes(role);
+      const canAccessOrders = [
+        "admin",
+        "manager",
+        "waiter",
+        "cashier",
+        "kitchen",
+      ].includes(role);
 
+      const promises = [];
+
+      // Tables - for admin, manager, waiter, cashier
+      if (canAccessTables) {
+        promises.push(api.get("/tables").catch(() => ({ data: { data: [] } })));
+      }
+
+      // Orders - for all roles
+      if (canAccessOrders) {
+        promises.push(
+          api.get("/orders?limit=5").catch(() => ({ data: { data: [] } })),
+        );
+      }
+
+      // Reports - only for admin and manager
       if (canAccessReports) {
         promises.push(api.get("/reports/dashboard"));
         promises.push(api.get("/reports/weekly"));
         promises.push(api.get("/reports/best-sellers"));
       }
 
+      // Inventory - only for admin and manager
       if (canAccessInventory) {
         promises.push(api.get("/inventory"));
       }
 
       const results = await Promise.all(promises);
-      const tablesRes = results[0];
-      const ordersRes = results[1];
-      const dashboardRes = canAccessReports ? results[2] : null;
-      const weeklyRes = canAccessReports ? results[3] : null;
-      const bestSellersRes = canAccessReports ? results[4] : null;
-      const inventoryRes = canAccessInventory
-        ? results[canAccessReports ? 5 : 2]
-        : null;
 
-      const tables = tablesRes.data.data;
-      const orders = ordersRes.data.data;
+      let resultIndex = 0;
+      const tablesRes = canAccessTables ? results[resultIndex++] : null;
+      const ordersRes = canAccessOrders ? results[resultIndex++] : null;
+      const dashboardRes = canAccessReports ? results[resultIndex++] : null;
+      const weeklyRes = canAccessReports ? results[resultIndex++] : null;
+      const bestSellersRes = canAccessReports ? results[resultIndex++] : null;
+      const inventoryRes = canAccessInventory ? results[resultIndex++] : null;
+
+      const tables = tablesRes?.data.data || [];
+      const orders = ordersRes?.data.data || [];
       const dashboard = dashboardRes?.data.data;
       const weekly = weeklyRes?.data.data || [];
       const bestSellers = bestSellersRes?.data.data || [];
@@ -228,10 +255,13 @@ export default function Dashboard() {
       setRecentOrders(orders.slice(0, 5));
       setBestSellers(bestSellers.slice(0, 5));
       setStats({
-        todayOrders: dashboard?.todayOrders || 0,
+        todayOrders: dashboard?.todayOrders || orders.length,
         todayRevenue: dashboard?.todayRevenue || 0,
         activeTables: tables.filter((t) => t.status === "occupied").length,
-        pendingOrders: dashboard?.pendingOrders || 0,
+        pendingOrders:
+          dashboard?.pendingOrders ||
+          orders.filter((o) => ["pending", "preparing"].includes(o.status))
+            .length,
         lowStockItems: inventory.filter(
           (i) => i.quantity <= i.lowStockThreshold,
         ).length,
@@ -245,7 +275,14 @@ export default function Dashboard() {
     }
   };
 
-  const canAccessReports = ["admin", "manager"].includes(user?.role);
+  // Role-based permissions
+  const role = user?.role;
+  const canAccessReports = ["admin", "manager"].includes(role);
+  const canAccessInventory = ["admin", "manager"].includes(role);
+  const canAccessTables = ["admin", "manager", "waiter", "cashier"].includes(
+    role,
+  );
+  const canAccessFinancials = ["admin", "manager"].includes(role);
 
   return (
     <div className="space-y-6 pb-8">
@@ -280,37 +317,42 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Stats Cards - Role Based */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex items-start justify-between mb-3">
-            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-              <svg
-                className="w-5 h-5 text-gray-700"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+        {/* Revenue Card - Admin & Manager Only */}
+        {canAccessFinancials && (
+          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-gray-700"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              {stats.revenueChange !== 0 && (
+                <span
+                  className={`px-2 py-1 ${stats.revenueChange > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"} text-xs font-semibold rounded`}>
+                  {stats.revenueChange > 0 ? "+" : ""}
+                  {stats.revenueChange}%
+                </span>
+              )}
             </div>
-            {stats.revenueChange !== 0 && (
-              <span
-                className={`px-2 py-1 ${stats.revenueChange > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"} text-xs font-semibold rounded`}>
-                {stats.revenueChange > 0 ? "+" : ""}
-                {stats.revenueChange}%
-              </span>
-            )}
+            <p className="text-gray-500 text-sm mb-1">Today's Revenue</p>
+            <p className="text-2xl font-bold text-gray-900">
+              ${stats.todayRevenue.toFixed(0)}
+            </p>
           </div>
-          <p className="text-gray-500 text-sm mb-1">Today's Revenue</p>
-          <p className="text-2xl font-bold text-gray-900">
-            ${stats.todayRevenue.toFixed(0)}
-          </p>
-        </div>
+        )}
 
+        {/* Orders Card - All Roles */}
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex items-start justify-between mb-3">
             <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -327,7 +369,7 @@ export default function Dashboard() {
                 />
               </svg>
             </div>
-            {stats.ordersChange !== 0 && (
+            {canAccessFinancials && stats.ordersChange !== 0 && (
               <span
                 className={`px-2 py-1 ${stats.ordersChange > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"} text-xs font-semibold rounded`}>
                 {stats.ordersChange > 0 ? "+" : ""}
@@ -335,12 +377,15 @@ export default function Dashboard() {
               </span>
             )}
           </div>
-          <p className="text-gray-500 text-sm mb-1">Today's Orders</p>
+          <p className="text-gray-500 text-sm mb-1">
+            {role === "kitchen" ? "Orders to Prepare" : "Today's Orders"}
+          </p>
           <p className="text-2xl font-bold text-gray-900">
             {stats.todayOrders}
           </p>
         </div>
 
+        {/* Pending Orders - All Roles */}
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex items-start justify-between mb-3">
             <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -358,37 +403,73 @@ export default function Dashboard() {
               </svg>
             </div>
           </div>
-          <p className="text-gray-500 text-sm mb-1">Pending Orders</p>
+          <p className="text-gray-500 text-sm mb-1">
+            {role === "kitchen" ? "In Kitchen" : "Pending Orders"}
+          </p>
           <p className="text-2xl font-bold text-gray-900">
             {stats.pendingOrders}
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex items-start justify-between mb-3">
-            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-              <svg
-                className="w-5 h-5 text-gray-700"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
+        {/* Table Occupancy - Admin, Manager, Waiter, Cashier */}
+        {canAccessTables && (
+          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-gray-700"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
             </div>
+            <p className="text-gray-500 text-sm mb-1">Table Occupancy</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {tables.length > 0
+                ? Math.round((stats.activeTables / tables.length) * 100)
+                : 0}
+              %
+            </p>
           </div>
-          <p className="text-gray-500 text-sm mb-1">Table Occupancy</p>
-          <p className="text-2xl font-bold text-gray-900">
-            {tables.length > 0
-              ? Math.round((stats.activeTables / tables.length) * 100)
-              : 0}
-            %
-          </p>
-        </div>
+        )}
+
+        {/* Low Stock Alert - Admin & Manager Only */}
+        {canAccessInventory && (
+          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-gray-700"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                  />
+                </svg>
+              </div>
+              {stats.lowStockItems > 0 && (
+                <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded">
+                  Alert
+                </span>
+              )}
+            </div>
+            <p className="text-gray-500 text-sm mb-1">Low Stock Items</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {stats.lowStockItems}
+            </p>
+          </div>
+        )}
       </div>
 
       {canAccessReports && stats.lowStockItems > 0 && (
@@ -418,113 +499,130 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Weekly Revenue and Table Status */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Weekly Revenue Chart */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h2 className="text-lg font-bold text-gray-800">
-                Weekly Revenue
-              </h2>
-              <p className="text-sm text-gray-500">Last 7 days performance</p>
+      {/* Weekly Revenue and Table Status - Role Based */}
+      {(canAccessReports || canAccessTables) && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Weekly Revenue Chart - Admin & Manager Only */}
+          {canAccessReports && (
+            <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-lg font-bold text-gray-800">
+                    Weekly Revenue
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    Last 7 days performance
+                  </p>
+                </div>
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[#d4a843]"></div>
+                    <span className="text-gray-600">Revenue</span>
+                  </div>
+                </div>
+              </div>
+              {loading || weeklyData.length === 0 ? (
+                <div className="h-64 flex items-center justify-center text-gray-400">
+                  {loading ? "Loading chart data..." : "No data available"}
+                </div>
+              ) : (
+                <WeeklyChart data={weeklyData} />
+              )}
             </div>
-            <div className="flex items-center gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-[#d4a843]"></div>
-                <span className="text-gray-600">Revenue</span>
+          )}
+
+          {/* Table Status - Admin, Manager, Waiter, Cashier */}
+          {canAccessTables && (
+            <div
+              className={`bg-white p-6 rounded-2xl shadow-sm border border-gray-100 ${!canAccessReports ? "lg:col-span-3" : ""}`}>
+              <h2 className="text-lg font-bold text-gray-800 mb-4">
+                Table Status
+              </h2>
+              <div className="grid grid-cols-3 gap-2">
+                {tables.slice(0, 9).map((table) => {
+                  const statusColors = {
+                    occupied: "bg-[#0d5f4e] text-white",
+                    available: "bg-gray-200 text-gray-700",
+                    reserved: "bg-[#d4a843] text-white",
+                    cleaning: "bg-pink-200 text-pink-700",
+                  };
+
+                  return (
+                    <div
+                      key={table._id}
+                      className={`${statusColors[table.status] || statusColors.available} p-4 rounded-xl text-center transition hover:scale-105 cursor-pointer`}>
+                      <div className="font-bold text-lg mb-1">
+                        {table.tableNumber}
+                      </div>
+                      <div className="text-xs opacity-90 capitalize">
+                        {table.status}
+                      </div>
+                      {table.status === "occupied" && (
+                        <div className="text-xs mt-1">
+                          {table.capacity} guests
+                        </div>
+                      )}
+                      {table.status === "reserved" && (
+                        <div className="text-xs mt-1">
+                          {table.capacity} guests
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Available</span>
+                  <span className="font-semibold text-gray-800">
+                    {tables.filter((t) => t.status === "available").length}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm mt-2">
+                  <span className="text-gray-600">Occupied</span>
+                  <span className="font-semibold text-gray-800">
+                    {tables.filter((t) => t.status === "occupied").length}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm mt-2">
+                  <span className="text-gray-600">Reserved</span>
+                  <span className="font-semibold text-gray-800">
+                    {tables.filter((t) => t.status === "reserved").length}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-          {loading || weeklyData.length === 0 ? (
-            <div className="h-64 flex items-center justify-center text-gray-400">
-              {loading ? "Loading chart data..." : "No data available"}
-            </div>
-          ) : (
-            <WeeklyChart data={weeklyData} />
           )}
         </div>
+      )}
 
-        {/* Table Status */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">Table Status</h2>
-          <div className="grid grid-cols-3 gap-2">
-            {tables.slice(0, 9).map((table) => {
-              const statusColors = {
-                occupied: "bg-[#0d5f4e] text-white",
-                available: "bg-gray-200 text-gray-700",
-                reserved: "bg-[#d4a843] text-white",
-                cleaning: "bg-pink-200 text-pink-700",
-              };
-
-              return (
-                <div
-                  key={table._id}
-                  className={`${statusColors[table.status] || statusColors.available} p-4 rounded-xl text-center transition hover:scale-105 cursor-pointer`}>
-                  <div className="font-bold text-lg mb-1">
-                    {table.tableNumber}
-                  </div>
-                  <div className="text-xs opacity-90 capitalize">
-                    {table.status}
-                  </div>
-                  {table.status === "occupied" && (
-                    <div className="text-xs mt-1">{table.capacity} guests</div>
-                  )}
-                  {table.status === "reserved" && (
-                    <div className="text-xs mt-1">{table.capacity} guests</div>
-                  )}
-                </div>
-              );
-            })}
+      {/* Orders Trend and Best Sellers - Role Based */}
+      {canAccessReports && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Orders Trend */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-lg font-bold text-gray-800">
+                  Orders Trend
+                </h2>
+                <p className="text-sm text-gray-500">Weekly order volume</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-[#0d5f4e]"></div>
+                <span className="text-sm text-gray-600">Orders</span>
+              </div>
+            </div>
+            {loading || weeklyData.length === 0 ? (
+              <div className="h-48 flex items-center justify-center text-gray-400">
+                {loading ? "Loading..." : "No data"}
+              </div>
+            ) : (
+              <OrdersChart data={weeklyData} />
+            )}
           </div>
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Available</span>
-              <span className="font-semibold text-gray-800">
-                {tables.filter((t) => t.status === "available").length}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm mt-2">
-              <span className="text-gray-600">Occupied</span>
-              <span className="font-semibold text-gray-800">
-                {tables.filter((t) => t.status === "occupied").length}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm mt-2">
-              <span className="text-gray-600">Reserved</span>
-              <span className="font-semibold text-gray-800">
-                {tables.filter((t) => t.status === "reserved").length}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Orders Trend and Best Sellers */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Orders Trend */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h2 className="text-lg font-bold text-gray-800">Orders Trend</h2>
-              <p className="text-sm text-gray-500">Weekly order volume</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#0d5f4e]"></div>
-              <span className="text-sm text-gray-600">Orders</span>
-            </div>
-          </div>
-          {loading || weeklyData.length === 0 ? (
-            <div className="h-48 flex items-center justify-center text-gray-400">
-              {loading ? "Loading..." : "No data"}
-            </div>
-          ) : (
-            <OrdersChart data={weeklyData} />
-          )}
-        </div>
-
-        {/* Best Sellers */}
-        {canAccessReports && (
+          {/* Best Sellers */}
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
             <div className="flex justify-between items-center mb-6">
               <div>
@@ -577,18 +675,24 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Recent Orders */}
+      {/* Recent Orders - All Roles */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-lg font-bold text-gray-800">Recent Orders</h2>
-            <p className="text-sm text-gray-500">Latest customer orders</p>
+            <h2 className="text-lg font-bold text-gray-800">
+              {role === "kitchen" ? "Kitchen Orders" : "Recent Orders"}
+            </h2>
+            <p className="text-sm text-gray-500">
+              {role === "kitchen"
+                ? "Orders to prepare"
+                : "Latest customer orders"}
+            </p>
           </div>
           <a
-            href="/orders"
+            href={role === "kitchen" ? "/kitchen" : "/orders"}
             className="text-sm text-[#0d5f4e] hover:text-[#0a4a3c] font-medium">
             View All →
           </a>
@@ -609,15 +713,19 @@ export default function Dashboard() {
                   <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
                     Order ID
                   </th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
-                    Table
-                  </th>
+                  {canAccessTables && (
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+                      Table
+                    </th>
+                  )}
                   <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
                     Items
                   </th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
-                    Total
-                  </th>
+                  {canAccessFinancials && (
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+                      Total
+                    </th>
+                  )}
                   <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
                     Status
                   </th>
@@ -644,15 +752,19 @@ export default function Dashboard() {
                       <td className="py-3 px-4 text-sm font-medium text-gray-800">
                         #{order._id?.slice(-6).toUpperCase()}
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-600">
-                        {order.table?.tableNumber || "N/A"}
-                      </td>
+                      {canAccessTables && (
+                        <td className="py-3 px-4 text-sm text-gray-600">
+                          {order.table?.tableNumber || "N/A"}
+                        </td>
+                      )}
                       <td className="py-3 px-4 text-sm text-gray-600">
                         {order.items?.length || 0} items
                       </td>
-                      <td className="py-3 px-4 text-sm font-semibold text-gray-800">
-                        ${order.total?.toFixed(2) || "0.00"}
-                      </td>
+                      {canAccessFinancials && (
+                        <td className="py-3 px-4 text-sm font-semibold text-gray-800">
+                          ${order.total?.toFixed(2) || "0.00"}
+                        </td>
+                      )}
                       <td className="py-3 px-4">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[order.status] || statusColors.pending}`}>
@@ -779,10 +891,12 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* Quick Actions - Role Based */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <h2 className="text-xl font-bold mb-4 text-gray-800">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {["admin", "manager", "cashier", "waiter"].includes(user?.role) && (
+          {/* New Order - Admin, Manager, Cashier, Waiter */}
+          {["admin", "manager", "cashier", "waiter"].includes(role) && (
             <a
               href="/pos"
               className="bg-white border border-gray-200 hover:border-[#0d5f4e] hover:bg-gray-50 text-gray-700 p-4 rounded-xl text-center transition group">
@@ -803,7 +917,9 @@ export default function Dashboard() {
               <span className="text-sm font-medium">New Order</span>
             </a>
           )}
-          {["admin", "kitchen"].includes(user?.role) && (
+
+          {/* Kitchen - Admin, Kitchen */}
+          {["admin", "kitchen"].includes(role) && (
             <a
               href="/kitchen"
               className="bg-white border border-gray-200 hover:border-orange-500 hover:bg-gray-50 text-gray-700 p-4 rounded-xl text-center transition group">
@@ -824,47 +940,166 @@ export default function Dashboard() {
               <span className="text-sm font-medium">Kitchen</span>
             </a>
           )}
-          {["admin", "manager"].includes(user?.role) && (
-            <>
-              <a
-                href="/menu"
-                className="bg-white border border-gray-200 hover:border-[#d4a843] hover:bg-gray-50 text-gray-700 p-4 rounded-xl text-center transition group">
-                <div className="w-10 h-10 bg-[#d4a843] bg-opacity-10 group-hover:bg-opacity-20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <svg
-                    className="w-5 h-5 text-[#d4a843]"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                    />
-                  </svg>
-                </div>
-                <span className="text-sm font-medium">Menu</span>
-              </a>
-              <a
-                href="/reports"
-                className="bg-white border border-gray-200 hover:border-[#0f7a62] hover:bg-gray-50 text-gray-700 p-4 rounded-xl text-center transition group">
-                <div className="w-10 h-10 bg-[#0f7a62] bg-opacity-10 group-hover:bg-opacity-20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <svg
-                    className="w-5 h-5 text-[#0f7a62]"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                    />
-                  </svg>
-                </div>
-                <span className="text-sm font-medium">Reports</span>
-              </a>
-            </>
+
+          {/* Tables - Admin, Manager, Waiter */}
+          {["admin", "manager", "waiter"].includes(role) && (
+            <a
+              href="/tables"
+              className="bg-white border border-gray-200 hover:border-purple-500 hover:bg-gray-50 text-gray-700 p-4 rounded-xl text-center transition group">
+              <div className="w-10 h-10 bg-purple-100 group-hover:bg-purple-200 rounded-lg flex items-center justify-center mx-auto mb-2">
+                <svg
+                  className="w-5 h-5 text-purple-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-medium">Tables</span>
+            </a>
+          )}
+
+          {/* Menu - Admin, Manager */}
+          {["admin", "manager"].includes(role) && (
+            <a
+              href="/menu"
+              className="bg-white border border-gray-200 hover:border-[#d4a843] hover:bg-gray-50 text-gray-700 p-4 rounded-xl text-center transition group">
+              <div className="w-10 h-10 bg-[#d4a843] bg-opacity-10 group-hover:bg-opacity-20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                <svg
+                  className="w-5 h-5 text-[#d4a843]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-medium">Menu</span>
+            </a>
+          )}
+
+          {/* Inventory - Admin, Manager */}
+          {["admin", "manager"].includes(role) && (
+            <a
+              href="/inventory"
+              className="bg-white border border-gray-200 hover:border-blue-500 hover:bg-gray-50 text-gray-700 p-4 rounded-xl text-center transition group">
+              <div className="w-10 h-10 bg-blue-100 group-hover:bg-blue-200 rounded-lg flex items-center justify-center mx-auto mb-2">
+                <svg
+                  className="w-5 h-5 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-medium">Inventory</span>
+            </a>
+          )}
+
+          {/* Reports - Admin, Manager */}
+          {["admin", "manager"].includes(role) && (
+            <a
+              href="/reports"
+              className="bg-white border border-gray-200 hover:border-[#0f7a62] hover:bg-gray-50 text-gray-700 p-4 rounded-xl text-center transition group">
+              <div className="w-10 h-10 bg-[#0f7a62] bg-opacity-10 group-hover:bg-opacity-20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                <svg
+                  className="w-5 h-5 text-[#0f7a62]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-medium">Reports</span>
+            </a>
+          )}
+
+          {/* Users - Admin Only */}
+          {role === "admin" && (
+            <a
+              href="/users"
+              className="bg-white border border-gray-200 hover:border-indigo-500 hover:bg-gray-50 text-gray-700 p-4 rounded-xl text-center transition group">
+              <div className="w-10 h-10 bg-indigo-100 group-hover:bg-indigo-200 rounded-lg flex items-center justify-center mx-auto mb-2">
+                <svg
+                  className="w-5 h-5 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-medium">Users</span>
+            </a>
+          )}
+
+          {/* My Orders - Waiter */}
+          {role === "waiter" && (
+            <a
+              href="/waiter-orders"
+              className="bg-white border border-gray-200 hover:border-teal-500 hover:bg-gray-50 text-gray-700 p-4 rounded-xl text-center transition group">
+              <div className="w-10 h-10 bg-teal-100 group-hover:bg-teal-200 rounded-lg flex items-center justify-center mx-auto mb-2">
+                <svg
+                  className="w-5 h-5 text-teal-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-medium">My Orders</span>
+            </a>
+          )}
+
+          {/* Cashier Orders - Cashier */}
+          {role === "cashier" && (
+            <a
+              href="/cashier-orders"
+              className="bg-white border border-gray-200 hover:border-green-500 hover:bg-gray-50 text-gray-700 p-4 rounded-xl text-center transition group">
+              <div className="w-10 h-10 bg-green-100 group-hover:bg-green-200 rounded-lg flex items-center justify-center mx-auto mb-2">
+                <svg
+                  className="w-5 h-5 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-medium">Payments</span>
+            </a>
           )}
         </div>
       </div>
