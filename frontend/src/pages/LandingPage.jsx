@@ -36,7 +36,7 @@ export default function LandingPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                   />
                 </svg>
               </div>
@@ -45,14 +45,36 @@ export default function LandingPage() {
                   Alif Restaurant
                 </h1>
                 <p className="text-xs text-[#d4a843] font-medium">
-                  Management System
+                  World Flavors, One Place
                 </p>
               </div>
+            </div>
+            <div className="hidden md:flex items-center gap-8">
+              <a
+                href="#menu"
+                className="text-gray-700 hover:text-[#0d5f4e] font-medium transition-colors">
+                Menu
+              </a>
+              <a
+                href="#about"
+                className="text-gray-700 hover:text-[#0d5f4e] font-medium transition-colors">
+                About
+              </a>
+              <a
+                href="#gallery"
+                className="text-gray-700 hover:text-[#0d5f4e] font-medium transition-colors">
+                Gallery
+              </a>
+              <a
+                href="#contact"
+                className="text-gray-700 hover:text-[#0d5f4e] font-medium transition-colors">
+                Contact
+              </a>
             </div>
             <button
               onClick={() => navigate("/login")}
               className="px-6 py-3 bg-[#0d5f4e] text-white rounded-lg font-semibold hover:bg-[#0f7a62] transition-all duration-300 shadow-md hover:shadow-lg">
-              Sign In
+              Reserve Table
             </button>
           </div>
         </div>
@@ -65,27 +87,27 @@ export default function LandingPage() {
           <div className="space-y-10">
             <div className="inline-block">
               <span className="px-5 py-2.5 bg-[#0d5f4e]/10 border border-[#0d5f4e]/20 rounded-full text-[#0d5f4e] text-sm font-semibold">
-                🍽️ Modern Restaurant Management
+                � InternatRional Cuisine Excellence
               </span>
             </div>
 
             <h1 className="text-6xl lg:text-7xl xl:text-8xl font-black text-gray-800 leading-tight">
-              Elevate Your
-              <span className="block text-[#0d5f4e]">Restaurant</span>
-              <span className="block text-[#d4a843]">Experience</span>
+              Welcome to
+              <span className="block text-[#0d5f4e]">Alif</span>
+              <span className="block text-[#d4a843]">Restaurant</span>
             </h1>
 
             <p className="text-2xl text-gray-600 leading-relaxed max-w-xl">
-              Streamline operations, boost efficiency, and delight customers
-              with our comprehensive restaurant management system. From orders
-              to analytics, we've got you covered.
+              Experience flavors from around the world. From authentic Ethiopian
+              dishes to Italian classics, Asian delicacies, and American
+              favorites - all under one roof.
             </p>
 
             <div className="flex flex-wrap gap-5 pt-4">
               <button
                 onClick={() => navigate("/login")}
                 className="px-10 py-5 bg-[#0d5f4e] text-white rounded-xl font-bold text-xl hover:bg-[#0f7a62] transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 flex items-center gap-3">
-                Get Started
+                View Menu
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -95,7 +117,7 @@ export default function LandingPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                   />
                 </svg>
               </button>
@@ -109,16 +131,10 @@ export default function LandingPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                Watch Demo
+                Book a Table
               </button>
             </div>
 
@@ -126,26 +142,26 @@ export default function LandingPage() {
             <div className="grid grid-cols-3 gap-8 pt-12">
               <div className="text-center bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
                 <div className="text-5xl font-black text-[#0d5f4e] mb-3">
-                  99.9%
+                  15+
                 </div>
                 <div className="text-base text-gray-600 font-medium">
-                  Uptime
+                  Years Serving
                 </div>
               </div>
               <div className="text-center bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
                 <div className="text-5xl font-black text-[#0d5f4e] mb-3">
-                  500+
+                  200+
                 </div>
                 <div className="text-base text-gray-600 font-medium">
-                  Restaurants
+                  Dishes
                 </div>
               </div>
               <div className="text-center bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
                 <div className="text-5xl font-black text-[#0d5f4e] mb-3">
-                  24/7
+                  5★
                 </div>
                 <div className="text-base text-gray-600 font-medium">
-                  Support
+                  Rating
                 </div>
               </div>
             </div>
@@ -172,14 +188,14 @@ export default function LandingPage() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
                   </div>
                   <div>
-                    <div className="text-3xl font-black text-white">1,247</div>
+                    <div className="text-3xl font-black text-white">Open</div>
                     <div className="text-base text-[#8fb8ad] font-medium">
-                      Orders Today
+                      Daily 11AM-11PM
                     </div>
                   </div>
                 </div>
@@ -196,14 +212,14 @@ export default function LandingPage() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                        d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
                       />
                     </svg>
                   </div>
                   <div>
-                    <div className="text-3xl font-black text-white">+32%</div>
+                    <div className="text-3xl font-black text-white">5.0</div>
                     <div className="text-base text-white/90 font-medium">
-                      Revenue Up
+                      Customer Rating
                     </div>
                   </div>
                 </div>
@@ -213,54 +229,325 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* What Restaurant Does Section */}
+      <div className="relative z-10 bg-white py-24">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-20">
+            <span className="px-4 py-2 bg-[#0d5f4e]/10 border border-[#0d5f4e]/20 rounded-full text-[#0d5f4e] text-sm font-semibold inline-block mb-6">
+              Understanding Restaurant Operations
+            </span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
+              What a Restaurant Actually Does
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              A restaurant prepares and serves food and drinks to customers. Our
+              system manages everything required to serve customers efficiently.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+            {[
+              {
+                number: "1",
+                title: "Serve Customers",
+                description:
+                  "Customers come to eat food, drink beverages, and spend time. They can dine in, take away, or order online.",
+                icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
+                color: "bg-[#0d5f4e]",
+              },
+              {
+                number: "2",
+                title: "Take Orders",
+                description:
+                  "Customers choose food from the menu. Orders taken by waiter, cashier, or online system.",
+                icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01",
+                color: "bg-[#d4a843]",
+              },
+              {
+                number: "3",
+                title: "Prepare Food",
+                description:
+                  "Kitchen staff prepares the food. Order flows from customer to waiter/cashier to kitchen.",
+                icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
+                color: "bg-[#0d5f4e]",
+              },
+              {
+                number: "4",
+                title: "Serve & Payment",
+                description:
+                  "Waiter delivers food to table. Customer pays using cash, card, mobile, or online payment.",
+                icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+                color: "bg-[#d4a843]",
+              },
+            ].map((step, i) => (
+              <div key={i} className="relative">
+                <div className="bg-[#f5f5f0] p-8 rounded-2xl hover:shadow-xl transition-all duration-300 h-full">
+                  <div
+                    className={`w-16 h-16 ${step.color} rounded-2xl flex items-center justify-center mb-6 shadow-lg`}>
+                    <svg
+                      className="w-8 h-8 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d={step.icon}
+                      />
+                    </svg>
+                  </div>
+                  <div className="absolute -top-4 -right-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center border-4 border-[#f5f5f0]">
+                    <span className="text-2xl font-black text-[#0d5f4e]">
+                      {step.number}
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Restaurant Workflow Diagram */}
+          <div className="bg-gradient-to-br from-[#0d5f4e] to-[#0a4a3a] rounded-3xl p-12 shadow-2xl">
+            <h3 className="text-3xl font-bold text-white text-center mb-12">
+              Simple Restaurant Workflow
+            </h3>
+            <div className="grid md:grid-cols-4 lg:grid-cols-8 gap-4 items-center">
+              {[
+                {
+                  label: "Customer Enters",
+                  icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
+                },
+                {
+                  label: "Assign Table",
+                  icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+                },
+                {
+                  label: "Order Food",
+                  icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2",
+                },
+                { label: "Send to Kitchen", icon: "M13 7l5 5m0 0l-5 5m5-5H6" },
+                {
+                  label: "Prepare Food",
+                  icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
+                },
+                { label: "Serve Food", icon: "M5 13l4 4L19 7" },
+                {
+                  label: "Customer Eats",
+                  icon: "M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5",
+                },
+                {
+                  label: "Payment",
+                  icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+                },
+              ].map((step, i) => (
+                <div key={i} className="flex flex-col items-center">
+                  <div className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-3 hover:bg-white/20 transition-all">
+                    <svg
+                      className="w-10 h-10 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d={step.icon}
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-white text-sm font-semibold text-center">
+                    {step.label}
+                  </p>
+                  {i < 7 && (
+                    <svg
+                      className="w-6 h-6 text-[#d4a843] mt-2 hidden lg:block"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={3}
+                        d="M13 7l5 5m0 0l-5 5m5-5H6"
+                      />
+                    </svg>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* System Management Areas */}
+      <div className="relative z-10 bg-[#f5f5f0] py-24">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
+              Our System Manages Everything
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Alif Restaurant System handles all aspects of your restaurant
+              operations
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {[
+              {
+                title: "Customer Service",
+                items: [
+                  "Table management",
+                  "Order management",
+                  "Menu display",
+                  "Reservation system",
+                ],
+                image:
+                  "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600&q=80",
+                color: "bg-[#0d5f4e]",
+              },
+              {
+                title: "Kitchen Operations",
+                items: [
+                  "Kitchen order queue",
+                  "Food preparation status",
+                  "Real-time updates",
+                  "Multi-station support",
+                ],
+                image:
+                  "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&q=80",
+                color: "bg-[#d4a843]",
+              },
+              {
+                title: "Financial Operations",
+                items: [
+                  "Billing & invoicing",
+                  "Payment tracking",
+                  "Daily sales reports",
+                  "Revenue analytics",
+                ],
+                image:
+                  "https://images.unsplash.com/photo-1554224311-beee460201f9?w=600&q=80",
+                color: "bg-[#0d5f4e]",
+              },
+              {
+                title: "Staff Management",
+                items: [
+                  "Admin controls",
+                  "Manager dashboard",
+                  "Waiter assignments",
+                  "Kitchen & cashier roles",
+                ],
+                image:
+                  "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600&q=80",
+                color: "bg-[#d4a843]",
+              },
+            ].map((area, i) => (
+              <div
+                key={i}
+                className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
+                <div className="relative h-64 overflow-hidden">
+                  <img
+                    src={area.image}
+                    alt={area.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div
+                    className={`absolute top-6 left-6 ${area.color} px-6 py-3 rounded-xl shadow-lg`}>
+                    <h3 className="text-2xl font-bold text-white">
+                      {area.title}
+                    </h3>
+                  </div>
+                </div>
+                <div className="p-8">
+                  <ul className="space-y-4">
+                    {area.items.map((item, j) => (
+                      <li key={j} className="flex items-center gap-3">
+                        <div
+                          className={`w-8 h-8 ${area.color} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                          <svg
+                            className="w-5 h-5 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        </div>
+                        <span className="text-lg text-gray-700 font-medium">
+                          {item}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Features Section */}
-      <div className="relative z-10 bg-white py-20">
+      <div className="relative z-10 bg-white py-20" id="about">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
-              Powerful Features
+              Why Choose Alif Restaurant
             </h2>
             <p className="text-xl text-gray-600">
-              Everything you need to run a modern restaurant
+              Experience world-class dining with authentic international flavors
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2",
-                title: "Order Management",
+                icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+                title: "Fresh Ingredients",
                 description:
-                  "Track and manage orders in real-time with our intuitive interface",
+                  "We source the finest ingredients daily to ensure every dish is fresh and flavorful",
               },
               {
-                icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
-                title: "POS System",
+                icon: "M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+                title: "International Cuisine",
                 description:
-                  "Lightning-fast point of sale for seamless transactions",
-              },
-              {
-                icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
-                title: "Analytics & Reports",
-                description: "Data-driven insights to grow your business",
-              },
-              {
-                icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
-                title: "Menu Management",
-                description:
-                  "Update your menu instantly with beautiful displays",
+                  "Ethiopian, Italian, Asian, American, and Middle Eastern dishes all in one place",
               },
               {
                 icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
-                title: "Staff Management",
+                title: "Expert Chefs",
                 description:
-                  "Manage roles, schedules, and performance effortlessly",
+                  "Our international team of chefs brings authentic flavors from their homelands",
               },
               {
-                icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4",
-                title: "Inventory Control",
+                icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
+                title: "Elegant Atmosphere",
                 description:
-                  "Never run out of stock with smart inventory tracking",
+                  "Modern, comfortable dining space perfect for family gatherings and special occasions",
+              },
+              {
+                icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
+                title: "Fast Service",
+                description:
+                  "Quick and attentive service ensuring you enjoy your meal without long waits",
+              },
+              {
+                icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+                title: "Great Value",
+                description:
+                  "Premium quality at reasonable prices with generous portions",
               },
             ].map((feature, index) => (
               <div
