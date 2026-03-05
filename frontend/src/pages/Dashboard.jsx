@@ -292,14 +292,6 @@ export default function Dashboard() {
           <h1 className="text-3xl font-bold text-gray-800">
             Welcome back, {user?.name}!
           </h1>
-          <p className="text-gray-500 mt-1">
-            {new Date().toLocaleDateString("en-US", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
         </div>
         <div className="flex items-center gap-3">
           <span className="px-4 py-2 bg-[#d4a843] text-white rounded-xl font-semibold shadow-sm">
