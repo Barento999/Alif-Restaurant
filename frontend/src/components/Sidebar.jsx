@@ -279,7 +279,28 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-4 pt-8 space-y-2">
+        {/* Profile Section */}
+        <div className="px-4 pb-6 border-b border-[#0f7a62]">
+          <div className="bg-[#0f7a62] rounded-xl p-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-[#d4a843] rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-[#0d5f4e] font-bold text-lg">
+                  {user?.name?.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-white font-semibold text-base truncate">
+                  {user?.name}
+                </p>
+                <p className="text-[#8fb8ad] text-sm capitalize">
+                  {user?.role}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto px-4 pt-6 space-y-2">
           {visibleMenuItems.map((item) => (
             <Link
               key={item.path}
