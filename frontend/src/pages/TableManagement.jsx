@@ -90,15 +90,54 @@ export default function TableManagement() {
     }
   };
 
+  const filteredTables = (() => {
+    const tableId = searchParams.get("table");
+    // If searching for a specific table, show only that table
+    if (tableId) {
+      return tables.filter((t) => t._id === tableId);
+    }
+    // Otherwise, show all tables
+    return tables;
+  })();
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Table Management</h1>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-[#0d5f4e] text-white px-4 py-2 rounded-xl hover:bg-[#0f7a62]">
-          {showForm ? "Cancel" : "Add Table"}
-        </button>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Table Management</h1>
+          {searchParams.get("table") && (
+            <p className="text-gray-600 mt-1">Viewing searched table</p>
+          )}
+        </div>
+        <div className="flex gap-3">
+          {searchParams.get("table") && (
+            <button
+              onClick={() => {
+                setSearchParams({});
+                setHighlightedTableId(null);
+              }}
+              className="bg-[#d4a843] text-white px-6 py-2.5 rounded-xl hover:bg-[#c49739] font-medium transition flex items-center gap-2">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                />
+              </svg>
+              Show All Tables
+            </button>
+          )}
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-[#0d5f4e] text-white px-4 py-2 rounded-xl hover:bg-[#0f7a62]">
+            {showForm ? "Cancel" : "Add Table"}
+          </button>
+        </div>
       </div>
 
       {showForm && (
@@ -143,7 +182,7 @@ export default function TableManagement() {
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {tables.map((table) => (
+        {filteredTables.map((table) => (
           <div
             key={table._id}
             id={`table-${table._id}`}

@@ -79,24 +79,57 @@ export default function MenuManagement() {
     }
   };
 
-  const filteredItems =
-    selectedCategory === "All"
+  const filteredItems = (() => {
+    const itemId = searchParams.get("item");
+    // If searching for a specific item, show only that item
+    if (itemId) {
+      return items.filter((item) => item._id === itemId);
+    }
+    // Otherwise, filter by category as usual
+    return selectedCategory === "All"
       ? items
       : items.filter((item) => item.category?.name === selectedCategory);
+  })();
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          Menu Management
-        </h1>
-        <p className="text-gray-600">
-          Manage {items.length} menu items from your database
-        </p>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            Menu Management
+          </h1>
+          <p className="text-gray-600">
+            {searchParams.get("item")
+              ? "Viewing searched item"
+              : `Manage ${items.length} menu items from your database`}
+          </p>
+        </div>
+        {searchParams.get("item") && (
+          <button
+            onClick={() => {
+              setSearchParams({});
+              setHighlightedItemId(null);
+            }}
+            className="flex items-center gap-2 bg-[#0d5f4e] text-white px-6 py-3 rounded-xl hover:bg-[#0f7a62] font-medium transition">
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 10h16M4 14h16M4 18h16"
+              />
+            </svg>
+            Show All Items
+          </button>
+        )}
       </div>
 
       {/* Category Filter */}
-      {!loading && categories.length > 0 && (
+      {!loading && categories.length > 0 && !searchParams.get("item") && (
         <div className="mb-6 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex items-center gap-3 flex-wrap">
             <span className="text-sm font-semibold text-gray-700">

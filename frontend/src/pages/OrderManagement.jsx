@@ -83,21 +83,58 @@ export default function OrderManagement() {
 
   const statusOptions = ["pending", "preparing", "ready", "served", "paid"];
 
-  const filteredOrders =
-    selectedStatus === "all"
+  const filteredOrders = (() => {
+    const orderId = searchParams.get("order");
+    // If searching for a specific order, show only that order
+    if (orderId) {
+      return orders.filter((o) => o._id === orderId);
+    }
+    // Otherwise, filter by status as usual
+    return selectedStatus === "all"
       ? orders
       : orders.filter((o) => o.status === selectedStatus);
+  })();
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800">Order Management</h1>
-        <button
-          onClick={loadOrders}
-          className="flex items-center space-x-2 bg-[#0d5f4e] text-white px-6 py-2.5 rounded-xl hover:bg-[#0f7a62] font-medium transition">
-          <svg
-            className="w-5 h-5"
-            fill="none"
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">
+            Order Management
+          </h1>
+          {searchParams.get("order") && (
+            <p className="text-gray-600 mt-1">Viewing searched order</p>
+          )}
+        </div>
+        <div className="flex gap-3">
+          {searchParams.get("order") && (
+            <button
+              onClick={() => {
+                setSearchParams({});
+                setHighlightedOrderId(null);
+              }}
+              className="flex items-center space-x-2 bg-[#d4a843] text-white px-6 py-2.5 rounded-xl hover:bg-[#c49739] font-medium transition">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                />
+              </svg>
+              Show All Orders
+            </button>
+          )}
+          <button
+            onClick={loadOrders}
+            className="flex items-center space-x-2 bg-[#0d5f4e] text-white px-6 py-2.5 rounded-xl hover:bg-[#0f7a62] font-medium transition">
+            <svg
+              className="w-5 h-5"
+              fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24">
             <path
@@ -112,29 +149,31 @@ export default function OrderManagement() {
       </div>
 
       {/* Status Filter */}
-      <div className="flex flex-wrap gap-2">
-        <button
-          onClick={() => setSelectedStatus("all")}
-          className={`px-4 py-2 rounded-xl font-medium transition ${
-            selectedStatus === "all"
-              ? "bg-[#0d5f4e] text-white"
-              : "bg-white border border-gray-200 text-gray-700 hover:border-[#0d5f4e] hover:bg-gray-50"
-          }`}>
-          All Orders ({orders.length})
-        </button>
-        {statusOptions.map((status) => (
+      {!searchParams.get("order") && (
+        <div className="flex flex-wrap gap-2">
           <button
-            key={status}
-            onClick={() => setSelectedStatus(status)}
-            className={`px-4 py-2 rounded-xl font-medium capitalize transition ${
-              selectedStatus === status
+            onClick={() => setSelectedStatus("all")}
+            className={`px-4 py-2 rounded-xl font-medium transition ${
+              selectedStatus === "all"
                 ? "bg-[#0d5f4e] text-white"
                 : "bg-white border border-gray-200 text-gray-700 hover:border-[#0d5f4e] hover:bg-gray-50"
             }`}>
-            {status} ({orders.filter((o) => o.status === status).length})
+            All Orders ({orders.length})
           </button>
-        ))}
-      </div>
+          {statusOptions.map((status) => (
+            <button
+              key={status}
+              onClick={() => setSelectedStatus(status)}
+              className={`px-4 py-2 rounded-xl font-medium capitalize transition ${
+                selectedStatus === status
+                  ? "bg-[#0d5f4e] text-white"
+                  : "bg-white border border-gray-200 text-gray-700 hover:border-[#0d5f4e] hover:bg-gray-50"
+              }`}>
+              {status} ({orders.filter((o) => o.status === status).length})
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Orders Table */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
