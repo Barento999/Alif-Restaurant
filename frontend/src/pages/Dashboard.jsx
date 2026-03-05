@@ -286,7 +286,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Header with Time */}
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">
@@ -297,15 +297,6 @@ export default function Dashboard() {
           <span className="px-4 py-2 bg-[#d4a843] text-white rounded-xl font-semibold shadow-sm">
             {user?.role.toUpperCase()}
           </span>
-          <div className="text-right">
-            <p className="text-sm text-gray-500">Last updated</p>
-            <p className="text-sm font-semibold text-gray-700">
-              {new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </p>
-          </div>
         </div>
       </div>
 
