@@ -57,10 +57,10 @@ export default function LayoutWithSidebar() {
                 <input
                   type="text"
                   placeholder="Search orders, reservations, menu items..."
-                  className="w-full pl-12 pr-6 py-3.5 bg-white border-2 border-[#d4a843] rounded-full text-base text-gray-600 placeholder-gray-400 focus:outline-none focus:border-[#c09838] transition-all"
+                  className="w-full pl-12 pr-6 py-3.5 bg-[#f5f5f0] border border-gray-200 rounded-xl text-base text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent transition-all"
                 />
                 <svg
-                  className="absolute left-4 top-4 w-6 h-6 text-gray-400"
+                  className="absolute left-4 top-4 w-5 h-5 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24">
