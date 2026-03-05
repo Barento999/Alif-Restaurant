@@ -107,7 +107,7 @@ export default function MenuManagement() {
       </div>
 
       {showForm && (
-        <div className="bg-white p-6 rounded-xl shadow-lg mb-6">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
           <h2 className="text-xl font-bold mb-4 text-gray-800">
             {editingItem ? "Edit Item" : "Add New Item"}
           </h2>
@@ -119,7 +119,7 @@ export default function MenuManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="p-2 border rounded-lg focus:ring-2 focus:ring-[#0d5f4e]"
+              className="p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
               required
             />
             <select
@@ -127,7 +127,7 @@ export default function MenuManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="p-2 border rounded-lg focus:ring-2 focus:ring-[#0d5f4e]"
+              className="p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
               required>
               <option value="">Select Category</option>
               {categories.map((cat) => (
@@ -144,7 +144,7 @@ export default function MenuManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, price: Number(e.target.value) })
               }
-              className="p-2 border rounded-lg focus:ring-2 focus:ring-[#0d5f4e]"
+              className="p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
               required
             />
             <div className="flex items-center">
@@ -154,9 +154,9 @@ export default function MenuManagement() {
                 onChange={(e) =>
                   setFormData({ ...formData, isAvailable: e.target.checked })
                 }
-                className="mr-2"
+                className="mr-2 w-4 h-4 text-[#0d5f4e] rounded focus:ring-[#0d5f4e]"
               />
-              <label className="text-gray-800">Available</label>
+              <label className="text-gray-700 font-medium">Available</label>
             </div>
             <textarea
               placeholder="Description (optional)"
@@ -164,49 +164,51 @@ export default function MenuManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="col-span-2 p-2 border rounded-lg focus:ring-2 focus:ring-[#0d5f4e]"
+              className="col-span-2 p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
               rows="3"
             />
             <button
               type="submit"
-              className="col-span-2 bg-[#0d5f4e] text-white p-2 rounded-xl hover:bg-[#0f7a62]">
+              className="col-span-2 bg-[#0d5f4e] text-white py-3 rounded-xl hover:bg-[#0f7a62] font-medium transition">
               {editingItem ? "Update Item" : "Add Item"}
             </button>
           </form>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {items.map((item) => (
-          <div key={item._id} className="bg-white p-6 rounded-xl shadow-lg">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="text-xl font-bold text-gray-800">{item.name}</h3>
+          <div
+            key={item._id}
+            className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex justify-between items-start mb-3">
+              <h3 className="text-lg font-bold text-gray-800">{item.name}</h3>
               <span
-                className={`px-2 py-1 rounded-lg text-sm ${item.isAvailable ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                className={`px-2 py-1 rounded text-xs font-semibold ${item.isAvailable ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
                 {item.isAvailable ? "Available" : "Unavailable"}
               </span>
             </div>
-            <p className="text-[#d4a843] text-2xl font-bold mb-2">
+            <p className="text-[#0d5f4e] text-2xl font-bold mb-2">
               ${item.price.toFixed(2)}
             </p>
-            <p className="text-gray-600 mb-2">{item.category?.name}</p>
+            <p className="text-gray-500 text-sm mb-2">{item.category?.name}</p>
             {item.description && (
-              <p className="text-gray-500 text-sm mb-4">{item.description}</p>
+              <p className="text-gray-600 text-sm mb-4">{item.description}</p>
             )}
             <div className="flex gap-2">
               <button
                 onClick={() => handleEdit(item)}
-                className="flex-1 bg-[#0d5f4e] text-white p-2 rounded-lg hover:bg-[#0f7a62]">
+                className="flex-1 bg-white border border-gray-200 text-gray-700 py-2 rounded-lg hover:border-[#0d5f4e] hover:bg-gray-50 transition text-sm font-medium">
                 Edit
               </button>
               <button
                 onClick={() => toggleAvailability(item)}
-                className="flex-1 bg-[#d4a843] text-white p-2 rounded-lg hover:bg-[#c09838]">
+                className="flex-1 bg-white border border-gray-200 text-gray-700 py-2 rounded-lg hover:border-[#d4a843] hover:bg-gray-50 transition text-sm font-medium">
                 Toggle
               </button>
               <button
                 onClick={() => handleDelete(item._id)}
-                className="flex-1 bg-red-600 text-white p-2 rounded-lg hover:bg-red-700">
+                className="flex-1 bg-white border border-red-200 text-red-600 py-2 rounded-lg hover:bg-red-50 transition text-sm font-medium">
                 Delete
               </button>
             </div>

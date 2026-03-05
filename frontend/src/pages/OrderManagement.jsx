@@ -68,12 +68,10 @@ export default function OrderManagement() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-          Order Management
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-800">Order Management</h1>
         <button
           onClick={loadOrders}
-          className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+          className="flex items-center space-x-2 bg-[#0d5f4e] text-white px-6 py-2.5 rounded-xl hover:bg-[#0f7a62] font-medium transition">
           <svg
             className="w-5 h-5"
             fill="none"
@@ -94,10 +92,10 @@ export default function OrderManagement() {
       <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setSelectedStatus("all")}
-          className={`px-4 py-2 rounded-lg font-medium transition ${
+          className={`px-4 py-2 rounded-xl font-medium transition ${
             selectedStatus === "all"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+              ? "bg-[#0d5f4e] text-white"
+              : "bg-white border border-gray-200 text-gray-700 hover:border-[#0d5f4e] hover:bg-gray-50"
           }`}>
           All Orders ({orders.length})
         </button>
@@ -105,10 +103,10 @@ export default function OrderManagement() {
           <button
             key={status}
             onClick={() => setSelectedStatus(status)}
-            className={`px-4 py-2 rounded-lg font-medium capitalize transition ${
+            className={`px-4 py-2 rounded-xl font-medium capitalize transition ${
               selectedStatus === status
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                ? "bg-[#0d5f4e] text-white"
+                : "bg-white border border-gray-200 text-gray-700 hover:border-[#0d5f4e] hover:bg-gray-50"
             }`}>
             {status} ({orders.filter((o) => o.status === status).length})
           </button>
@@ -116,43 +114,43 @@ export default function OrderManagement() {
       </div>
 
       {/* Orders Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+            <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Order #
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Table
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Waiter
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Items
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Total
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Time
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-gray-100">
               {filteredOrders.length === 0 ? (
                 <tr>
                   <td
                     colSpan="8"
-                    className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    className="px-6 py-12 text-center text-gray-500">
                     <svg
                       className="w-16 h-16 mx-auto mb-4 opacity-50"
                       fill="none"
@@ -170,24 +168,22 @@ export default function OrderManagement() {
                 </tr>
               ) : (
                 filteredOrders.map((order) => (
-                  <tr
-                    key={order._id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <tr key={order._id} className="hover:bg-gray-50 transition">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
+                      <span className="font-mono text-sm font-semibold text-gray-900">
                         {order.orderNumber}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {order.table?.tableNumber || "N/A"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {order.waiter?.name || "N/A"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       {order.items?.length || 0} items
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#0d5f4e]">
                       ${order.total?.toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -196,7 +192,7 @@ export default function OrderManagement() {
                         onChange={(e) =>
                           handleStatusChange(order._id, e.target.value)
                         }
-                        className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusColor(order.status)}`}>
+                        className={`px-3 py-1 rounded-full text-xs font-semibold capitalize bg-gray-50 border border-gray-200 ${getStatusColor(order.status)}`}>
                         {statusOptions.map((status) => (
                           <option key={status} value={status}>
                             {status}
@@ -204,18 +200,18 @@ export default function OrderManagement() {
                         ))}
                       </select>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       {new Date(order.createdAt).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                       <button
                         onClick={() => viewOrderDetails(order)}
-                        className="text-blue-600 hover:text-blue-800 font-medium">
+                        className="text-[#0d5f4e] hover:text-[#0f7a62] font-medium">
                         View
                       </button>
                       <button
                         onClick={() => handleDeleteOrder(order._id)}
-                        className="text-red-600 hover:text-red-800 font-medium">
+                        className="text-red-600 hover:text-red-700 font-medium">
                         Delete
                       </button>
                     </td>

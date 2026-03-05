@@ -49,18 +49,16 @@ export default function UserManagement() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-          User Management
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-800">User Management</h1>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          className="bg-[#0d5f4e] text-white px-6 py-2.5 rounded-xl hover:bg-[#0f7a62] font-medium transition">
           {showForm ? "Cancel" : "Add User"}
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded shadow mb-6">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
           <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
             <input
               type="text"
@@ -69,7 +67,7 @@ export default function UserManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="p-2 border rounded dark:bg-gray-700 dark:text-white"
+              className="p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
               required
             />
             <input
@@ -79,7 +77,7 @@ export default function UserManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
-              className="p-2 border rounded dark:bg-gray-700 dark:text-white"
+              className="p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
               required
             />
             <input
@@ -89,7 +87,7 @@ export default function UserManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
-              className="p-2 border rounded dark:bg-gray-700 dark:text-white"
+              className="p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
               required
             />
             <select
@@ -97,7 +95,7 @@ export default function UserManagement() {
               onChange={(e) =>
                 setFormData({ ...formData, role: e.target.value })
               }
-              className="p-2 border rounded dark:bg-gray-700 dark:text-white">
+              className="p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent">
               <option value="waiter">Waiter</option>
               <option value="cashier">Cashier</option>
               <option value="kitchen">Kitchen Staff</option>
@@ -106,58 +104,56 @@ export default function UserManagement() {
             </select>
             <button
               type="submit"
-              className="col-span-2 bg-green-600 text-white p-2 rounded hover:bg-green-700">
+              className="col-span-2 bg-[#0d5f4e] text-white py-3 rounded-xl hover:bg-[#0f7a62] font-medium transition">
               Create User
             </button>
           </form>
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 rounded shadow overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50 dark:bg-gray-700">
+          <thead className="bg-gray-50 border-b border-gray-100">
             <tr>
-              <th className="px-6 py-3 text-left text-gray-800 dark:text-white">
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
                 Name
               </th>
-              <th className="px-6 py-3 text-left text-gray-800 dark:text-white">
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
                 Email
               </th>
-              <th className="px-6 py-3 text-left text-gray-800 dark:text-white">
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
                 Role
               </th>
-              <th className="px-6 py-3 text-left text-gray-800 dark:text-white">
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-gray-800 dark:text-white">
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="divide-y divide-gray-100">
             {users.map((user) => (
-              <tr key={user._id}>
-                <td className="px-6 py-4 text-gray-800 dark:text-white">
+              <tr key={user._id} className="hover:bg-gray-50 transition">
+                <td className="px-6 py-4 text-gray-800 font-medium">
                   {user.name}
                 </td>
-                <td className="px-6 py-4 text-gray-800 dark:text-white">
-                  {user.email}
-                </td>
+                <td className="px-6 py-4 text-gray-600">{user.email}</td>
                 <td className="px-6 py-4">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                  <span className="px-3 py-1 bg-[#0d5f4e] bg-opacity-10 text-[#0d5f4e] rounded-full text-xs font-semibold">
                     {user.role}
                   </span>
                 </td>
                 <td className="px-6 py-4">
                   <span
-                    className={`px-3 py-1 rounded-full text-sm ${user.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${user.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
                     {user.isActive ? "Active" : "Inactive"}
                   </span>
                 </td>
                 <td className="px-6 py-4">
                   <button
                     onClick={() => toggleStatus(user._id, user.isActive)}
-                    className={`px-4 py-2 rounded text-white ${user.isActive ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}>
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${user.isActive ? "bg-white border border-red-200 text-red-600 hover:bg-red-50" : "bg-white border border-green-200 text-green-600 hover:bg-green-50"}`}>
                     {user.isActive ? "Deactivate" : "Activate"}
                   </button>
                 </td>
