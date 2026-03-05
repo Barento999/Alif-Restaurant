@@ -78,7 +78,7 @@ export default function Reports() {
         </h1>
         <button
           onClick={loadReports}
-          className="flex items-center space-x-2 bg-[#0d5f4e] text-white px-4 py-2 rounded-xl hover:bg-[#0f7a62] transition">
+          className="flex items-center space-x-2 bg-[#0d5f4e] text-white px-6 py-2.5 rounded-xl hover:bg-[#0f7a62] font-medium transition">
           <svg
             className="w-5 h-5"
             fill="none"
@@ -96,16 +96,12 @@ export default function Reports() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-[#0d5f4e] rounded-xl shadow-lg p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-[#8fb8ad] text-sm mb-1">Today's Orders</p>
-              <p className="text-3xl font-bold">{daily?.totalOrders || 0}</p>
-            </div>
-            <div className="bg-white bg-opacity-10 p-3 rounded-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+          <div className="flex items-start justify-between mb-3">
+            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
               <svg
-                className="w-8 h-8"
+                className="w-5 h-5 text-gray-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24">
@@ -117,22 +113,21 @@ export default function Reports() {
                 />
               </svg>
             </div>
+            <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded">
+              Today
+            </span>
           </div>
+          <p className="text-gray-500 text-sm mb-1">Today's Orders</p>
+          <p className="text-2xl font-bold text-gray-900">
+            {daily?.totalOrders || 0}
+          </p>
         </div>
 
-        <div className="bg-[#d4a843] rounded-xl shadow-lg p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white text-opacity-80 text-sm mb-1">
-                Today's Revenue
-              </p>
-              <p className="text-3xl font-bold">
-                ${daily?.revenue?.toFixed(2) || "0.00"}
-              </p>
-            </div>
-            <div className="bg-white bg-opacity-20 p-3 rounded-lg">
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+          <div className="flex items-start justify-between mb-3">
+            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
               <svg
-                className="w-8 h-8"
+                className="w-5 h-5 text-gray-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24">
@@ -144,18 +139,21 @@ export default function Reports() {
                 />
               </svg>
             </div>
+            <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded">
+              Today
+            </span>
           </div>
+          <p className="text-gray-500 text-sm mb-1">Today's Revenue</p>
+          <p className="text-2xl font-bold text-gray-900">
+            ${daily?.revenue?.toFixed(2) || "0.00"}
+          </p>
         </div>
 
-        <div className="bg-[#0f7a62] rounded-xl shadow-lg p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-[#8fb8ad] text-sm mb-1">Monthly Orders</p>
-              <p className="text-3xl font-bold">{monthly?.totalOrders || 0}</p>
-            </div>
-            <div className="bg-white bg-opacity-10 p-3 rounded-lg">
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+          <div className="flex items-start justify-between mb-3">
+            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
               <svg
-                className="w-8 h-8"
+                className="w-5 h-5 text-gray-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24">
@@ -167,20 +165,21 @@ export default function Reports() {
                 />
               </svg>
             </div>
+            <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+              Month
+            </span>
           </div>
+          <p className="text-gray-500 text-sm mb-1">Monthly Orders</p>
+          <p className="text-2xl font-bold text-gray-900">
+            {monthly?.totalOrders || 0}
+          </p>
         </div>
 
-        <div className="bg-orange-500 rounded-xl shadow-lg p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-orange-100 text-sm mb-1">Monthly Revenue</p>
-              <p className="text-3xl font-bold">
-                ${monthly?.revenue?.toFixed(2) || "0.00"}
-              </p>
-            </div>
-            <div className="bg-white bg-opacity-20 p-3 rounded-lg">
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+          <div className="flex items-start justify-between mb-3">
+            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
               <svg
-                className="w-8 h-8"
+                className="w-5 h-5 text-gray-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24">
@@ -192,32 +191,44 @@ export default function Reports() {
                 />
               </svg>
             </div>
+            <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+              Month
+            </span>
           </div>
+          <p className="text-gray-500 text-sm mb-1">Monthly Revenue</p>
+          <p className="text-2xl font-bold text-gray-900">
+            ${monthly?.revenue?.toFixed(2) || "0.00"}
+          </p>
         </div>
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Best Sellers Bar Chart */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-lg font-bold text-gray-800 mb-4">
             Top Selling Items
           </h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="quantity" fill="#0d5f4e" name="Quantity Sold" />
+              <Bar
+                dataKey="quantity"
+                fill="#0d5f4e"
+                name="Quantity Sold"
+                radius={[8, 8, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         {/* Revenue Chart */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-lg font-bold text-gray-800 mb-4">
             Revenue by Item
           </h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -247,46 +258,46 @@ export default function Reports() {
       </div>
 
       {/* Best Sellers Table */}
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-800">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-6 border-b border-gray-100">
+          <h2 className="text-lg font-bold text-gray-800">
             Best Selling Items Details
           </h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Rank
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Item Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Quantity Sold
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Total Revenue
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Avg Price
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-100">
               {bestSellers.map((item, index) => (
-                <tr key={index} className="hover:bg-gray-50">
+                <tr key={index} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
-                      className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${
+                      className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-xs ${
                         index === 0
-                          ? "bg-yellow-100 text-yellow-800"
+                          ? "bg-yellow-100 text-yellow-700"
                           : index === 1
-                            ? "bg-gray-100 text-gray-800"
+                            ? "bg-gray-100 text-gray-700"
                             : index === 2
-                              ? "bg-orange-100 text-orange-800"
-                              : "bg-blue-100 text-blue-800"
+                              ? "bg-orange-100 text-orange-700"
+                              : "bg-blue-100 text-blue-700"
                       } font-bold`}>
                       {index + 1}
                     </span>
@@ -294,13 +305,13 @@ export default function Reports() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {item.item?.name || "Unknown"}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {item.totalQuantity}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#0d5f4e]">
                     ${item.totalRevenue.toFixed(2)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     ${(item.totalRevenue / item.totalQuantity).toFixed(2)}
                   </td>
                 </tr>

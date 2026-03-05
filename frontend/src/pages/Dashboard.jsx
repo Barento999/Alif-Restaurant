@@ -11,6 +11,16 @@ export default function Dashboard() {
     pendingOrders: 0,
     lowStockItems: 0,
   });
+  const [tables, setTables] = useState([]);
+  const [weeklyData, setWeeklyData] = useState([
+    { day: "Mon", revenue: 4200, orders: 45 },
+    { day: "Tue", revenue: 5800, orders: 62 },
+    { day: "Wed", revenue: 7100, orders: 78 },
+    { day: "Thu", revenue: 6800, orders: 71 },
+    { day: "Fri", revenue: 9500, orders: 95 },
+    { day: "Sat", revenue: 12800, orders: 128 },
+    { day: "Sun", revenue: 11200, orders: 112 },
+  ]);
 
   useEffect(() => {
     loadStats();
@@ -50,6 +60,7 @@ export default function Dashboard() {
       const daily = dailyRes?.data.data;
       const inventory = inventoryRes?.data.data || [];
 
+      setTables(tables);
       setStats({
         todayOrders: daily?.totalOrders || orders.length,
         todayRevenue: daily?.revenue || 0,
@@ -214,6 +225,150 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Weekly Revenue and Table Status */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Weekly Revenue Chart */}
+        <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-lg font-bold text-gray-800">
+                Weekly Revenue
+              </h2>
+              <p className="text-sm text-gray-500">Last 7 days performance</p>
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-[#0d5f4e]"></div>
+                <span className="text-gray-600">Revenue</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-[#d4a843]"></div>
+                <span className="text-gray-600">Orders</span>
+              </div>
+            </div>
+          </div>
+          <div className="relative h-64">
+            <svg
+              className="w-full h-full"
+              viewBox="0 0 700 250"
+              preserveAspectRatio="none">
+              {/* Grid lines */}
+              <line
+                x1="0"
+                y1="50"
+                x2="700"
+                y2="50"
+                stroke="#f0f0f0"
+                strokeWidth="1"
+              />
+              <line
+                x1="0"
+                y1="100"
+                x2="700"
+                y2="100"
+                stroke="#f0f0f0"
+                strokeWidth="1"
+              />
+              <line
+                x1="0"
+                y1="150"
+                x2="700"
+                y2="150"
+                stroke="#f0f0f0"
+                strokeWidth="1"
+              />
+              <line
+                x1="0"
+                y1="200"
+                x2="700"
+                y2="200"
+                stroke="#f0f0f0"
+                strokeWidth="1"
+              />
+
+              {/* Revenue area */}
+              <defs>
+                <linearGradient
+                  id="revenueGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="0%"
+                  y2="100%">
+                  <stop offset="0%" stopColor="#d4a843" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="#d4a843" stopOpacity="0.05" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M 0 180 L 100 150 L 200 120 L 300 130 L 400 80 L 500 30 L 600 50 L 600 220 L 500 220 L 400 220 L 300 220 L 200 220 L 100 220 L 0 220 Z"
+                fill="url(#revenueGradient)"
+              />
+              <path
+                d="M 0 180 L 100 150 L 200 120 L 300 130 L 400 80 L 500 30 L 600 50"
+                fill="none"
+                stroke="#d4a843"
+                strokeWidth="3"
+              />
+
+              {/* Day labels */}
+              {weeklyData.map((day, i) => (
+                <text
+                  key={day.day}
+                  x={i * 100 + 50}
+                  y="240"
+                  textAnchor="middle"
+                  className="text-xs fill-gray-500">
+                  {day.day}
+                </text>
+              ))}
+            </svg>
+          </div>
+        </div>
+
+        {/* Table Status */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <h2 className="text-lg font-bold text-gray-800 mb-4">Table Status</h2>
+          <div className="grid grid-cols-3 gap-2">
+            {tables.slice(0, 9).map((table) => {
+              const statusColors = {
+                occupied: "bg-[#0d5f4e] text-white",
+                available: "bg-gray-200 text-gray-700",
+                reserved: "bg-[#d4a843] text-white",
+                cleaning: "bg-pink-200 text-pink-700",
+              };
+
+              return (
+                <div
+                  key={table._id}
+                  className={`${statusColors[table.status] || statusColors.available} p-4 rounded-xl text-center transition hover:scale-105`}>
+                  <div className="font-bold text-lg mb-1">
+                    {table.tableNumber}
+                  </div>
+                  <div className="text-xs opacity-90 capitalize">
+                    {table.status}
+                  </div>
+                  {table.status === "occupied" && (
+                    <>
+                      <div className="text-xs mt-1">
+                        {table.capacity} guests
+                      </div>
+                      <div className="text-xs opacity-75">45 min</div>
+                    </>
+                  )}
+                  {table.status === "reserved" && (
+                    <>
+                      <div className="text-xs mt-1">
+                        {table.capacity} guests
+                      </div>
+                      <div className="text-xs opacity-75">7:30 PM</div>
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
 
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <h2 className="text-xl font-bold mb-4 text-gray-800">Quick Actions</h2>
