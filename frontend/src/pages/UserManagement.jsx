@@ -46,6 +46,25 @@ export default function UserManagement() {
     }
   };
 
+  const handleDelete = async (id, userName) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete user "${userName}"? This action cannot be undone.`,
+      )
+    ) {
+      try {
+        await api.delete(`/users/${id}`);
+        loadUsers();
+        alert("User deleted successfully");
+      } catch (error) {
+        alert(
+          "Error deleting user: " +
+            (error.response?.data?.message || "Unknown error"),
+        );
+      }
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -151,11 +170,18 @@ export default function UserManagement() {
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <button
-                    onClick={() => toggleStatus(user._id, user.isActive)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${user.isActive ? "bg-white border border-red-200 text-red-600 hover:bg-red-50" : "bg-white border border-green-200 text-green-600 hover:bg-green-50"}`}>
-                    {user.isActive ? "Deactivate" : "Activate"}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => toggleStatus(user._id, user.isActive)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition ${user.isActive ? "bg-white border border-orange-200 text-orange-600 hover:bg-orange-50" : "bg-white border border-green-200 text-green-600 hover:bg-green-50"}`}>
+                      {user.isActive ? "Deactivate" : "Activate"}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(user._id, user.name)}
+                      className="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-red-200 text-red-600 hover:bg-red-50 transition">
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

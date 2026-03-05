@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { updateUser } from "../features/auth/authSlice";
 import api from "../services/api";
 
 export default function Profile() {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -31,7 +33,11 @@ export default function Profile() {
         email: formData.email,
       };
 
-      await api.put("/auth/profile", updateData);
+      const response = await api.put("/auth/profile", updateData);
+
+      // Update Redux store and localStorage
+      dispatch(updateUser(response.data.data));
+
       setMessage({ type: "success", text: "Profile updated successfully!" });
       setIsEditing(false);
     } catch (error) {
@@ -130,7 +136,9 @@ export default function Profile() {
                 </svg>
                 <span className="text-gray-600">Member since</span>
                 <span className="ml-auto font-semibold text-gray-800">
-                  {new Date(user?.createdAt).toLocaleDateString()}
+                  {user?.createdAt
+                    ? new Date(user.createdAt).toLocaleDateString()
+                    : "N/A"}
                 </span>
               </div>
               <div className="flex items-center text-sm">
