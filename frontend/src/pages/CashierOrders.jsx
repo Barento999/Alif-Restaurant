@@ -133,14 +133,12 @@ export default function CashierOrders() {
       : orders.filter((o) => o.status === selectedStatus);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-          Cashier - Payment Processing
-        </h1>
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Payment Processing</h1>
         <button
           onClick={() => dispatch(fetchOrders())}
-          className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+          className="flex items-center space-x-2 bg-[#0d5f4e] text-white px-6 py-2.5 rounded-xl hover:bg-[#0f7a62] font-medium transition">
           <svg
             className="w-5 h-5"
             fill="none"
@@ -158,15 +156,15 @@ export default function CashierOrders() {
       </div>
 
       {/* Status Filter */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 mb-6">
         {statusOptions.map((status) => (
           <button
             key={status}
             onClick={() => setSelectedStatus(status)}
-            className={`px-4 py-2 rounded-lg font-medium capitalize transition ${
+            className={`px-4 py-2 rounded-xl font-medium capitalize transition ${
               selectedStatus === status
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                ? "bg-[#0d5f4e] text-white"
+                : "bg-white border border-gray-200 text-gray-700 hover:border-[#0d5f4e] hover:bg-gray-50"
             }`}>
             {status} (
             {status === "all"
@@ -178,9 +176,9 @@ export default function CashierOrders() {
       </div>
 
       {/* Orders Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredOrders.length === 0 ? (
-          <div className="col-span-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
+          <div className="col-span-full bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
             <svg
               className="w-16 h-16 mx-auto mb-4 opacity-50 text-gray-400"
               fill="none"
@@ -193,84 +191,76 @@ export default function CashierOrders() {
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <p className="text-lg font-medium text-gray-500 dark:text-gray-400">
-              No orders found
-            </p>
+            <p className="text-lg font-medium text-gray-500">No orders found</p>
           </div>
         ) : (
           filteredOrders.map((order) => (
             <div
               key={order._id}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-              <div className="flex justify-between items-start mb-4">
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+              <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+                  <h3 className="text-lg font-bold text-gray-800">
                     {order.orderNumber}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-gray-500">
                     {new Date(order.createdAt).toLocaleString()}
                   </p>
                 </div>
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusColor(order.status)}`}>
+                  className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${getStatusColor(order.status)}`}>
                   {order.status}
                 </span>
               </div>
 
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Table:
-                  </span>
-                  <span className="font-semibold text-gray-800 dark:text-white">
+              <div className="space-y-2 mb-3">
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-600">Table:</span>
+                  <span className="font-semibold text-gray-800">
                     {order.table?.tableNumber}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Waiter:
-                  </span>
-                  <span className="font-semibold text-gray-800 dark:text-white">
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-600">Waiter:</span>
+                  <span className="font-semibold text-gray-800">
                     {order.waiter?.name}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Items:
-                  </span>
-                  <span className="font-semibold text-gray-800 dark:text-white">
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-600">Items:</span>
+                  <span className="font-semibold text-gray-800">
                     {order.items?.length || 0}
                   </span>
                 </div>
               </div>
 
               {/* Items List with Images */}
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4 max-h-48 overflow-y-auto space-y-2">
+              <div className="bg-gray-50 rounded-lg p-2 mb-3 max-h-40 overflow-y-auto space-y-1.5">
                 {order.items?.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 bg-white dark:bg-gray-600 p-2 rounded">
+                    className="flex items-center gap-2 bg-white p-2 rounded border border-gray-100">
                     {item.menuItem?.image && (
                       <img
                         src={item.menuItem.image}
                         alt={item.menuItem.name}
-                        className="w-12 h-12 object-cover rounded"
+                        className="w-10 h-10 object-cover rounded"
                       />
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start">
-                        <span className="text-sm text-gray-800 dark:text-white font-medium truncate">
+                        <span className="text-xs text-gray-800 font-medium truncate">
                           {item.menuItem?.name}
                         </span>
-                        <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+                        <span className="text-xs text-gray-600 ml-2">
                           x{item.quantity}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-gray-500">
                         ${item.price.toFixed(2)} each
                       </p>
                     </div>
-                    <span className="text-sm font-bold text-[#0d5f4e] dark:text-green-400">
+                    <span className="text-xs font-bold text-[#0d5f4e]">
                       ${(item.price * item.quantity).toFixed(2)}
                     </span>
                   </div>
@@ -278,12 +268,12 @@ export default function CashierOrders() {
               </div>
 
               {/* Total */}
-              <div className="bg-green-50 dark:bg-green-900 rounded-lg p-3 mb-4">
+              <div className="bg-green-50 rounded-lg p-2.5 mb-3 border border-green-100">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-green-700 dark:text-green-300">
+                  <span className="text-xs text-green-700 font-medium">
                     Total Amount:
                   </span>
-                  <span className="text-2xl font-bold text-green-800 dark:text-green-200">
+                  <span className="text-xl font-bold text-green-800">
                     ${order.total?.toFixed(2)}
                   </span>
                 </div>
@@ -294,9 +284,9 @@ export default function CashierOrders() {
                 {order.status === "served" && (
                   <button
                     onClick={() => handleMarkPaid(order)}
-                    className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all flex items-center justify-center space-x-2">
+                    className="w-full bg-[#0d5f4e] text-white py-2.5 rounded-xl font-semibold hover:bg-[#0f7a62] transition flex items-center justify-center space-x-2 text-sm">
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24">
@@ -313,9 +303,9 @@ export default function CashierOrders() {
                 {order.status === "paid" && (
                   <button
                     onClick={() => handlePrintReceipt(order)}
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all flex items-center justify-center space-x-2">
+                    className="w-full bg-white border border-gray-200 text-gray-700 py-2.5 rounded-xl font-semibold hover:border-[#0d5f4e] hover:bg-gray-50 transition flex items-center justify-center space-x-2 text-sm">
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24">
@@ -333,17 +323,17 @@ export default function CashierOrders() {
 
               {/* Status Info */}
               {order.status === "ready" && (
-                <div className="text-center text-sm text-green-600 dark:text-green-400 mt-2">
+                <div className="text-center text-xs text-green-600 mt-2 font-medium">
                   Ready for serving
                 </div>
               )}
               {order.status === "served" && (
-                <div className="text-center text-sm text-purple-600 dark:text-purple-400 mt-2">
+                <div className="text-center text-xs text-purple-600 mt-2 font-medium">
                   Awaiting payment
                 </div>
               )}
               {order.status === "paid" && (
-                <div className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+                <div className="text-center text-xs text-gray-600 mt-2 font-medium">
                   Payment completed
                 </div>
               )}
@@ -355,28 +345,28 @@ export default function CashierOrders() {
       {/* Payment Modal */}
       {showPaymentModal && selectedOrder && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-800">
                 Process Payment
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
+              <p className="text-gray-600 mt-1 text-sm">
                 Order: {selectedOrder.orderNumber}
               </p>
             </div>
 
             <div className="p-6 space-y-6">
-              <div className="bg-green-50 dark:bg-green-900 rounded-lg p-4">
-                <p className="text-sm text-green-700 dark:text-green-300 mb-1">
+              <div className="bg-green-50 rounded-xl p-4 border border-green-100">
+                <p className="text-sm text-green-700 mb-1 font-medium">
                   Total Amount
                 </p>
-                <p className="text-4xl font-bold text-green-800 dark:text-green-200">
+                <p className="text-4xl font-bold text-green-800">
                   ${selectedOrder.total?.toFixed(2)}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
                   Payment Method
                 </label>
                 <div className="space-y-2">
@@ -384,12 +374,12 @@ export default function CashierOrders() {
                     <button
                       key={method}
                       onClick={() => setPaymentMethod(method)}
-                      className={`w-full p-4 rounded-lg border-2 transition-all ${
+                      className={`w-full p-3 rounded-xl border-2 transition-all ${
                         paymentMethod === method
-                          ? "border-blue-600 bg-blue-50 dark:bg-blue-900"
-                          : "border-gray-300 dark:border-gray-600 hover:border-blue-400"
+                          ? "border-[#0d5f4e] bg-[#0d5f4e] bg-opacity-5"
+                          : "border-gray-200 hover:border-[#0d5f4e]"
                       }`}>
-                      <span className="font-semibold text-gray-800 dark:text-white capitalize">
+                      <span className="font-semibold text-gray-800 capitalize">
                         {method}
                       </span>
                     </button>
@@ -398,19 +388,19 @@ export default function CashierOrders() {
               </div>
             </div>
 
-            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex gap-3">
+            <div className="p-6 border-t border-gray-100 flex gap-3">
               <button
                 onClick={() => {
                   setShowPaymentModal(false);
                   setSelectedOrder(null);
                   setPaymentMethod("cash");
                 }}
-                className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-3 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">
+                className="flex-1 bg-white border border-gray-200 text-gray-800 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
                 Cancel
               </button>
               <button
                 onClick={confirmPayment}
-                className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all">
+                className="flex-1 bg-[#0d5f4e] text-white py-3 rounded-xl font-semibold hover:bg-[#0f7a62] transition">
                 Confirm Payment
               </button>
             </div>
