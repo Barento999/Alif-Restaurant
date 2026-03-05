@@ -290,6 +290,310 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* How It Works Section */}
+      <div className="relative z-10 bg-[#f5f5f0] py-24">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
+              How It Works
+            </h2>
+            <p className="text-xl text-gray-600">
+              Get started in minutes with our simple setup process
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-16 items-center mb-24">
+            <div className="order-2 lg:order-1">
+              <img
+                src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=90"
+                alt="Restaurant POS System"
+                className="w-full h-[500px] object-cover rounded-3xl shadow-2xl"
+              />
+            </div>
+            <div className="order-1 lg:order-2 space-y-8">
+              <div className="flex gap-6">
+                <div className="flex-shrink-0 w-16 h-16 bg-[#0d5f4e] rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-lg">
+                  1
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                    Quick Setup
+                  </h3>
+                  <p className="text-lg text-gray-600">
+                    Create your account and configure your restaurant settings
+                    in under 5 minutes. No technical knowledge required.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-6">
+                <div className="flex-shrink-0 w-16 h-16 bg-[#0d5f4e] rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-lg">
+                  2
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                    Add Your Menu
+                  </h3>
+                  <p className="text-lg text-gray-600">
+                    Import your existing menu or create a new one with our
+                    intuitive menu builder. Add photos, prices, and
+                    descriptions.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-6">
+                <div className="flex-shrink-0 w-16 h-16 bg-[#0d5f4e] rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-lg">
+                  3
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                    Start Taking Orders
+                  </h3>
+                  <p className="text-lg text-gray-600">
+                    Begin accepting orders immediately. Train your staff with
+                    our easy-to-use interface and watch your efficiency soar.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div className="flex gap-6">
+                <div className="flex-shrink-0 w-16 h-16 bg-[#d4a843] rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-lg">
+                  4
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                    Monitor Performance
+                  </h3>
+                  <p className="text-lg text-gray-600">
+                    Track sales, inventory, and staff performance in real-time
+                    with comprehensive analytics dashboards.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-6">
+                <div className="flex-shrink-0 w-16 h-16 bg-[#d4a843] rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-lg">
+                  5
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                    Grow Your Business
+                  </h3>
+                  <p className="text-lg text-gray-600">
+                    Use data-driven insights to optimize operations, reduce
+                    costs, and increase revenue month over month.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <img
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=90"
+                alt="Restaurant Analytics Dashboard"
+                className="w-full h-[500px] object-cover rounded-3xl shadow-2xl"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Kitchen Display Section */}
+      <div className="relative z-10 bg-white py-24">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <span className="px-4 py-2 bg-[#0d5f4e]/10 border border-[#0d5f4e]/20 rounded-full text-[#0d5f4e] text-sm font-semibold inline-block mb-6">
+                Kitchen Display System
+              </span>
+              <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
+                Streamline Your Kitchen Operations
+              </h2>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                Real-time order updates keep your kitchen running smoothly.
+                Orders appear instantly on kitchen displays, reducing errors and
+                improving preparation times.
+              </p>
+              <ul className="space-y-4">
+                {[
+                  "Real-time order notifications",
+                  "Priority-based order queue",
+                  "Preparation time tracking",
+                  "Order modification alerts",
+                  "Multi-station support",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <svg
+                      className="w-6 h-6 text-[#0d5f4e] flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span className="text-lg text-gray-700">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="relative">
+              <img
+                src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&q=90"
+                alt="Professional Kitchen"
+                className="w-full h-[600px] object-cover rounded-3xl shadow-2xl"
+              />
+              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-2xl">
+                <div className="text-center">
+                  <div className="text-4xl font-black text-[#0d5f4e] mb-2">
+                    45%
+                  </div>
+                  <div className="text-sm text-gray-600 font-medium">
+                    Faster Service
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Table Management Section */}
+      <div className="relative z-10 bg-[#f5f5f0] py-24">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="order-2 lg:order-1 relative">
+              <img
+                src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=90"
+                alt="Restaurant Dining Area"
+                className="w-full h-[600px] object-cover rounded-3xl shadow-2xl"
+              />
+              <div className="absolute -top-6 -right-6 bg-[#d4a843] p-6 rounded-2xl shadow-2xl">
+                <div className="text-center">
+                  <div className="text-4xl font-black text-white mb-2">98%</div>
+                  <div className="text-sm text-white/90 font-medium">
+                    Table Turnover
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="order-1 lg:order-2">
+              <span className="px-4 py-2 bg-[#d4a843]/10 border border-[#d4a843]/20 rounded-full text-[#d4a843] text-sm font-semibold inline-block mb-6">
+                Table Management
+              </span>
+              <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
+                Optimize Your Seating & Service
+              </h2>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                Manage table assignments, track occupancy, and maximize your
+                seating capacity with intelligent table management tools.
+              </p>
+              <ul className="space-y-4">
+                {[
+                  "Visual floor plan management",
+                  "Real-time table status updates",
+                  "Reservation system integration",
+                  "Waitlist management",
+                  "Server assignment tracking",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <svg
+                      className="w-6 h-6 text-[#d4a843] flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span className="text-lg text-gray-700">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Testimonials Section */}
+      <div className="relative z-10 bg-white py-24">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
+              What Our Customers Say
+            </h2>
+            <p className="text-xl text-gray-600">
+              Trusted by restaurant owners worldwide
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Sarah Johnson",
+                role: "Owner, The Golden Fork",
+                image:
+                  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80",
+                text: "This system transformed our operations. We've seen a 40% increase in efficiency and our customers love the faster service.",
+              },
+              {
+                name: "Michael Chen",
+                role: "Manager, Spice Garden",
+                image:
+                  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80",
+                text: "The analytics features are incredible. We can now make data-driven decisions that have significantly improved our bottom line.",
+              },
+              {
+                name: "Emily Rodriguez",
+                role: "Chef & Owner, Bella Cucina",
+                image:
+                  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80",
+                text: "Setup was incredibly easy and the support team is fantastic. Our kitchen runs smoother than ever before.",
+              },
+            ].map((testimonial, i) => (
+              <div
+                key={i}
+                className="bg-[#f5f5f0] p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                <div className="flex items-center gap-4 mb-6">
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
+                  <div>
+                    <h4 className="font-bold text-gray-800">
+                      {testimonial.name}
+                    </h4>
+                    <p className="text-sm text-gray-600">{testimonial.role}</p>
+                  </div>
+                </div>
+                <div className="flex mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className="w-5 h-5 text-[#d4a843]"
+                      fill="currentColor"
+                      viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-gray-700 leading-relaxed">
+                  {testimonial.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Restaurant Showcase */}
       <div className="relative z-10 bg-[#f5f5f0] py-20">
         <div className="container mx-auto px-6">
