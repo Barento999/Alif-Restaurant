@@ -279,7 +279,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-4 pt-8 pb-4 space-y-2">
+        <nav className="flex-1 overflow-y-auto px-4 pt-8 pb-4 space-y-2 scrollbar-hide">
           {visibleMenuItems.map((item) => (
             <Link
               key={item.path}
