@@ -42,14 +42,20 @@ export const createOrder = async (req, res) => {
 
 export const getOrders = async (req, res) => {
   try {
-    const { status } = req.query;
+    const { status, limit } = req.query;
     const filter = status ? { status } : {};
 
-    const orders = await Order.find(filter)
+    let query = Order.find(filter)
       .populate("table")
       .populate("waiter", "name")
       .populate("items.menuItem")
       .sort("-createdAt");
+
+    if (limit) {
+      query = query.limit(parseInt(limit));
+    }
+
+    const orders = await query;
 
     res.json({ success: true, data: orders });
   } catch (error) {

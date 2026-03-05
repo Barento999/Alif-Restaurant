@@ -2,6 +2,72 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import api from "../services/api";
 
+function OrdersChart({ data }) {
+  if (!data || data.length === 0) return null;
+
+  const maxOrders = Math.max(...data.map((d) => d.orders));
+  const chartHeight = 180;
+  const chartWidth = 700;
+  const padding = 20;
+  const stepX = (chartWidth - padding * 2) / (data.length - 1);
+
+  const points = data.map((item, i) => {
+    const x = padding + i * stepX;
+    const y = chartHeight - (item.orders / maxOrders) * (chartHeight - 40);
+    return { x, y, ...item };
+  });
+
+  const pathData = points
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
+    .join(" ");
+  const areaData = `${pathData} L ${points[points.length - 1].x} ${chartHeight} L ${points[0].x} ${chartHeight} Z`;
+
+  return (
+    <div className="relative h-48">
+      <svg
+        className="w-full h-full"
+        viewBox={`0 0 ${chartWidth} 200`}
+        preserveAspectRatio="xMidYMid meet">
+        {[0, 1, 2, 3].map((i) => (
+          <line
+            key={i}
+            x1="0"
+            y1={45 * i}
+            x2={chartWidth}
+            y2={45 * i}
+            stroke="#f0f0f0"
+            strokeWidth="1"
+          />
+        ))}
+        <defs>
+          <linearGradient id="ordersGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#0d5f4e" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#0d5f4e" stopOpacity="0.05" />
+          </linearGradient>
+        </defs>
+        <path d={areaData} fill="url(#ordersGradient)" />
+        <path d={pathData} fill="none" stroke="#0d5f4e" strokeWidth="3" />
+        {points.map((point, i) => (
+          <g key={i}>
+            <circle cx={point.x} cy={point.y} r="4" fill="#0d5f4e" />
+            <title>{`${point.day}: ${point.orders} orders`}</title>
+          </g>
+        ))}
+        {points.map((point, i) => (
+          <text
+            key={i}
+            x={point.x}
+            y="195"
+            textAnchor="middle"
+            className="text-xs fill-gray-500">
+            {point.day}
+          </text>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
 function WeeklyChart({ data }) {
   if (!data || data.length === 0) return null;
 
@@ -109,6 +175,8 @@ export default function Dashboard() {
   });
   const [tables, setTables] = useState([]);
   const [weeklyData, setWeeklyData] = useState([]);
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [bestSellers, setBestSellers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -125,11 +193,13 @@ export default function Dashboard() {
 
       const promises = [
         api.get("/tables").catch(() => ({ data: { data: [] } })),
+        api.get("/orders?limit=5").catch(() => ({ data: { data: [] } })),
       ];
 
       if (canAccessReports) {
         promises.push(api.get("/reports/dashboard"));
         promises.push(api.get("/reports/weekly"));
+        promises.push(api.get("/reports/best-sellers"));
       }
 
       if (canAccessInventory) {
@@ -138,19 +208,25 @@ export default function Dashboard() {
 
       const results = await Promise.all(promises);
       const tablesRes = results[0];
-      const dashboardRes = canAccessReports ? results[1] : null;
-      const weeklyRes = canAccessReports ? results[2] : null;
+      const ordersRes = results[1];
+      const dashboardRes = canAccessReports ? results[2] : null;
+      const weeklyRes = canAccessReports ? results[3] : null;
+      const bestSellersRes = canAccessReports ? results[4] : null;
       const inventoryRes = canAccessInventory
-        ? results[canAccessReports ? 3 : 1]
+        ? results[canAccessReports ? 5 : 2]
         : null;
 
       const tables = tablesRes.data.data;
+      const orders = ordersRes.data.data;
       const dashboard = dashboardRes?.data.data;
       const weekly = weeklyRes?.data.data || [];
+      const bestSellers = bestSellersRes?.data.data || [];
       const inventory = inventoryRes?.data.data || [];
 
       setTables(tables);
       setWeeklyData(weekly);
+      setRecentOrders(orders.slice(0, 5));
+      setBestSellers(bestSellers.slice(0, 5));
       setStats({
         todayOrders: dashboard?.todayOrders || 0,
         todayRevenue: dashboard?.todayRevenue || 0,
@@ -172,14 +248,36 @@ export default function Dashboard() {
   const canAccessReports = ["admin", "manager"].includes(user?.role);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
+      {/* Header with Time */}
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Welcome, {user?.name}!
-        </h1>
-        <span className="px-4 py-2 bg-[#d4a843] text-white rounded-xl font-semibold">
-          {user?.role.toUpperCase()}
-        </span>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">
+            Welcome back, {user?.name}!
+          </h1>
+          <p className="text-gray-500 mt-1">
+            {new Date().toLocaleDateString("en-US", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="px-4 py-2 bg-[#d4a843] text-white rounded-xl font-semibold shadow-sm">
+            {user?.role.toUpperCase()}
+          </span>
+          <div className="text-right">
+            <p className="text-sm text-gray-500">Last updated</p>
+            <p className="text-sm font-semibold text-gray-700">
+              {new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -333,12 +431,8 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-[#0d5f4e]"></div>
-                <span className="text-gray-600">Revenue</span>
-              </div>
-              <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-[#d4a843]"></div>
-                <span className="text-gray-600">Orders</span>
+                <span className="text-gray-600">Revenue</span>
               </div>
             </div>
           </div>
@@ -366,7 +460,7 @@ export default function Dashboard() {
               return (
                 <div
                   key={table._id}
-                  className={`${statusColors[table.status] || statusColors.available} p-4 rounded-xl text-center transition hover:scale-105`}>
+                  className={`${statusColors[table.status] || statusColors.available} p-4 rounded-xl text-center transition hover:scale-105 cursor-pointer`}>
                   <div className="font-bold text-lg mb-1">
                     {table.tableNumber}
                   </div>
@@ -374,27 +468,316 @@ export default function Dashboard() {
                     {table.status}
                   </div>
                   {table.status === "occupied" && (
-                    <>
-                      <div className="text-xs mt-1">
-                        {table.capacity} guests
-                      </div>
-                      <div className="text-xs opacity-75">45 min</div>
-                    </>
+                    <div className="text-xs mt-1">{table.capacity} guests</div>
                   )}
                   {table.status === "reserved" && (
-                    <>
-                      <div className="text-xs mt-1">
-                        {table.capacity} guests
-                      </div>
-                      <div className="text-xs opacity-75">7:30 PM</div>
-                    </>
+                    <div className="text-xs mt-1">{table.capacity} guests</div>
                   )}
                 </div>
               );
             })}
           </div>
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Available</span>
+              <span className="font-semibold text-gray-800">
+                {tables.filter((t) => t.status === "available").length}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm mt-2">
+              <span className="text-gray-600">Occupied</span>
+              <span className="font-semibold text-gray-800">
+                {tables.filter((t) => t.status === "occupied").length}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm mt-2">
+              <span className="text-gray-600">Reserved</span>
+              <span className="font-semibold text-gray-800">
+                {tables.filter((t) => t.status === "reserved").length}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Orders Trend and Best Sellers */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Orders Trend */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-lg font-bold text-gray-800">Orders Trend</h2>
+              <p className="text-sm text-gray-500">Weekly order volume</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#0d5f4e]"></div>
+              <span className="text-sm text-gray-600">Orders</span>
+            </div>
+          </div>
+          {loading || weeklyData.length === 0 ? (
+            <div className="h-48 flex items-center justify-center text-gray-400">
+              {loading ? "Loading..." : "No data"}
+            </div>
+          ) : (
+            <OrdersChart data={weeklyData} />
+          )}
+        </div>
+
+        {/* Best Sellers */}
+        {canAccessReports && (
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-lg font-bold text-gray-800">
+                  Top Selling Items
+                </h2>
+                <p className="text-sm text-gray-500">Most popular dishes</p>
+              </div>
+              <a
+                href="/reports"
+                className="text-sm text-[#0d5f4e] hover:text-[#0a4a3c] font-medium">
+                View All →
+              </a>
+            </div>
+            {loading ? (
+              <div className="h-48 flex items-center justify-center text-gray-400">
+                Loading...
+              </div>
+            ) : bestSellers.length === 0 ? (
+              <div className="h-48 flex items-center justify-center text-gray-400">
+                No sales data yet
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {bestSellers.map((item, index) => (
+                  <div
+                    key={item._id}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-[#d4a843] text-white rounded-lg flex items-center justify-center font-bold text-sm">
+                        {index + 1}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-800 text-sm">
+                          {item.item?.name || "Unknown Item"}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {item.totalQuantity} sold
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-[#0d5f4e]">
+                        ${item.totalRevenue?.toFixed(0) || 0}
+                      </p>
+                      <p className="text-xs text-gray-500">revenue</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Recent Orders */}
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-lg font-bold text-gray-800">Recent Orders</h2>
+            <p className="text-sm text-gray-500">Latest customer orders</p>
+          </div>
+          <a
+            href="/orders"
+            className="text-sm text-[#0d5f4e] hover:text-[#0a4a3c] font-medium">
+            View All →
+          </a>
+        </div>
+        {loading ? (
+          <div className="h-32 flex items-center justify-center text-gray-400">
+            Loading orders...
+          </div>
+        ) : recentOrders.length === 0 ? (
+          <div className="h-32 flex items-center justify-center text-gray-400">
+            No recent orders
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+                    Order ID
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+                    Table
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+                    Items
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+                    Total
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+                    Status
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+                    Time
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentOrders.map((order) => {
+                  const statusColors = {
+                    pending: "bg-yellow-100 text-yellow-700",
+                    preparing: "bg-blue-100 text-blue-700",
+                    ready: "bg-green-100 text-green-700",
+                    served: "bg-purple-100 text-purple-700",
+                    paid: "bg-gray-100 text-gray-700",
+                    cancelled: "bg-red-100 text-red-700",
+                  };
+
+                  return (
+                    <tr
+                      key={order._id}
+                      className="border-b border-gray-100 hover:bg-gray-50 transition">
+                      <td className="py-3 px-4 text-sm font-medium text-gray-800">
+                        #{order._id?.slice(-6).toUpperCase()}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600">
+                        {order.table?.tableNumber || "N/A"}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600">
+                        {order.items?.length || 0} items
+                      </td>
+                      <td className="py-3 px-4 text-sm font-semibold text-gray-800">
+                        ${order.total?.toFixed(2) || "0.00"}
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[order.status] || statusColors.pending}`}>
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-500">
+                        {new Date(order.createdAt).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Performance Summary */}
+      {canAccessReports && weeklyData.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-gradient-to-br from-[#0d5f4e] to-[#0a4a3c] p-6 rounded-2xl shadow-lg text-white">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                  />
+                </svg>
+              </div>
+              <span className="text-xs bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                Weekly
+              </span>
+            </div>
+            <p className="text-sm opacity-90 mb-2">Total Revenue</p>
+            <p className="text-3xl font-bold">
+              $
+              {weeklyData.reduce((sum, day) => sum + day.revenue, 0).toFixed(0)}
+            </p>
+            <p className="text-xs opacity-75 mt-2">
+              Avg: $
+              {(
+                weeklyData.reduce((sum, day) => sum + day.revenue, 0) / 7
+              ).toFixed(0)}
+              /day
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-[#d4a843] to-[#b8923a] p-6 rounded-2xl shadow-lg text-white">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
+              </div>
+              <span className="text-xs bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                Weekly
+              </span>
+            </div>
+            <p className="text-sm opacity-90 mb-2">Total Orders</p>
+            <p className="text-3xl font-bold">
+              {weeklyData.reduce((sum, day) => sum + day.orders, 0)}
+            </p>
+            <p className="text-xs opacity-75 mt-2">
+              Avg:{" "}
+              {Math.round(
+                weeklyData.reduce((sum, day) => sum + day.orders, 0) / 7,
+              )}{" "}
+              orders/day
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-purple-500 to-purple-700 p-6 rounded-2xl shadow-lg text-white">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-xs bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                Average
+              </span>
+            </div>
+            <p className="text-sm opacity-90 mb-2">Order Value</p>
+            <p className="text-3xl font-bold">
+              $
+              {weeklyData.reduce((sum, day) => sum + day.orders, 0) > 0
+                ? (
+                    weeklyData.reduce((sum, day) => sum + day.revenue, 0) /
+                    weeklyData.reduce((sum, day) => sum + day.orders, 0)
+                  ).toFixed(2)
+                : "0.00"}
+            </p>
+            <p className="text-xs opacity-75 mt-2">Per order this week</p>
+          </div>
+        </div>
+      )}
 
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <h2 className="text-xl font-bold mb-4 text-gray-800">Quick Actions</h2>
