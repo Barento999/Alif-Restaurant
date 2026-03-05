@@ -296,14 +296,40 @@ export default function OrderManagement() {
                   {selectedOrder.items?.map((item, index) => (
                     <div
                       key={index}
-                      className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <div>
+                      className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      {item.menuItem?.image && (
+                        <img
+                          src={item.menuItem.image}
+                          alt={item.menuItem.name}
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                      )}
+                      <div className="flex-1 min-w-0">
                         <p className="font-medium text-gray-800 dark:text-white">
                           {item.menuItem?.name || "Unknown Item"}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           ${item.price} × {item.quantity}
                         </p>
+                        {item.menuItem?.ingredients &&
+                          item.menuItem.ingredients.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {item.menuItem.ingredients
+                                .slice(0, 4)
+                                .map((ing, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="text-xs bg-white dark:bg-gray-600 text-gray-600 dark:text-gray-300 px-1.5 py-0.5 rounded border border-gray-200 dark:border-gray-500">
+                                    {ing}
+                                  </span>
+                                ))}
+                              {item.menuItem.ingredients.length > 4 && (
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  +{item.menuItem.ingredients.length - 4} more
+                                </span>
+                              )}
+                            </div>
+                          )}
                       </div>
                       <p className="font-semibold text-gray-800 dark:text-white">
                         ${(item.price * item.quantity).toFixed(2)}

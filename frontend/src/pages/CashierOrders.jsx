@@ -244,6 +244,39 @@ export default function CashierOrders() {
                 </div>
               </div>
 
+              {/* Items List with Images */}
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4 max-h-48 overflow-y-auto space-y-2">
+                {order.items?.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 bg-white dark:bg-gray-600 p-2 rounded">
+                    {item.menuItem?.image && (
+                      <img
+                        src={item.menuItem.image}
+                        alt={item.menuItem.name}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start">
+                        <span className="text-sm text-gray-800 dark:text-white font-medium truncate">
+                          {item.menuItem?.name}
+                        </span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+                          x{item.quantity}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        ${item.price.toFixed(2)} each
+                      </p>
+                    </div>
+                    <span className="text-sm font-bold text-[#0d5f4e] dark:text-green-400">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
               {/* Total */}
               <div className="bg-green-50 dark:bg-green-900 rounded-lg p-3 mb-4">
                 <div className="flex justify-between items-center">
