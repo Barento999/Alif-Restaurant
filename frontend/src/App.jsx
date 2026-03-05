@@ -12,6 +12,7 @@ import UserManagement from "./pages/UserManagement";
 import OrderManagement from "./pages/OrderManagement";
 import WaiterOrders from "./pages/WaiterOrders";
 import CashierOrders from "./pages/CashierOrders";
+import Profile from "./pages/Profile";
 import LayoutWithSidebar from "./components/LayoutWithSidebar";
 
 const PrivateRoute = ({ children, roles }) => {
@@ -37,6 +38,7 @@ function App() {
           }>
           <Route index element={<Navigate to="/dashboard" />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="profile" element={<Profile />} />
           <Route
             path="pos"
             element={
