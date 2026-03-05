@@ -232,8 +232,8 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         />
       )}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-72 bg-[#0d5f4e] transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
-        <div className="flex items-center justify-between h-24 px-6">
+        className={`fixed top-0 left-0 z-50 h-screen w-72 bg-[#0d5f4e] transform transition-transform duration-300 ease-in-out flex flex-col ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
+        <div className="flex items-center justify-between h-24 px-6 flex-shrink-0">
           <div className="flex items-center space-x-3">
             <div className="w-14 h-14 bg-[#d4a843] rounded-2xl flex items-center justify-center">
               <svg
@@ -279,7 +279,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-4 pt-8 space-y-2">
+        <nav className="flex-1 overflow-y-auto px-4 pt-8 pb-4 space-y-2">
           {visibleMenuItems.map((item) => (
             <Link
               key={item.path}
@@ -292,8 +292,8 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           ))}
         </nav>
 
-        {/* Profile Section */}
-        <div className="px-4 pb-4 border-t border-[#0f7a62] pt-4">
+        {/* Profile Section - Sticks to bottom */}
+        <div className="px-4 pb-4 border-t border-[#0f7a62] pt-4 flex-shrink-0">
           <Link
             to="/profile"
             onClick={() => setIsOpen(false)}

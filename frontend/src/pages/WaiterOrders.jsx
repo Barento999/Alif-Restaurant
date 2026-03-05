@@ -21,33 +21,29 @@ export default function WaiterOrders() {
     const socket = io("http://localhost:5000");
 
     socket.on("newOrder", (order) => {
-      // Only add if it's assigned to this waiter
-      if (order.waiter?._id === user?.id) {
-        dispatch(addOrderRealtime(order));
-      }
+      // Add all new orders (waiters need to see all orders)
+      dispatch(addOrderRealtime(order));
     });
 
     socket.on("orderStatusUpdate", (order) => {
-      // Update if it's assigned to this waiter
-      if (order.waiter?._id === user?.id) {
-        dispatch(updateOrderRealtime(order));
-      }
+      // Update all orders (waiters need to see status changes)
+      dispatch(updateOrderRealtime(order));
     });
 
     return () => socket.disconnect();
   }, [dispatch, user?.id]);
 
-  // Filter orders assigned to this waiter
-  // Use 'id' field from user object (backend returns 'id' not '_id')
+  // Filter orders that need waiter attention
+  // Show orders that are ready to be served or already served (waiting for payment)
   const myOrders = orders.filter((order) => {
+    // Show all ready and served orders to all waiters
+    if (order.status === "ready" || order.status === "served") {
+      return true;
+    }
+    // For other statuses, only show if assigned to this waiter
     const orderWaiterId =
       order.waiter?._id?.toString() || order.waiter?.toString();
     const currentUserId = user?.id?.toString();
-    console.log("Comparing:", {
-      orderWaiterId,
-      currentUserId,
-      match: orderWaiterId === currentUserId,
-    });
     return orderWaiterId === currentUserId;
   });
 
@@ -56,10 +52,14 @@ export default function WaiterOrders() {
   console.log("Current User ID:", user?.id);
   console.log("Total Orders:", orders.length);
   console.log("My Orders:", myOrders.length);
-  if (orders.length > 0) {
-    console.log("Sample Order:", orders[0]);
-    console.log("Sample Order Waiter:", orders[0]?.waiter);
-  }
+  console.log(
+    "Ready Orders:",
+    orders.filter((o) => o.status === "ready").length,
+  );
+  console.log(
+    "Served Orders:",
+    orders.filter((o) => o.status === "served").length,
+  );
 
   const filteredOrders =
     selectedStatus === "all"
