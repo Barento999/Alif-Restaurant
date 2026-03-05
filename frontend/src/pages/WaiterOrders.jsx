@@ -198,17 +198,35 @@ export default function WaiterOrders() {
               </div>
 
               {/* Items List */}
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4 max-h-32 overflow-y-auto">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4 max-h-48 overflow-y-auto space-y-2">
                 {order.items?.map((item, index) => (
                   <div
                     key={index}
-                    className="flex justify-between text-sm py-1">
-                    <span className="text-gray-800 dark:text-white">
-                      {item.menuItem?.name}
-                    </span>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      x{item.quantity}
-                    </span>
+                    className="flex items-center gap-2 bg-white dark:bg-gray-600 p-2 rounded">
+                    {item.menuItem?.image && (
+                      <img
+                        src={item.menuItem.image}
+                        alt={item.menuItem.name}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start">
+                        <span className="text-sm text-gray-800 dark:text-white font-medium truncate">
+                          {item.menuItem?.name}
+                        </span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+                          x{item.quantity}
+                        </span>
+                      </div>
+                      {item.menuItem?.ingredients &&
+                        item.menuItem.ingredients.length > 0 && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                            {item.menuItem.ingredients.slice(0, 3).join(", ")}
+                            {item.menuItem.ingredients.length > 3 && "..."}
+                          </p>
+                        )}
+                    </div>
                   </div>
                 ))}
               </div>

@@ -52,6 +52,8 @@ export default function POSScreen() {
           name: item.name,
           price: item.price,
           quantity: 1,
+          image: item.image,
+          ingredients: item.ingredients,
         },
       ]);
     }
@@ -162,16 +164,51 @@ export default function POSScreen() {
               <button
                 key={item._id}
                 onClick={() => addToCart(item)}
-                className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl hover:shadow-lg transition-all transform hover:scale-105 text-left border border-gray-200">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold text-gray-800 text-sm">
+                className="bg-white rounded-xl hover:shadow-xl transition-all transform hover:scale-105 text-left border border-gray-200 overflow-hidden">
+                {/* Image */}
+                {item.image && (
+                  <div className="relative h-32 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-2 right-2">
+                      <span className="bg-[#d4a843] text-white text-xs px-2 py-1 rounded-full font-bold shadow-lg">
+                        ${item.price.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                <div className="p-3">
+                  <h3 className="font-bold text-gray-800 text-sm mb-1 line-clamp-2">
                     {item.name}
                   </h3>
-                  <span className="bg-[#d4a843] text-white text-xs px-2 py-1 rounded-full font-semibold">
-                    ${item.price}
-                  </span>
+                  <p className="text-xs text-gray-500 mb-2">
+                    {item.category?.name}
+                  </p>
+                  {!item.image && (
+                    <span className="bg-[#d4a843] text-white text-xs px-2 py-1 rounded-full font-semibold">
+                      ${item.price.toFixed(2)}
+                    </span>
+                  )}
+                  {item.ingredients && item.ingredients.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {item.ingredients.slice(0, 3).map((ing, idx) => (
+                        <span
+                          key={idx}
+                          className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+                          {ing}
+                        </span>
+                      ))}
+                      {item.ingredients.length > 3 && (
+                        <span className="text-xs text-gray-500">
+                          +{item.ingredients.length - 3}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <p className="text-xs text-gray-500">{item.category?.name}</p>
               </button>
             ))}
           </div>
@@ -227,17 +264,30 @@ export default function POSScreen() {
               cart.map((item) => (
                 <div
                   key={item.menuItem}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-800 text-sm">
+                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  {item.image && (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-16 h-16 object-cover rounded-lg"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-800 text-sm truncate">
                       {item.name}
                     </p>
                     <p className="text-xs text-gray-500">${item.price} each</p>
+                    {item.ingredients && item.ingredients.length > 0 && (
+                      <p className="text-xs text-gray-400 truncate">
+                        {item.ingredients.slice(0, 2).join(", ")}
+                        {item.ingredients.length > 2 && "..."}
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => updateQuantity(item.menuItem, -1)}
-                      className="w-7 h-7 bg-red-500 text-white rounded-full hover:bg-red-600 flex items-center justify-center">
+                      className="w-7 h-7 bg-red-500 text-white rounded-full hover:bg-red-600 flex items-center justify-center text-sm">
                       -
                     </button>
                     <span className="w-8 text-center font-semibold text-gray-800">
@@ -245,7 +295,7 @@ export default function POSScreen() {
                     </span>
                     <button
                       onClick={() => updateQuantity(item.menuItem, 1)}
-                      className="w-7 h-7 bg-[#0d5f4e] text-white rounded-full hover:bg-[#0f7a62] flex items-center justify-center">
+                      className="w-7 h-7 bg-[#0d5f4e] text-white rounded-full hover:bg-[#0f7a62] flex items-center justify-center text-sm">
                       +
                     </button>
                     <button

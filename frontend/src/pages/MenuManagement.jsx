@@ -2,68 +2,64 @@ import { useState, useEffect } from "react";
 import api from "../services/api";
 
 export default function MenuManagement() {
-  const [apiMeals, setApiMeals] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
+  const [editingItem, setEditingItem] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
-    loadAllMealsFromAPI();
+    loadData();
   }, []);
 
-  const loadAllMealsFromAPI = async () => {
+  const loadData = async () => {
     setLoading(true);
     try {
-      // Fetch all meals from our backend (which caches TheMealDB data)
-      const response = await api.get("/menu/api/all");
-
-      if (response.data.success) {
-        const meals = response.data.data || [];
-        const apiCategories = response.data.categories || [];
-
-        // Add prices to meals
-        const mealsWithPrices = meals.map((meal) => ({
-          ...meal,
-          price: generatePrice(meal.category),
-        }));
-
-        setApiMeals(mealsWithPrices);
-        setCategories(["All", ...apiCategories]);
-      }
+      const [menuRes, catRes] = await Promise.all([
+        api.get("/menu"),
+        api.get("/categories"),
+      ]);
+      setItems(menuRes.data.data);
+      setAllCategories(catRes.data.data);
+      setCategories(["All", ...catRes.data.data.map((c) => c.name)]);
     } catch (error) {
-      console.error("Error loading meals:", error);
-      alert("Error loading meals from API. Please try again.");
+      console.error("Error loading data:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Generate price based on category
-  const generatePrice = (category) => {
-    const priceRanges = {
-      Dessert: [5, 10],
-      Starter: [6, 12],
-      Side: [4, 8],
-      Breakfast: [7, 15],
-      Vegetarian: [10, 18],
-      Vegan: [10, 18],
-      Seafood: [18, 35],
-      Beef: [15, 30],
-      Chicken: [12, 25],
-      Lamb: [16, 32],
-      Pork: [14, 28],
-      Pasta: [12, 22],
-      Miscellaneous: [8, 20],
-    };
-
-    const range = priceRanges[category] || [10, 20];
-    return (Math.random() * (range[1] - range[0]) + range[0]).toFixed(2);
+  const toggleAvailability = async (item) => {
+    try {
+      await api.put(`/menu/${item._id}`, { isAvailable: !item.isAvailable });
+      loadData();
+    } catch (error) {
+      alert("Error updating availability");
+    }
   };
 
-  const filteredMeals =
+  const handleEdit = (item) => {
+    setEditingItem(item);
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = async (updatedData) => {
+    try {
+      await api.put(`/menu/${editingItem._id}`, updatedData);
+      setShowEditModal(false);
+      setEditingItem(null);
+      loadData();
+    } catch (error) {
+      alert("Error updating item: " + error.response?.data?.message);
+    }
+  };
+
+  const filteredItems =
     selectedCategory === "All"
-      ? apiMeals
-      : apiMeals.filter((meal) => meal.category === selectedCategory);
+      ? items
+      : items.filter((item) => item.category?.name === selectedCategory);
 
   return (
     <div>
@@ -72,7 +68,7 @@ export default function MenuManagement() {
           Menu Management
         </h1>
         <p className="text-gray-600">
-          Browse {apiMeals.length} meals from TheMealDB API
+          Manage {items.length} menu items from your database
         </p>
       </div>
 
@@ -94,7 +90,7 @@ export default function MenuManagement() {
                 }`}>
                 {cat}
                 {cat !== "All" &&
-                  ` (${apiMeals.filter((m) => m.category === cat).length})`}
+                  ` (${items.filter((m) => m.category?.name === cat).length})`}
               </button>
             ))}
           </div>
@@ -106,25 +102,40 @@ export default function MenuManagement() {
         <div className="text-center py-20">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#0d5f4e] mx-auto mb-4"></div>
           <h3 className="text-xl font-bold text-gray-700 mb-2">
-            Loading Meals from API...
+            Loading Menu...
           </h3>
-          <p className="text-gray-500">
-            Fetching delicious meals from TheMealDB
-          </p>
         </div>
       )}
 
       {/* Meals Grid */}
       {!loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredMeals.map((meal) => (
-            <MealCard key={meal.id} meal={meal} />
+          {filteredItems.map((item) => (
+            <MealCard
+              key={item._id}
+              item={item}
+              onToggle={toggleAvailability}
+              onEdit={handleEdit}
+            />
           ))}
         </div>
       )}
 
+      {/* Edit Modal */}
+      {showEditModal && editingItem && (
+        <EditModal
+          item={editingItem}
+          categories={allCategories}
+          onSave={handleSaveEdit}
+          onClose={() => {
+            setShowEditModal(false);
+            setEditingItem(null);
+          }}
+        />
+      )}
+
       {/* Empty State */}
-      {!loading && filteredMeals.length === 0 && (
+      {!loading && filteredItems.length === 0 && (
         <div className="text-center py-16">
           <svg
             className="w-20 h-20 mx-auto mb-4 text-gray-300"
@@ -139,7 +150,7 @@ export default function MenuManagement() {
             />
           </svg>
           <h3 className="text-xl font-bold text-gray-600 mb-2">
-            No meals found in this category
+            No items found in this category
           </h3>
         </div>
       )}
@@ -148,50 +159,83 @@ export default function MenuManagement() {
 }
 
 // Meal Card Component
-function MealCard({ meal }) {
+function MealCard({ item, onToggle, onEdit }) {
   const [showDetails, setShowDetails] = useState(false);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300">
       {/* Image */}
-      <div className="relative h-56 overflow-hidden group">
-        <img
-          src={meal.image}
-          alt={meal.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-        />
-        <div className="absolute top-3 right-3">
-          <span className="px-3 py-1 bg-[#0d5f4e] text-white rounded-full text-xs font-semibold shadow-lg">
-            {meal.category}
-          </span>
+      {item.image && (
+        <div className="relative h-56 overflow-hidden group">
+          <img
+            src={item.image}
+            alt={item.name}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          />
+          <div className="absolute top-3 right-3">
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-semibold shadow-lg ${
+                item.isAvailable
+                  ? "bg-green-500 text-white"
+                  : "bg-red-500 text-white"
+              }`}>
+              {item.isAvailable ? "Available" : "Unavailable"}
+            </span>
+          </div>
+          <div className="absolute bottom-3 left-3">
+            <span className="px-3 py-1 bg-[#0d5f4e] text-white rounded-full text-xs font-semibold shadow">
+              {item.category?.name}
+            </span>
+          </div>
+          {/* Edit Button Overlay */}
+          <button
+            onClick={() => onEdit(item)}
+            className="absolute top-3 left-3 bg-white bg-opacity-90 hover:bg-opacity-100 p-2 rounded-full shadow-lg transition">
+            <svg
+              className="w-5 h-5 text-gray-700"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+          </button>
         </div>
-        <div className="absolute bottom-3 left-3">
-          <span className="px-3 py-1 bg-white bg-opacity-90 text-gray-700 rounded-full text-xs font-medium shadow">
-            {meal.area}
-          </span>
-        </div>
-      </div>
+      )}
 
       <div className="p-5">
         {/* Header */}
         <div className="mb-3">
-          <h3 className="text-xl font-bold text-gray-800 mb-2">{meal.name}</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">{item.name}</h3>
           <div className="flex items-center justify-between">
-            <p className="text-[#0d5f4e] text-3xl font-bold">${meal.price}</p>
-            <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-              Available
-            </span>
+            <p className="text-[#0d5f4e] text-3xl font-bold">
+              ${item.price.toFixed(2)}
+            </p>
+            {!item.image && (
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                  item.isAvailable
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
+                }`}>
+                {item.isAvailable ? "Available" : "Unavailable"}
+              </span>
+            )}
           </div>
         </div>
 
         {/* Description */}
-        {meal.description && (
+        {item.description && (
           <div className="mb-4">
             <p
               className={`text-gray-600 text-sm leading-relaxed ${!showDetails ? "line-clamp-3" : ""}`}>
-              {meal.description}
+              {item.description}
             </p>
-            {meal.description.length > 150 && (
+            {item.description.length > 150 && (
               <button
                 onClick={() => setShowDetails(!showDetails)}
                 className="text-[#0d5f4e] text-xs font-semibold mt-2 hover:underline flex items-center gap-1">
@@ -234,7 +278,7 @@ function MealCard({ meal }) {
         )}
 
         {/* Ingredients */}
-        {meal.ingredients && meal.ingredients.length > 0 && (
+        {item.ingredients && item.ingredients.length > 0 && (
           <div className="mb-4">
             <h4 className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
               <svg
@@ -249,10 +293,10 @@ function MealCard({ meal }) {
                   d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                 />
               </svg>
-              Ingredients ({meal.ingredients.length})
+              Ingredients ({item.ingredients.length})
             </h4>
             <div className="flex flex-wrap gap-1.5">
-              {meal.ingredients
+              {item.ingredients
                 .slice(0, showDetails ? undefined : 8)
                 .map((ing, idx) => (
                   <span
@@ -261,32 +305,25 @@ function MealCard({ meal }) {
                     {ing}
                   </span>
                 ))}
-              {!showDetails && meal.ingredients.length > 8 && (
+              {!showDetails && item.ingredients.length > 8 && (
                 <button
                   onClick={() => setShowDetails(true)}
                   className="px-2.5 py-1 bg-[#0d5f4e] bg-opacity-10 text-[#0d5f4e] text-xs rounded-full font-semibold hover:bg-opacity-20">
-                  +{meal.ingredients.length - 8} more
+                  +{item.ingredients.length - 8} more
                 </button>
               )}
             </div>
           </div>
         )}
 
-        {/* Tags */}
-        {meal.tags && meal.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            {meal.tags.map((tag, idx) => (
-              <span
-                key={idx}
-                className="px-2 py-0.5 bg-[#d4a843] bg-opacity-10 text-[#d4a843] text-xs rounded font-medium">
-                #{tag.trim()}
-              </span>
-            ))}
-          </div>
-        )}
-
         {/* Action Button */}
-        <button className="w-full bg-gradient-to-r from-[#0d5f4e] to-[#0f7a62] text-white py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold flex items-center justify-center gap-2">
+        <button
+          onClick={() => onToggle(item)}
+          className={`w-full py-3 rounded-xl transition-all duration-300 font-semibold flex items-center justify-center gap-2 ${
+            item.isAvailable
+              ? "bg-gradient-to-r from-red-500 to-red-600 text-white hover:shadow-lg"
+              : "bg-gradient-to-r from-green-500 to-green-600 text-white hover:shadow-lg"
+          }`}>
           <svg
             className="w-5 h-5"
             fill="none"
@@ -296,17 +333,187 @@ function MealCard({ meal }) {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
             />
           </svg>
-          View Details
+          {item.isAvailable ? "Mark Unavailable" : "Mark Available"}
         </button>
+      </div>
+    </div>
+  );
+}
+
+// Edit Modal Component
+function EditModal({ item, categories, onSave, onClose }) {
+  const [formData, setFormData] = useState({
+    name: item.name,
+    price: item.price,
+    category: item.category?._id || "",
+    description: item.description || "",
+    isAvailable: item.isAvailable,
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-gray-800">Edit Menu Item</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700">
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+          {/* Image Preview */}
+          {item.image && (
+            <div className="mb-6">
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-full h-48 object-cover rounded-xl"
+              />
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {/* Name */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Item Name
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
+                required
+              />
+            </div>
+
+            {/* Price and Category */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Price ($)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.price}
+                  onChange={(e) =>
+                    setFormData({ ...formData, price: Number(e.target.value) })
+                  }
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Category
+                </label>
+                <select
+                  value={formData.category}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
+                  required>
+                  <option value="">Select Category</option>
+                  {categories.map((cat) => (
+                    <option key={cat._id} value={cat._id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Description
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
+                rows="4"
+              />
+            </div>
+
+            {/* Availability */}
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                checked={formData.isAvailable}
+                onChange={(e) =>
+                  setFormData({ ...formData, isAvailable: e.target.checked })
+                }
+                className="w-5 h-5 text-[#0d5f4e] rounded focus:ring-[#0d5f4e]"
+              />
+              <label className="ml-3 text-sm font-semibold text-gray-700">
+                Available for ordering
+              </label>
+            </div>
+
+            {/* Ingredients (Read-only) */}
+            {item.ingredients && item.ingredients.length > 0 && (
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Ingredients (from API - read only)
+                </label>
+                <div className="flex flex-wrap gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                  {item.ingredients.map((ing, idx) => (
+                    <span
+                      key={idx}
+                      className="px-2.5 py-1 bg-white text-gray-700 text-xs rounded-full border border-gray-200">
+                      {ing}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 mt-6">
+            <button
+              type="submit"
+              className="flex-1 bg-[#0d5f4e] text-white py-3 rounded-xl font-semibold hover:bg-[#0f7a62] transition">
+              Save Changes
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-xl font-semibold hover:bg-gray-300 transition">
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -120,11 +120,45 @@ export default function KitchenScreen() {
                 {order.items?.map((item, i) => (
                   <div
                     key={i}
-                    className="flex justify-between items-center bg-gray-50 p-2 rounded border border-gray-200">
-                    <span className="text-gray-800">{item.menuItem?.name}</span>
-                    <span className="bg-[#d4a843] text-white px-2 py-1 rounded-full text-sm font-bold">
-                      x{item.quantity}
-                    </span>
+                    className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                    <div className="flex items-center gap-3 p-2">
+                      {item.menuItem?.image && (
+                        <img
+                          src={item.menuItem.image}
+                          alt={item.menuItem.name}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start">
+                          <span className="text-gray-800 font-medium">
+                            {item.menuItem?.name}
+                          </span>
+                          <span className="bg-[#d4a843] text-white px-2 py-1 rounded-full text-sm font-bold ml-2">
+                            x{item.quantity}
+                          </span>
+                        </div>
+                        {item.menuItem?.ingredients &&
+                          item.menuItem.ingredients.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {item.menuItem.ingredients
+                                .slice(0, 4)
+                                .map((ing, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="text-xs bg-white text-gray-600 px-1.5 py-0.5 rounded border border-gray-200">
+                                    {ing}
+                                  </span>
+                                ))}
+                              {item.menuItem.ingredients.length > 4 && (
+                                <span className="text-xs text-gray-500">
+                                  +{item.menuItem.ingredients.length - 4} more
+                                </span>
+                              )}
+                            </div>
+                          )}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
