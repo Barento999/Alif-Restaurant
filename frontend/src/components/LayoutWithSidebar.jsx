@@ -29,7 +29,7 @@ export default function LayoutWithSidebar() {
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
       {/* Main Content */}
-      <div className="lg:pl-56">
+      <div className="lg:pl-72">
         {/* Top Bar */}
         <header className="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-sm">
           <div className="flex items-center justify-between h-16 px-4 lg:px-8">
@@ -210,7 +210,9 @@ export default function LayoutWithSidebar() {
 
         {/* Page Content */}
         <main className="p-4 lg:p-8">
-          <Outlet />
+          <div className="max-w-7xl mx-auto">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

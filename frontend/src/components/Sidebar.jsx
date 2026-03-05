@@ -232,7 +232,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         />
       )}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-56 bg-[#0d5f4e] transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
+        className={`fixed top-0 left-0 z-50 h-screen w-72 bg-[#0d5f4e] transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
         <div className="flex items-center justify-between h-24 px-6">
           <div className="flex items-center space-x-3">
             <div className="w-14 h-14 bg-[#d4a843] rounded-2xl flex items-center justify-center">
@@ -240,12 +240,19 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                 className="w-8 h-8 text-[#0d5f4e]"
                 fill="none"
                 stroke="currentColor"
+                strokeWidth={2.5}
                 viewBox="0 0 24 24">
+                {/* Fork */}
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  d="M8 2v7m0 0v13m0-13c-1.5 0-2-1-2-2V2m2 7c1.5 0 2-1 2-2V2M6 2h4"
+                />
+                {/* Knife */}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16 2l-2 8m0 0l-1 12m1-12l2-8"
                 />
               </svg>
             </div>
