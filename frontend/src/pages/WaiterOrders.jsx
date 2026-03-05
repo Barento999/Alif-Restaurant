@@ -95,14 +95,12 @@ export default function WaiterOrders() {
   const statusOptions = ["pending", "preparing", "ready", "served", "paid"];
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-          My Orders
-        </h1>
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">My Orders</h1>
         <button
           onClick={() => dispatch(fetchOrders())}
-          className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+          className="flex items-center space-x-2 bg-[#0d5f4e] text-white px-6 py-2.5 rounded-xl hover:bg-[#0f7a62] font-medium transition">
           <svg
             className="w-5 h-5"
             fill="none"
@@ -120,13 +118,13 @@ export default function WaiterOrders() {
       </div>
 
       {/* Status Filter */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 mb-6">
         <button
           onClick={() => setSelectedStatus("all")}
-          className={`px-4 py-2 rounded-lg font-medium transition ${
+          className={`px-4 py-2 rounded-xl font-medium transition ${
             selectedStatus === "all"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+              ? "bg-[#0d5f4e] text-white"
+              : "bg-white border border-gray-200 text-gray-700 hover:border-[#0d5f4e] hover:bg-gray-50"
           }`}>
           All ({myOrders.length})
         </button>
@@ -134,10 +132,10 @@ export default function WaiterOrders() {
           <button
             key={status}
             onClick={() => setSelectedStatus(status)}
-            className={`px-4 py-2 rounded-lg font-medium capitalize transition ${
+            className={`px-4 py-2 rounded-xl font-medium capitalize transition ${
               selectedStatus === status
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                ? "bg-[#0d5f4e] text-white"
+                : "bg-white border border-gray-200 text-gray-700 hover:border-[#0d5f4e] hover:bg-gray-50"
             }`}>
             {status} ({myOrders.filter((o) => o.status === status).length})
           </button>
@@ -145,9 +143,9 @@ export default function WaiterOrders() {
       </div>
 
       {/* Orders Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredOrders.length === 0 ? (
-          <div className="col-span-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
+          <div className="col-span-full bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
             <svg
               className="w-16 h-16 mx-auto mb-4 opacity-50 text-gray-400"
               fill="none"
@@ -160,21 +158,19 @@ export default function WaiterOrders() {
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <p className="text-lg font-medium text-gray-500 dark:text-gray-400">
-              No orders found
-            </p>
+            <p className="text-lg font-medium text-gray-500">No orders found</p>
           </div>
         ) : (
           filteredOrders.map((order) => (
             <div
               key={order._id}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-              <div className="flex justify-between items-start mb-4">
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+              <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+                  <h3 className="text-lg font-bold text-gray-800">
                     {order.orderNumber}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-gray-500">
                     {new Date(order.createdAt).toLocaleString()}
                   </p>
                 </div>
@@ -184,50 +180,46 @@ export default function WaiterOrders() {
                 </span>
               </div>
 
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Table:
-                  </span>
-                  <span className="font-semibold text-gray-800 dark:text-white">
+              <div className="space-y-2 mb-3">
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-600">Table:</span>
+                  <span className="font-semibold text-gray-800">
                     {order.table?.tableNumber}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Items:
-                  </span>
-                  <span className="font-semibold text-gray-800 dark:text-white">
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-600">Items:</span>
+                  <span className="font-semibold text-gray-800">
                     {order.items?.length || 0}
                   </span>
                 </div>
               </div>
 
               {/* Items List */}
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4 max-h-48 overflow-y-auto space-y-2">
+              <div className="bg-gray-50 rounded-lg p-2 mb-3 max-h-40 overflow-y-auto space-y-1.5">
                 {order.items?.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 bg-white dark:bg-gray-600 p-2 rounded">
+                    className="flex items-center gap-2 bg-white p-2 rounded border border-gray-100">
                     {item.menuItem?.image && (
                       <img
                         src={item.menuItem.image}
                         alt={item.menuItem.name}
-                        className="w-12 h-12 object-cover rounded"
+                        className="w-10 h-10 object-cover rounded"
                       />
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start">
-                        <span className="text-sm text-gray-800 dark:text-white font-medium truncate">
+                        <span className="text-xs text-gray-800 font-medium truncate">
                           {item.menuItem?.name}
                         </span>
-                        <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+                        <span className="text-xs text-gray-600 ml-2">
                           x{item.quantity}
                         </span>
                       </div>
                       {item.menuItem?.ingredients &&
                         item.menuItem.ingredients.length > 0 && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          <p className="text-xs text-gray-500 truncate">
                             {item.menuItem.ingredients.slice(0, 3).join(", ")}
                             {item.menuItem.ingredients.length > 3 && "..."}
                           </p>
@@ -239,10 +231,8 @@ export default function WaiterOrders() {
 
               {/* Notes */}
               {order.notes && (
-                <div className="bg-yellow-50 dark:bg-yellow-900 border-l-4 border-yellow-500 p-2 mb-4">
-                  <p className="text-xs text-yellow-800 dark:text-yellow-200">
-                    {order.notes}
-                  </p>
+                <div className="bg-yellow-50 border-l-4 border-yellow-500 p-2 mb-3 rounded">
+                  <p className="text-xs text-yellow-800">{order.notes}</p>
                 </div>
               )}
 
@@ -250,9 +240,9 @@ export default function WaiterOrders() {
               {order.status === "ready" && (
                 <button
                   onClick={() => handleMarkServed(order._id)}
-                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all flex items-center justify-center space-x-2">
+                  className="w-full bg-[#0d5f4e] text-white py-2.5 rounded-xl font-semibold hover:bg-[#0f7a62] transition flex items-center justify-center space-x-2 text-sm">
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24">
@@ -269,22 +259,22 @@ export default function WaiterOrders() {
 
               {/* Status Info */}
               {order.status === "pending" && (
-                <div className="text-center text-sm text-yellow-600 dark:text-yellow-400">
+                <div className="text-center text-xs text-yellow-600 font-medium">
                   Waiting for kitchen...
                 </div>
               )}
               {order.status === "preparing" && (
-                <div className="text-center text-sm text-blue-600 dark:text-blue-400">
+                <div className="text-center text-xs text-blue-600 font-medium">
                   Kitchen is preparing...
                 </div>
               )}
               {order.status === "served" && (
-                <div className="text-center text-sm text-purple-600 dark:text-purple-400">
+                <div className="text-center text-xs text-purple-600 font-medium">
                   Waiting for payment...
                 </div>
               )}
               {order.status === "paid" && (
-                <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+                <div className="text-center text-xs text-gray-600 font-medium">
                   Completed
                 </div>
               )}
