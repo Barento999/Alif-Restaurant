@@ -13,6 +13,7 @@ import OrderManagement from "./pages/OrderManagement";
 import WaiterOrders from "./pages/WaiterOrders";
 import CashierOrders from "./pages/CashierOrders";
 import Profile from "./pages/Profile";
+import LandingPage from "./pages/LandingPage";
 import LayoutWithSidebar from "./components/LayoutWithSidebar";
 
 const PrivateRoute = ({ children, roles }) => {
@@ -28,19 +29,18 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route
-          path="/"
           element={
             <PrivateRoute>
               <LayoutWithSidebar />
             </PrivateRoute>
           }>
-          <Route index element={<Navigate to="/dashboard" />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="profile" element={<Profile />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
           <Route
-            path="pos"
+            path="/pos"
             element={
               <PrivateRoute roles={["manager", "cashier", "waiter"]}>
                 <POSScreen />
@@ -48,7 +48,7 @@ function App() {
             }
           />
           <Route
-            path="my-orders"
+            path="/my-orders"
             element={
               <PrivateRoute roles={["waiter"]}>
                 <WaiterOrders />
@@ -56,7 +56,7 @@ function App() {
             }
           />
           <Route
-            path="payments"
+            path="/payments"
             element={
               <PrivateRoute roles={["cashier"]}>
                 <CashierOrders />
@@ -64,7 +64,7 @@ function App() {
             }
           />
           <Route
-            path="kitchen"
+            path="/kitchen"
             element={
               <PrivateRoute roles={["kitchen"]}>
                 <KitchenScreen />
@@ -72,7 +72,7 @@ function App() {
             }
           />
           <Route
-            path="menu"
+            path="/menu"
             element={
               <PrivateRoute roles={["admin", "manager"]}>
                 <MenuManagement />
@@ -80,7 +80,7 @@ function App() {
             }
           />
           <Route
-            path="reports"
+            path="/reports"
             element={
               <PrivateRoute roles={["admin", "manager"]}>
                 <Reports />
@@ -88,7 +88,7 @@ function App() {
             }
           />
           <Route
-            path="tables"
+            path="/tables"
             element={
               <PrivateRoute roles={["admin", "manager"]}>
                 <TableManagement />
@@ -96,7 +96,7 @@ function App() {
             }
           />
           <Route
-            path="inventory"
+            path="/inventory"
             element={
               <PrivateRoute roles={["admin", "manager"]}>
                 <Inventory />
@@ -104,7 +104,7 @@ function App() {
             }
           />
           <Route
-            path="users"
+            path="/users"
             element={
               <PrivateRoute roles={["admin"]}>
                 <UserManagement />
@@ -112,7 +112,7 @@ function App() {
             }
           />
           <Route
-            path="orders"
+            path="/orders"
             element={
               <PrivateRoute roles={["admin", "manager"]}>
                 <OrderManagement />
