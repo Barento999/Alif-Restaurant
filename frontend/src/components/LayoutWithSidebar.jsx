@@ -31,7 +31,7 @@ export default function LayoutWithSidebar() {
       {/* Main Content */}
       <div className="lg:pl-72">
         {/* Top Bar */}
-        <header className="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-sm">
+        <header className="sticky top-0 z-30 bg-[#f8f9fa] border-b border-gray-200">
           <div className="flex items-center justify-between h-20 px-6 lg:px-10">
             {/* Mobile Menu Button */}
             <button
@@ -57,10 +57,10 @@ export default function LayoutWithSidebar() {
                 <input
                   type="text"
                   placeholder="Search orders, reservations, menu items..."
-                  className="w-full pl-12 pr-6 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-base text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent focus:bg-white transition-all"
+                  className="w-full pl-12 pr-6 py-3.5 bg-white border-2 border-[#d4a843] rounded-full text-base text-gray-600 placeholder-gray-400 focus:outline-none focus:border-[#c09838] transition-all"
                 />
                 <svg
-                  className="absolute left-4 top-4 w-5 h-5 text-gray-400"
+                  className="absolute left-4 top-4 w-6 h-6 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24">
@@ -75,9 +75,9 @@ export default function LayoutWithSidebar() {
             </div>
 
             {/* Right Side Actions */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
               {/* Notification bell with badge */}
-              <button className="relative p-3 text-gray-600 hover:text-[#0d5f4e] hover:bg-gray-50 rounded-xl transition-colors">
+              <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -90,16 +90,16 @@ export default function LayoutWithSidebar() {
                     d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
                   />
                 </svg>
-                <span className="absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#d4a843] opacity-75 animate-ping"></span>
-                  <span className="relative inline-flex items-center justify-center rounded-full h-5 w-5 bg-[#d4a843] text-white text-xs font-bold">
+                <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                  <span className="relative inline-flex items-center justify-center rounded-full h-5 w-5 bg-yellow-400 text-white text-xs font-bold">
                     3
                   </span>
                 </span>
               </button>
 
               {/* Message icon */}
-              <button className="p-3 text-gray-600 hover:text-[#0d5f4e] hover:bg-gray-50 rounded-xl transition-colors">
+              <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -115,7 +115,7 @@ export default function LayoutWithSidebar() {
               </button>
 
               {/* Date Display */}
-              <div className="hidden md:flex items-center px-6 py-3 bg-[#0d5f4e] text-white rounded-xl text-base font-semibold shadow-sm">
+              <div className="hidden md:flex items-center px-5 py-2.5 bg-[#0d5f4e] text-white rounded-xl text-sm font-medium shadow-sm">
                 {new Date().toLocaleDateString("en-US", {
                   weekday: "long",
                   month: "long",
