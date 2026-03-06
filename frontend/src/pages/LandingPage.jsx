@@ -1,16 +1,41 @@
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { token } = useSelector((state) => state.auth);
+  const [featuredDishes, setFeaturedDishes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (token) {
       navigate("/dashboard");
     }
   }, [token, navigate]);
+
+  useEffect(() => {
+    fetchFeaturedDishes();
+  }, []);
+
+  const fetchFeaturedDishes = async () => {
+    try {
+      const response = await axios.get("/api/menu/api/all");
+      if (response.data.success) {
+        // Get 8 random dishes
+        const allDishes = response.data.data;
+        const shuffled = allDishes.sort(() => 0.5 - Math.random());
+        setFeaturedDishes(shuffled.slice(0, 8));
+      }
+    } catch (error) {
+      console.error("Error fetching dishes:", error);
+      // Use fallback static dishes if API fails
+      setFeaturedDishes([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#f5f5f0] relative overflow-hidden">
@@ -319,87 +344,67 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Ethiopian Injera Platter",
-                cuisine: "Ethiopian",
-                price: "$18.99",
-                image:
-                  "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=600&q=80",
-                description:
-                  "Traditional injera with assorted stews and vegetables",
-              },
-              {
-                name: "Grilled Lamb Chops",
-                cuisine: "Middle Eastern",
-                price: "$24.99",
-                image:
-                  "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=600&q=80",
-                description:
-                  "Tender lamb chops marinated in Mediterranean spices",
-              },
-              {
-                name: "Beef Burger Deluxe",
-                cuisine: "American",
-                price: "$16.99",
-                image:
-                  "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80",
-                description: "Angus beef patty with premium toppings and fries",
-              },
-              {
-                name: "Seafood Paella",
-                cuisine: "Spanish",
-                price: "$28.99",
-                image:
-                  "https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=600&q=80",
-                description: "Traditional Spanish rice with fresh seafood",
-              },
-              {
-                name: "Sushi Platter",
-                cuisine: "Japanese",
-                price: "$32.99",
-                image:
-                  "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600&q=80",
-                description: "Assorted fresh sushi rolls and sashimi",
-              },
-              {
-                name: "Pasta Carbonara",
-                cuisine: "Italian",
-                price: "$19.99",
-                image:
-                  "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=600&q=80",
-                description: "Creamy pasta with pancetta and parmesan",
-              },
-            ].map((dish, i) => (
-              <div
-                key={i}
-                className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
-                <div className="relative overflow-hidden h-64">
-                  <img
-                    src={dish.image}
-                    alt={dish.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 right-4 bg-[#d4a843] text-white px-4 py-2 rounded-full font-bold">
-                    {dish.price}
+          {loading ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#0d5f4e]"></div>
+            </div>
+          ) : (
+            <>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {featuredDishes.map((dish) => (
+                  <div
+                    key={dish.id}
+                    className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <div className="relative overflow-hidden h-64">
+                      <img
+                        src={dish.image}
+                        alt={dish.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute top-4 right-4 bg-[#d4a843] text-white px-3 py-1 rounded-full text-sm font-bold">
+                        {dish.area}
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <span className="text-sm text-[#0d5f4e] font-semibold">
+                        {dish.category}
+                      </span>
+                      <h3 className="text-xl font-bold text-gray-800 mt-2 mb-3 line-clamp-1">
+                        {dish.name}
+                      </h3>
+                      <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                        {dish.description?.substring(0, 100)}...
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="p-6">
-                  <span className="text-sm text-[#0d5f4e] font-semibold">
-                    {dish.cuisine}
-                  </span>
-                  <h3 className="text-2xl font-bold text-gray-800 mt-2 mb-3">
-                    {dish.name}
-                  </h3>
-                  <p className="text-gray-600 mb-4">{dish.description}</p>
-                  <button className="w-full bg-[#0d5f4e] text-white py-3 rounded-xl font-semibold hover:bg-[#0f7a62] transition-colors">
-                    Order Now
-                  </button>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+
+              {/* Explore Full Menu Button */}
+              <div className="text-center mt-16">
+                <button
+                  onClick={() => navigate("/menu")}
+                  className="px-12 py-5 bg-[#0d5f4e] text-white rounded-xl font-bold text-xl hover:bg-[#0f7a62] transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 inline-flex items-center gap-3">
+                  Explore Full Menu
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </button>
+                <p className="text-gray-600 mt-4">
+                  Discover 300+ dishes from around the world
+                </p>
+              </div>
+            </>
+          )}
         </div>
       </div>
 

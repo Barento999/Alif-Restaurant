@@ -14,6 +14,7 @@ import WaiterOrders from "./pages/WaiterOrders";
 import CashierOrders from "./pages/CashierOrders";
 import Profile from "./pages/Profile";
 import LandingPage from "./pages/LandingPage";
+import PublicMenu from "./pages/PublicMenu";
 import LayoutWithSidebar from "./components/LayoutWithSidebar";
 
 const PrivateRoute = ({ children, roles }) => {
@@ -30,6 +31,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/menu" element={<PublicMenu />} />
         <Route path="/login" element={<Login />} />
         <Route
           element={

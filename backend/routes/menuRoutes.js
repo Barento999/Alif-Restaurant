@@ -17,7 +17,10 @@ router.post("/", protect, authorize("admin", "manager"), createMenuItem);
 router.put("/:id", protect, authorize("admin", "manager"), updateMenuItem);
 router.delete("/:id", protect, authorize("admin", "manager"), deleteMenuItem);
 
-// API import routes
+// Public API route for menu display (no auth required)
+router.get("/api/all", getAllMealsFromAPI);
+
+// Protected API import routes
 router.get(
   "/api/search",
   protect,
@@ -30,6 +33,5 @@ router.post(
   authorize("admin", "manager"),
   importMealFromAPI,
 );
-router.get("/api/all", protect, getAllMealsFromAPI);
 
 export default router;
