@@ -1674,7 +1674,9 @@ export default function LandingPage() {
       </div>
 
       {/* Contact Section */}
-      <footer className="relative z-10 bg-white border-t border-gray-200 py-12" id="contact">
+      <footer
+        className="relative z-10 bg-white border-t border-gray-200 py-12"
+        id="contact">
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-8">
             <div className="md:col-span-2">
@@ -1694,73 +1696,135 @@ export default function LandingPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-[#0d5f4e]">Alif Restaurant</h3>
-                  <p className="text-sm text-[#d4a843] font-medium">World Flavors, One Place</p>
+                  <h3 className="text-2xl font-bold text-[#0d5f4e]">
+                    Alif Restaurant
+                  </h3>
+                  <p className="text-sm text-[#d4a843] font-medium">
+                    World Flavors, One Place
+                  </p>
                 </div>
               </div>
               <p className="text-gray-600 mb-4">
-                Experience authentic international cuisine in an elegant atmosphere. From Ethiopian specialties to Italian classics, we bring the world to your table.
+                Experience authentic international cuisine in an elegant
+                atmosphere. From Ethiopian specialties to Italian classics, we
+                bring the world to your table.
               </p>
             </div>
-            
+
             <div>
-              <h4 className="text-lg font-bold text-gray-800 mb-4">Quick Links</h4>
+              <h4 className="text-lg font-bold text-gray-800 mb-4">
+                Quick Links
+              </h4>
               <ul className="space-y-2">
-                {['Menu', 'About Us', 'Gallery', 'Reservations', 'Contact'].map((link) => (
-                  <li key={link}>
-                    <a href="#" className="text-gray-600 hover:text-[#0d5f4e] transition-colors">
-                      {link}
-                    </a>
-                  </li>
-                ))}
+                {["Menu", "About Us", "Gallery", "Reservations", "Contact"].map(
+                  (link) => (
+                    <li key={link}>
+                      <a
+                        href="#"
+                        className="text-gray-600 hover:text-[#0d5f4e] transition-colors">
+                        {link}
+                      </a>
+                    </li>
+                  ),
+                )}
               </ul>
             </div>
-            
+
             <div>
-              <h4 className="text-lg font-bold text-gray-800 mb-4">Contact Us</h4>
+              <h4 className="text-lg font-bold text-gray-800 mb-4">
+                Contact Us
+              </h4>
               <ul className="space-y-3 text-gray-600">
                 <li className="flex items-start gap-2">
-                  <svg className="w-5 h-5 text-[#0d5f4e] mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <svg
+                    className="w-5 h-5 text-[#0d5f4e] mt-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
                   </svg>
-                  <span>123 Main Street<br />Addis Ababa, Ethiopia</span>
+                  <span>
+                    123 Main Street
+                    <br />
+                    Addis Ababa, Ethiopia
+                  </span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-[#0d5f4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  <svg
+                    className="w-5 h-5 text-[#0d5f4e]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                    />
                   </svg>
                   <span>+251 11 123 4567</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-[#0d5f4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  <svg
+                    className="w-5 h-5 text-[#0d5f4e]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
                   </svg>
                   <span>info@alifrestaurant.com</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-[#0d5f4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-5 h-5 text-[#0d5f4e]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                   <span>Daily: 11:00 AM - 11:00 PM</span>
                 </li>
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-gray-200 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-gray-600 text-sm">
                 © 2026 Alif Restaurant. All rights reserved.
               </p>
               <div className="flex gap-4">
-                {['Facebook', 'Instagram', 'Twitter'].map((social) => (
+                {["Facebook", "Instagram", "Twitter"].map((social) => (
                   <a
                     key={social}
                     href="#"
                     className="w-10 h-10 bg-[#0d5f4e] rounded-full flex items-center justify-center text-white hover:bg-[#0f7a62] transition-colors">
                     <span className="sr-only">{social}</span>
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <svg
+                      className="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 24 24">
                       <path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12c0-5.523-4.477-10-10-10z" />
                     </svg>
                   </a>
@@ -1769,6 +1833,7 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      </footer>>
+      </footer>
+    </div>
   );
 }
