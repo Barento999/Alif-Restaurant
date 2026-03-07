@@ -1,8 +1,15 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import { fetchOrders, updateOrderStatus } from "../features/orders/orderSlice";
+import {
+  fetchOrders,
+  updateOrderStatus,
+  cancelOrder,
+  modifyOrder,
+} from "../features/orders/orderSlice";
+import { fetchMenu } from "../features/menu/menuSlice";
 import api from "../services/api";
+import ModifyOrderModal from "../components/ModifyOrderModal";
 
 export default function OrderManagement() {
   const dispatch = useDispatch();
@@ -10,11 +17,13 @@ export default function OrderManagement() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [modifyingOrder, setModifyingOrder] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [highlightedOrderId, setHighlightedOrderId] = useState(null);
 
   useEffect(() => {
     loadOrders();
+    dispatch(fetchMenu());
   }, [selectedStatus]);
 
   useEffect(() => {
@@ -77,11 +86,49 @@ export default function OrderManagement() {
       ready: "bg-green-100 text-green-800",
       served: "bg-purple-100 text-purple-800",
       paid: "bg-gray-100 text-gray-800",
+      cancelled: "bg-red-100 text-red-800",
     };
     return colors[status] || "bg-gray-100 text-gray-800";
   };
 
-  const statusOptions = ["pending", "preparing", "ready", "served", "paid"];
+  const statusOptions = [
+    "pending",
+    "preparing",
+    "ready",
+    "served",
+    "paid",
+    "cancelled",
+  ];
+
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to cancel this order?")) {
+      return;
+    }
+    try {
+      await dispatch(cancelOrder(orderId)).unwrap();
+      alert("Order cancelled successfully");
+      loadOrders();
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+      alert("Error: " + (error.message || "Failed to cancel order"));
+    }
+  };
+
+  const handleModifyOrder = (order) => {
+    setModifyingOrder(order);
+  };
+
+  const handleSaveModifiedOrder = async (items) => {
+    try {
+      await dispatch(modifyOrder({ id: modifyingOrder._id, items })).unwrap();
+      alert("Order updated successfully");
+      setModifyingOrder(null);
+      loadOrders();
+    } catch (error) {
+      console.error("Error modifying order:", error);
+      alert("Error: " + (error.message || "Failed to modify order"));
+    }
+  };
 
   const filteredOrders = (() => {
     const orderId = searchParams.get("order");
@@ -235,23 +282,45 @@ export default function OrderManagement() {
                     className={`hover:bg-gray-50 transition ${
                       highlightedOrderId === order._id
                         ? "bg-[#d4a843] bg-opacity-20 animate-pulse"
-                        : ""
+                        : order.status === "cancelled"
+                          ? "bg-red-50 opacity-75"
+                          : ""
                     }`}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="font-mono text-sm font-semibold text-gray-900">
+                      <span
+                        className={`font-mono text-sm font-semibold ${
+                          order.status === "cancelled"
+                            ? "text-gray-500 line-through"
+                            : "text-gray-900"
+                        }`}>
                         {order.orderNumber}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td
+                      className={`px-6 py-4 whitespace-nowrap text-sm ${
+                        order.status === "cancelled"
+                          ? "text-gray-500"
+                          : "text-gray-900"
+                      }`}>
                       {order.table?.tableNumber || "N/A"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td
+                      className={`px-6 py-4 whitespace-nowrap text-sm ${
+                        order.status === "cancelled"
+                          ? "text-gray-500"
+                          : "text-gray-900"
+                      }`}>
                       {order.waiter?.name || "N/A"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       {order.items?.length || 0} items
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#0d5f4e]">
+                    <td
+                      className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${
+                        order.status === "cancelled"
+                          ? "text-gray-500 line-through"
+                          : "text-[#0d5f4e]"
+                      }`}>
                       ${order.total?.toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -271,17 +340,33 @@ export default function OrderManagement() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       {new Date(order.createdAt).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                      <button
-                        onClick={() => viewOrderDetails(order)}
-                        className="text-[#0d5f4e] hover:text-[#0f7a62] font-medium">
-                        View
-                      </button>
-                      <button
-                        onClick={() => handleDeleteOrder(order._id)}
-                        className="text-red-600 hover:text-red-700 font-medium">
-                        Delete
-                      </button>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => viewOrderDetails(order)}
+                          className="text-[#0d5f4e] hover:text-[#0f7a62] font-medium">
+                          View
+                        </button>
+                        {order.status === "pending" && (
+                          <>
+                            <button
+                              onClick={() => handleModifyOrder(order)}
+                              className="text-blue-600 hover:text-blue-700 font-medium">
+                              Modify
+                            </button>
+                            <button
+                              onClick={() => handleCancelOrder(order._id)}
+                              className="text-orange-600 hover:text-orange-700 font-medium">
+                              Cancel
+                            </button>
+                          </>
+                        )}
+                        <button
+                          onClick={() => handleDeleteOrder(order._id)}
+                          className="text-red-600 hover:text-red-700 font-medium">
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -443,6 +528,15 @@ export default function OrderManagement() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modify Order Modal */}
+      {modifyingOrder && (
+        <ModifyOrderModal
+          order={modifyingOrder}
+          onClose={() => setModifyingOrder(null)}
+          onSave={handleSaveModifiedOrder}
+        />
       )}
     </div>
   );
