@@ -424,3 +424,64 @@ export const updateOrderNotes = async (req, res) => {
     });
   }
 };
+
+// @desc    Reassign order to different waiter
+// @route   PATCH /api/orders/:id/reassign
+// @access  Private (Manager/Admin)
+export const reassignOrder = async (req, res) => {
+  try {
+    const { waiterId } = req.body;
+
+    if (!waiterId) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a waiter ID",
+      });
+    }
+
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    const previousWaiter = order.waiter;
+
+    // Update waiter
+    order.waiter = waiterId;
+    await order.save();
+
+    const populatedOrder = await Order.findById(order._id)
+      .populate("table")
+      .populate("waiter", "name")
+      .populate("items.menuItem");
+
+    // Log reassignment for audit trail
+    console.log(
+      `[ORDER REASSIGNMENT] Manager: ${req.user.name} (${req.user.role})`,
+    );
+    console.log(`Order: ${order.orderNumber}`);
+    console.log(`Previous Waiter ID: ${previousWaiter}`);
+    console.log(`New Waiter: ${populatedOrder.waiter?.name} (${waiterId})`);
+    console.log(`Timestamp: ${new Date().toISOString()}`);
+
+    // Emit socket event
+    if (req.io) {
+      req.io.emit("orderReassigned", populatedOrder);
+    }
+
+    res.json({
+      success: true,
+      data: populatedOrder,
+      message: "Order reassigned successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

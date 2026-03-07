@@ -32,11 +32,27 @@ export default function OrderManagement() {
   const [bulkAction, setBulkAction] = useState("");
   const [editingNotes, setEditingNotes] = useState(null);
   const [notesText, setNotesText] = useState("");
+  const [reassigningOrder, setReassigningOrder] = useState(null);
+  const [selectedWaiter, setSelectedWaiter] = useState("");
+  const [waiters, setWaiters] = useState([]);
 
   useEffect(() => {
     loadOrders();
     dispatch(fetchMenu());
+    fetchWaiters();
   }, [selectedStatus]);
+
+  const fetchWaiters = async () => {
+    try {
+      const response = await api.get("/users");
+      const waiterList = response.data.data.filter(
+        (u) => u.role === "waiter" || u.role === "manager",
+      );
+      setWaiters(waiterList);
+    } catch (error) {
+      console.error("Error fetching waiters:", error);
+    }
+  };
 
   useEffect(() => {
     // Check if there's an order ID in the URL
@@ -459,6 +475,33 @@ export default function OrderManagement() {
     } catch (error) {
       alert(
         "Error updating notes: " +
+          (error.response?.data?.message || error.message),
+      );
+    }
+  };
+
+  const handleReassignOrder = (order) => {
+    setReassigningOrder(order);
+    setSelectedWaiter(order.waiter?._id || "");
+  };
+
+  const handleSaveReassignment = async () => {
+    if (!selectedWaiter) {
+      alert("Please select a waiter");
+      return;
+    }
+
+    try {
+      await api.patch(`/orders/${reassigningOrder._id}/reassign`, {
+        waiterId: selectedWaiter,
+      });
+      loadOrders();
+      setReassigningOrder(null);
+      setSelectedWaiter("");
+      alert("Order reassigned successfully");
+    } catch (error) {
+      alert(
+        "Error reassigning order: " +
           (error.response?.data?.message || error.message),
       );
     }
@@ -1264,6 +1307,14 @@ export default function OrderManagement() {
                             className="px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-medium transition">
                             Notes
                           </button>
+                          {(user?.role === "admin" ||
+                            user?.role === "manager") && (
+                            <button
+                              onClick={() => handleReassignOrder(order)}
+                              className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition">
+                              Reassign
+                            </button>
+                          )}
                           {user?.role === "admin" && (
                             <button
                               onClick={() => handleDeleteOrder(order._id)}
@@ -1290,6 +1341,14 @@ export default function OrderManagement() {
                             className="px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-medium transition">
                             Notes
                           </button>
+                          {(user?.role === "admin" ||
+                            user?.role === "manager") && (
+                            <button
+                              onClick={() => handleReassignOrder(order)}
+                              className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition">
+                              Reassign
+                            </button>
+                          )}
                           <button
                             onClick={() => handleModifyOrder(order)}
                             className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium transition">
@@ -1326,6 +1385,14 @@ export default function OrderManagement() {
                             className="px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-medium transition">
                             Notes
                           </button>
+                          {(user?.role === "admin" ||
+                            user?.role === "manager") && (
+                            <button
+                              onClick={() => handleReassignOrder(order)}
+                              className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition">
+                              Reassign
+                            </button>
+                          )}
                           {user?.role === "admin" && (
                             <button
                               onClick={() => handleDeleteOrder(order._id)}
@@ -1741,6 +1808,88 @@ export default function OrderManagement() {
                 onClick={handleSaveNotes}
                 className="flex-1 px-4 py-2.5 bg-[#0d5f4e] text-white rounded-lg hover:bg-[#0f7a62] font-medium transition">
                 Save Notes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reassign Order Modal */}
+      {reassigningOrder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-indigo-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">
+                    Reassign Order
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {reassigningOrder.orderNumber} - Table{" "}
+                    {reassigningOrder.table?.tableNumber}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4">
+                <p className="text-sm text-blue-800">
+                  <strong>Current Waiter:</strong>{" "}
+                  {reassigningOrder.waiter?.name || "Unknown"}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Select New Waiter *
+                </label>
+                <select
+                  value={selectedWaiter}
+                  onChange={(e) => setSelectedWaiter(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  autoFocus>
+                  <option value="">-- Select Waiter --</option>
+                  {waiters.map((waiter) => (
+                    <option key={waiter._id} value={waiter._id}>
+                      {waiter.name} ({waiter.role})
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-500 mt-1">
+                  This will transfer order responsibility to the selected waiter
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex gap-3">
+              <button
+                onClick={() => {
+                  setReassigningOrder(null);
+                  setSelectedWaiter("");
+                }}
+                className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition">
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveReassignment}
+                disabled={!selectedWaiter}
+                className="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed">
+                Reassign Order
               </button>
             </div>
           </div>
