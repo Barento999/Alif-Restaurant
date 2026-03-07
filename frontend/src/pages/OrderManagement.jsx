@@ -464,6 +464,217 @@ export default function OrderManagement() {
     }
   };
 
+  // Print receipt for individual order
+  const printReceipt = (order) => {
+    const printWindow = window.open("", "_blank");
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Receipt - ${order.orderNumber}</title>
+        <style>
+          @media print {
+            body { margin: 0; }
+            .no-print { display: none !important; }
+          }
+          body {
+            font-family: 'Courier New', monospace;
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 10px;
+            font-size: 12px;
+          }
+          .receipt-header {
+            text-align: center;
+            border-bottom: 2px dashed #000;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+          }
+          .restaurant-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+          }
+          .receipt-info {
+            margin: 10px 0;
+            font-size: 11px;
+          }
+          .receipt-info div {
+            display: flex;
+            justify-content: space-between;
+            margin: 3px 0;
+          }
+          .items-section {
+            border-top: 1px dashed #000;
+            border-bottom: 1px dashed #000;
+            padding: 10px 0;
+            margin: 10px 0;
+          }
+          .item-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+          }
+          .item-name {
+            flex: 1;
+          }
+          .item-qty {
+            width: 30px;
+            text-align: center;
+          }
+          .item-price {
+            width: 60px;
+            text-align: right;
+          }
+          .totals-section {
+            margin: 10px 0;
+          }
+          .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 3px 0;
+          }
+          .total-row.grand-total {
+            font-size: 14px;
+            font-weight: bold;
+            border-top: 2px solid #000;
+            padding-top: 5px;
+            margin-top: 5px;
+          }
+          .notes-section {
+            border-top: 1px dashed #000;
+            padding-top: 10px;
+            margin-top: 10px;
+            font-size: 11px;
+          }
+          .footer {
+            text-align: center;
+            border-top: 2px dashed #000;
+            padding-top: 10px;
+            margin-top: 15px;
+            font-size: 11px;
+          }
+          .print-button {
+            margin: 20px auto;
+            display: block;
+            padding: 10px 20px;
+            background: #0d5f4e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+          }
+          .print-button:hover {
+            background: #0f7a62;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="receipt-header">
+          <div class="restaurant-name">RESTAURANT</div>
+          <div>Modern Restaurant Management</div>
+          <div>Thank You For Your Order!</div>
+        </div>
+
+        <div class="receipt-info">
+          <div>
+            <span>Order #:</span>
+            <span><strong>${order.orderNumber}</strong></span>
+          </div>
+          <div>
+            <span>Date:</span>
+            <span>${new Date(order.createdAt).toLocaleString()}</span>
+          </div>
+          <div>
+            <span>Table:</span>
+            <span>${order.table?.tableNumber || "N/A"}</span>
+          </div>
+          <div>
+            <span>Waiter:</span>
+            <span>${order.waiter?.name || "N/A"}</span>
+          </div>
+          <div>
+            <span>Status:</span>
+            <span style="text-transform: uppercase;"><strong>${order.status}</strong></span>
+          </div>
+        </div>
+
+        <div class="items-section">
+          <div style="font-weight: bold; margin-bottom: 8px;">ORDER ITEMS</div>
+          ${order.items
+            ?.map(
+              (item) => `
+            <div class="item-row">
+              <div class="item-name">${item.menuItem?.name || "Unknown Item"}</div>
+              <div class="item-qty">x${item.quantity}</div>
+              <div class="item-price">$${(item.price * item.quantity).toFixed(2)}</div>
+            </div>
+            ${item.menuItem?.ingredients && item.menuItem.ingredients.length > 0 ? `<div style="font-size: 10px; color: #666; margin-left: 10px; margin-top: -3px;">${item.menuItem.ingredients.slice(0, 3).join(", ")}${item.menuItem.ingredients.length > 3 ? "..." : ""}</div>` : ""}
+          `,
+            )
+            .join("")}
+        </div>
+
+        ${
+          order.notes
+            ? `
+        <div class="notes-section">
+          <div style="font-weight: bold; margin-bottom: 5px;">SPECIAL INSTRUCTIONS:</div>
+          <div>${order.notes}</div>
+        </div>
+        `
+            : ""
+        }
+
+        <div class="totals-section">
+          <div class="total-row">
+            <span>Subtotal:</span>
+            <span>$${order.subtotal?.toFixed(2)}</span>
+          </div>
+          <div class="total-row">
+            <span>Tax (10%):</span>
+            <span>$${order.tax?.toFixed(2)}</span>
+          </div>
+          ${
+            order.discount > 0
+              ? `
+          <div class="total-row">
+            <span>Discount:</span>
+            <span>-$${order.discount?.toFixed(2)}</span>
+          </div>
+          `
+              : ""
+          }
+          <div class="total-row grand-total">
+            <span>TOTAL:</span>
+            <span>$${order.total?.toFixed(2)}</span>
+          </div>
+        </div>
+
+        <div class="footer">
+          <div style="margin-bottom: 5px;">Thank you for dining with us!</div>
+          <div>Please come again</div>
+          <div style="margin-top: 10px; font-size: 10px;">
+            Printed: ${new Date().toLocaleString()}
+          </div>
+        </div>
+
+        <button class="print-button no-print" onclick="window.print()">
+          Print Receipt
+        </button>
+        <button class="print-button no-print" onclick="window.close()" style="background: #6b7280;">
+          Close
+        </button>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  };
+
   const handleBulkAction = async () => {
     if (selectedOrders.length === 0) {
       alert("Please select orders first");
@@ -1044,6 +1255,11 @@ export default function OrderManagement() {
                             View
                           </button>
                           <button
+                            onClick={() => printReceipt(order)}
+                            className="px-3 py-1.5 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-medium transition">
+                            Print
+                          </button>
+                          <button
                             onClick={() => handleEditNotes(order)}
                             className="px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-medium transition">
                             Notes
@@ -1063,6 +1279,11 @@ export default function OrderManagement() {
                             onClick={() => viewOrderDetails(order)}
                             className="px-3 py-1.5 rounded-lg bg-[#0d5f4e] bg-opacity-10 text-[#0d5f4e] hover:bg-opacity-20 font-medium transition">
                             View
+                          </button>
+                          <button
+                            onClick={() => printReceipt(order)}
+                            className="px-3 py-1.5 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-medium transition">
+                            Print
                           </button>
                           <button
                             onClick={() => handleEditNotes(order)}
@@ -1094,6 +1315,11 @@ export default function OrderManagement() {
                             onClick={() => viewOrderDetails(order)}
                             className="px-3 py-1.5 rounded-lg bg-[#0d5f4e] bg-opacity-10 text-[#0d5f4e] hover:bg-opacity-20 font-medium transition">
                             View
+                          </button>
+                          <button
+                            onClick={() => printReceipt(order)}
+                            className="px-3 py-1.5 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-medium transition">
+                            Print
                           </button>
                           <button
                             onClick={() => handleEditNotes(order)}
