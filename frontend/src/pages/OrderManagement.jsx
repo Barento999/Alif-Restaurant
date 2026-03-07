@@ -37,6 +37,7 @@ export default function OrderManagement() {
   const [waiters, setWaiters] = useState([]);
   const [priorityOrder, setPriorityOrder] = useState(null);
   const [selectedPriority, setSelectedPriority] = useState("");
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   useEffect(() => {
     loadOrders();
@@ -1395,135 +1396,528 @@ export default function OrderManagement() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       {order.status === "cancelled" ? (
                         // Cancelled orders: minimal actions
-                        <div className="flex items-center gap-2">
+                        <div className="relative">
                           <button
-                            onClick={() => viewOrderDetails(order)}
-                            className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium transition">
-                            View
+                            onClick={() =>
+                              setOpenDropdown(
+                                openDropdown === order._id ? null : order._id,
+                              )
+                            }
+                            className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium transition flex items-center gap-2">
+                            Actions
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 9l-7 7-7-7"
+                              />
+                            </svg>
                           </button>
-                          <button
-                            onClick={() => printReceipt(order)}
-                            className="px-3 py-1.5 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-medium transition">
-                            Print
-                          </button>
-                          <button
-                            onClick={() => handleEditNotes(order)}
-                            className="px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-medium transition">
-                            Notes
-                          </button>
-                          {(user?.role === "admin" ||
-                            user?.role === "manager") && (
-                            <>
+                          {openDropdown === order._id && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-10">
                               <button
-                                onClick={() => handleReassignOrder(order)}
-                                className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition">
-                                Reassign
+                                onClick={() => {
+                                  viewOrderDetails(order);
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-gray-700">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                  />
+                                </svg>
+                                View Details
                               </button>
                               <button
-                                onClick={() => handleSetPriority(order)}
-                                className="px-3 py-1.5 rounded-lg bg-orange-50 text-orange-700 hover:bg-orange-100 font-medium transition">
-                                Priority
+                                onClick={() => {
+                                  printReceipt(order);
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-purple-700">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                                  />
+                                </svg>
+                                Print Receipt
                               </button>
-                            </>
-                          )}
-                          {user?.role === "admin" && (
-                            <button
-                              onClick={() => handleDeleteOrder(order._id)}
-                              className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-medium transition">
-                              Delete
-                            </button>
+                              <button
+                                onClick={() => {
+                                  handleEditNotes(order);
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-yellow-700">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                  />
+                                </svg>
+                                Edit Notes
+                              </button>
+                              {(user?.role === "admin" ||
+                                user?.role === "manager") && (
+                                <>
+                                  <button
+                                    onClick={() => {
+                                      handleReassignOrder(order);
+                                      setOpenDropdown(null);
+                                    }}
+                                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-indigo-700">
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24">
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                                      />
+                                    </svg>
+                                    Reassign Waiter
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      handleSetPriority(order);
+                                      setOpenDropdown(null);
+                                    }}
+                                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-orange-700">
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24">
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                                      />
+                                    </svg>
+                                    Set Priority
+                                  </button>
+                                </>
+                              )}
+                              {user?.role === "admin" && (
+                                <button
+                                  onClick={() => {
+                                    handleDeleteOrder(order._id);
+                                    setOpenDropdown(null);
+                                  }}
+                                  className="w-full px-4 py-2 text-left hover:bg-red-50 flex items-center gap-2 text-red-600 border-t border-gray-100">
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                  </svg>
+                                  Delete Order
+                                </button>
+                              )}
+                            </div>
                           )}
                         </div>
                       ) : order.status === "pending" ? (
-                        // Pending orders: full action set with better styling
-                        <div className="flex items-center gap-1.5">
+                        // Pending orders: full action set
+                        <div className="relative">
                           <button
-                            onClick={() => viewOrderDetails(order)}
-                            className="px-3 py-1.5 rounded-lg bg-[#0d5f4e] bg-opacity-10 text-[#0d5f4e] hover:bg-opacity-20 font-medium transition">
-                            View
+                            onClick={() =>
+                              setOpenDropdown(
+                                openDropdown === order._id ? null : order._id,
+                              )
+                            }
+                            className="px-4 py-2 rounded-lg bg-[#0d5f4e] text-white hover:bg-[#0f7a62] font-medium transition flex items-center gap-2">
+                            Actions
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 9l-7 7-7-7"
+                              />
+                            </svg>
                           </button>
-                          <button
-                            onClick={() => printReceipt(order)}
-                            className="px-3 py-1.5 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-medium transition">
-                            Print
-                          </button>
-                          <button
-                            onClick={() => handleEditNotes(order)}
-                            className="px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-medium transition">
-                            Notes
-                          </button>
-                          {(user?.role === "admin" ||
-                            user?.role === "manager") && (
-                            <>
+                          {openDropdown === order._id && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-10">
                               <button
-                                onClick={() => handleReassignOrder(order)}
-                                className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition">
-                                Reassign
+                                onClick={() => {
+                                  viewOrderDetails(order);
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-gray-700">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                  />
+                                </svg>
+                                View Details
                               </button>
                               <button
-                                onClick={() => handleSetPriority(order)}
-                                className="px-3 py-1.5 rounded-lg bg-orange-50 text-orange-700 hover:bg-orange-100 font-medium transition">
-                                Priority
+                                onClick={() => {
+                                  printReceipt(order);
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-purple-700">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                                  />
+                                </svg>
+                                Print Receipt
                               </button>
-                            </>
-                          )}
-                          <button
-                            onClick={() => handleModifyOrder(order)}
-                            className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium transition">
-                            Modify
-                          </button>
-                          <button
-                            onClick={() => handleCancelOrder(order._id)}
-                            className="px-3 py-1.5 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 font-medium transition">
-                            Cancel
-                          </button>
-                          {user?.role === "admin" && (
-                            <button
-                              onClick={() => handleDeleteOrder(order._id)}
-                              className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-medium transition">
-                              Delete
-                            </button>
+                              <button
+                                onClick={() => {
+                                  handleModifyOrder(order);
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-blue-700">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                  />
+                                </svg>
+                                Modify Order
+                              </button>
+                              <button
+                                onClick={() => {
+                                  handleEditNotes(order);
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-yellow-700">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                  />
+                                </svg>
+                                Edit Notes
+                              </button>
+                              {(user?.role === "admin" ||
+                                user?.role === "manager") && (
+                                <>
+                                  <button
+                                    onClick={() => {
+                                      handleReassignOrder(order);
+                                      setOpenDropdown(null);
+                                    }}
+                                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-indigo-700">
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24">
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                                      />
+                                    </svg>
+                                    Reassign Waiter
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      handleSetPriority(order);
+                                      setOpenDropdown(null);
+                                    }}
+                                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-orange-700">
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24">
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                                      />
+                                    </svg>
+                                    Set Priority
+                                  </button>
+                                </>
+                              )}
+                              <button
+                                onClick={() => {
+                                  handleCancelOrder(order._id);
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-orange-50 flex items-center gap-2 text-orange-600 border-t border-gray-100">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                  />
+                                </svg>
+                                Cancel Order
+                              </button>
+                              {user?.role === "admin" && (
+                                <button
+                                  onClick={() => {
+                                    handleDeleteOrder(order._id);
+                                    setOpenDropdown(null);
+                                  }}
+                                  className="w-full px-4 py-2 text-left hover:bg-red-50 flex items-center gap-2 text-red-600">
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                  </svg>
+                                  Delete Order
+                                </button>
+                              )}
+                            </div>
                           )}
                         </div>
                       ) : (
-                        // Other statuses: view and delete only
-                        <div className="flex items-center gap-2">
+                        // Other statuses
+                        <div className="relative">
                           <button
-                            onClick={() => viewOrderDetails(order)}
-                            className="px-3 py-1.5 rounded-lg bg-[#0d5f4e] bg-opacity-10 text-[#0d5f4e] hover:bg-opacity-20 font-medium transition">
-                            View
+                            onClick={() =>
+                              setOpenDropdown(
+                                openDropdown === order._id ? null : order._id,
+                              )
+                            }
+                            className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium transition flex items-center gap-2">
+                            Actions
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 9l-7 7-7-7"
+                              />
+                            </svg>
                           </button>
-                          <button
-                            onClick={() => printReceipt(order)}
-                            className="px-3 py-1.5 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-medium transition">
-                            Print
-                          </button>
-                          <button
-                            onClick={() => handleEditNotes(order)}
-                            className="px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-medium transition">
-                            Notes
-                          </button>
-                          {(user?.role === "admin" ||
-                            user?.role === "manager") && (
-                            <>
+                          {openDropdown === order._id && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-10">
                               <button
-                                onClick={() => handleReassignOrder(order)}
-                                className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition">
-                                Reassign
+                                onClick={() => {
+                                  viewOrderDetails(order);
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-gray-700">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                  />
+                                </svg>
+                                View Details
                               </button>
                               <button
-                                onClick={() => handleSetPriority(order)}
-                                className="px-3 py-1.5 rounded-lg bg-orange-50 text-orange-700 hover:bg-orange-100 font-medium transition">
-                                Priority
+                                onClick={() => {
+                                  printReceipt(order);
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-purple-700">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                                  />
+                                </svg>
+                                Print Receipt
                               </button>
-                            </>
-                          )}
-                          {user?.role === "admin" && (
-                            <button
-                              onClick={() => handleDeleteOrder(order._id)}
-                              className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-medium transition">
-                              Delete
-                            </button>
+                              <button
+                                onClick={() => {
+                                  handleEditNotes(order);
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-yellow-700">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                  />
+                                </svg>
+                                Edit Notes
+                              </button>
+                              {(user?.role === "admin" ||
+                                user?.role === "manager") && (
+                                <>
+                                  <button
+                                    onClick={() => {
+                                      handleReassignOrder(order);
+                                      setOpenDropdown(null);
+                                    }}
+                                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-indigo-700">
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24">
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                                      />
+                                    </svg>
+                                    Reassign Waiter
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      handleSetPriority(order);
+                                      setOpenDropdown(null);
+                                    }}
+                                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-orange-700">
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24">
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                                      />
+                                    </svg>
+                                    Set Priority
+                                  </button>
+                                </>
+                              )}
+                              {user?.role === "admin" && (
+                                <button
+                                  onClick={() => {
+                                    handleDeleteOrder(order._id);
+                                    setOpenDropdown(null);
+                                  }}
+                                  className="w-full px-4 py-2 text-left hover:bg-red-50 flex items-center gap-2 text-red-600 border-t border-gray-100">
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                  </svg>
+                                  Delete Order
+                                </button>
+                              )}
+                            </div>
                           )}
                         </div>
                       )}
