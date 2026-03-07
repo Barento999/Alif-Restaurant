@@ -12,6 +12,12 @@ export default function Checkout() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
+  // Promo code state
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState(null);
+  const [promoError, setPromoError] = useState("");
+  const [promoLoading, setPromoLoading] = useState(false);
+
   const [orderData, setOrderData] = useState({
     street: "",
     city: "",
@@ -74,6 +80,48 @@ export default function Checkout() {
     }
   };
 
+  const applyPromoCode = async () => {
+    if (!promoCode.trim()) {
+      setPromoError("Please enter a promo code");
+      return;
+    }
+
+    setPromoError("");
+    setPromoLoading(true);
+
+    try {
+      const token = localStorage.getItem("customerToken");
+      const subtotal = getCartTotal();
+
+      const response = await axios.post(
+        "/api/promos/validate",
+        {
+          code: promoCode.toUpperCase(),
+          orderAmount: subtotal,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      if (response.data.success) {
+        setAppliedPromo(response.data.data);
+        setPromoError("");
+      }
+    } catch (err) {
+      setPromoError(err.response?.data?.message || "Invalid promo code");
+      setAppliedPromo(null);
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
+  const removePromo = () => {
+    setAppliedPromo(null);
+    setPromoCode("");
+    setPromoError("");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -104,9 +152,10 @@ export default function Checkout() {
       }));
 
       const subtotal = getCartTotal();
-      const deliveryFee = 5.0;
-      const tax = subtotal * 0.1;
-      const total = subtotal + deliveryFee + tax;
+      const deliveryFee = appliedPromo?.freeDelivery ? 0 : 5.0;
+      const discount = appliedPromo?.discount || 0;
+      const tax = (subtotal - discount) * 0.1;
+      const total = subtotal - discount + deliveryFee + tax;
 
       const orderPayload = {
         items,
@@ -120,6 +169,8 @@ export default function Checkout() {
         subtotal,
         deliveryFee,
         tax,
+        discount,
+        promoCode: appliedPromo?.code || null,
         total,
         notes: orderData.notes,
         paymentMethod: orderData.paymentMethod,
@@ -450,25 +501,120 @@ export default function Checkout() {
                   ))}
                 </div>
 
+                {/* Promo Code Section */}
+                <div className="border-t border-gray-200 pt-4">
+                  {!appliedPromo ? (
+                    <div className="space-y-3">
+                      <label className="block text-sm font-semibold text-gray-700">
+                        Have a promo code?
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={promoCode}
+                          onChange={(e) =>
+                            setPromoCode(e.target.value.toUpperCase())
+                          }
+                          placeholder="Enter code"
+                          className="flex-1 px-4 py-2 rounded-lg border-2 border-gray-200 focus:border-[#0d5f4e] focus:outline-none transition-colors uppercase"
+                        />
+                        <button
+                          type="button"
+                          onClick={applyPromoCode}
+                          disabled={promoLoading}
+                          className="px-6 py-2 bg-[#0d5f4e] text-white rounded-lg font-semibold hover:bg-[#0f7a62] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                          {promoLoading ? "..." : "Apply"}
+                        </button>
+                      </div>
+                      {promoError && (
+                        <p className="text-sm text-red-600">{promoError}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <svg
+                            className="w-5 h-5 text-green-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span className="font-bold text-green-800">
+                            {appliedPromo.code}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={removePromo}
+                          className="text-red-600 hover:text-red-700 text-sm font-semibold">
+                          Remove
+                        </button>
+                      </div>
+                      <p className="text-sm text-green-700">
+                        {appliedPromo.freeDelivery
+                          ? "Free delivery applied!"
+                          : `$${appliedPromo.discount.toFixed(2)} discount applied!`}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
                 <div className="border-t border-gray-200 pt-4 space-y-3">
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal</span>
                     <span>${getCartTotal().toFixed(2)}</span>
                   </div>
+                  {appliedPromo && appliedPromo.discount > 0 && (
+                    <div className="flex justify-between text-green-600 font-semibold">
+                      <span>Discount ({appliedPromo.code})</span>
+                      <span>-${appliedPromo.discount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-gray-600">
                     <span>Delivery Fee</span>
-                    <span>$5.00</span>
+                    <span
+                      className={
+                        appliedPromo?.freeDelivery
+                          ? "line-through text-gray-400"
+                          : ""
+                      }>
+                      $5.00
+                    </span>
+                    {appliedPromo?.freeDelivery && (
+                      <span className="text-green-600 font-semibold ml-2">
+                        FREE
+                      </span>
+                    )}
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Tax (10%)</span>
-                    <span>${(getCartTotal() * 0.1).toFixed(2)}</span>
+                    <span>
+                      $
+                      {(
+                        (getCartTotal() - (appliedPromo?.discount || 0)) *
+                        0.1
+                      ).toFixed(2)}
+                    </span>
                   </div>
                   <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
                     <span className="text-lg font-bold text-gray-800">
                       Total
                     </span>
                     <span className="text-2xl font-black text-[#0d5f4e]">
-                      ${(getCartTotal() * 1.1 + 5).toFixed(2)}
+                      $
+                      {(
+                        getCartTotal() -
+                        (appliedPromo?.discount || 0) +
+                        (appliedPromo?.freeDelivery ? 0 : 5) +
+                        (getCartTotal() - (appliedPromo?.discount || 0)) * 0.1
+                      ).toFixed(2)}
                     </span>
                   </div>
                 </div>

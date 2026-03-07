@@ -1,5 +1,6 @@
 import CustomerOrder from "../models/CustomerOrder.js";
 import Customer from "../models/Customer.js";
+import Promo from "../models/Promo.js";
 
 // @desc    Create new customer order
 // @route   POST /api/customer-orders
@@ -13,6 +14,8 @@ export const createCustomerOrder = async (req, res) => {
       subtotal,
       deliveryFee,
       tax,
+      discount,
+      promoCode,
       total,
       notes,
       paymentMethod,
@@ -42,11 +45,23 @@ export const createCustomerOrder = async (req, res) => {
       subtotal,
       deliveryFee: deliveryFee || 5.0,
       tax,
+      discount: discount || 0,
+      promoCode: promoCode || null,
       total,
       notes,
       paymentMethod: paymentMethod || "cash",
       estimatedDeliveryTime: new Date(Date.now() + 45 * 60 * 1000), // 45 minutes from now
     });
+
+    // Increment promo usage if promo was applied
+    if (promoCode) {
+      const promo = await Promo.findOne({ code: promoCode.toUpperCase() });
+      if (promo) {
+        await Promo.findByIdAndUpdate(promo._id, {
+          $inc: { usageCount: 1 },
+        });
+      }
+    }
 
     // Update customer stats
     await Customer.findByIdAndUpdate(req.customer._id, {
