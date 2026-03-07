@@ -94,6 +94,24 @@ export const updateOrderStatus = async (req, res) => {
 
 export const deleteOrder = async (req, res) => {
   try {
+    const { reason } = req.body;
+
+    // Only admin can delete orders
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Only administrators can delete orders",
+      });
+    }
+
+    // Require deletion reason
+    if (!reason || reason.trim().length < 5) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a reason for deletion (minimum 5 characters)",
+      });
+    }
+
     const order = await Order.findById(req.params.id);
     if (!order) {
       return res
@@ -101,13 +119,24 @@ export const deleteOrder = async (req, res) => {
         .json({ success: false, message: "Order not found" });
     }
 
+    // Log deletion for audit trail
+    console.log(`[ORDER DELETION] Admin: ${req.user.name} (${req.user.email})`);
+    console.log(`Order: ${order.orderNumber} | Status: ${order.status}`);
+    console.log(`Reason: ${reason}`);
+    console.log(`Timestamp: ${new Date().toISOString()}`);
+
     // Free the table if order is not paid
     if (order.status !== "paid") {
       await Table.findByIdAndUpdate(order.table, { status: "available" });
     }
 
     await Order.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: "Order deleted successfully" });
+    res.json({
+      success: true,
+      message: "Order deleted successfully",
+      deletedBy: req.user.name,
+      reason: reason,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

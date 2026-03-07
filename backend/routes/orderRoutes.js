@@ -18,6 +18,6 @@ router.get("/:id", protect, getOrderById);
 router.patch("/:id/status", protect, updateOrderStatus);
 router.put("/:id/cancel", protect, cancelOrder);
 router.put("/:id/modify", protect, modifyOrder);
-router.delete("/:id", protect, authorize("admin", "manager"), deleteOrder);
+router.delete("/:id", protect, authorize("admin"), deleteOrder);
 
 export default router;

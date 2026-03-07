@@ -14,12 +14,16 @@ import ModifyOrderModal from "../components/ModifyOrderModal";
 export default function OrderManagement() {
   const dispatch = useDispatch();
   const { orders } = useSelector((state) => state.orders);
+  const { user } = useSelector((state) => state.auth);
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [modifyingOrder, setModifyingOrder] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [highlightedOrderId, setHighlightedOrderId] = useState(null);
+  const [deleteReason, setDeleteReason] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState(null);
 
   useEffect(() => {
     loadOrders();
@@ -64,13 +68,28 @@ export default function OrderManagement() {
   };
 
   const handleDeleteOrder = async (orderId) => {
-    if (!confirm("Are you sure you want to delete this order?")) return;
+    setOrderToDelete(orderId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteOrder = async () => {
+    if (!deleteReason || deleteReason.trim().length < 5) {
+      alert("Please provide a reason for deletion (minimum 5 characters)");
+      return;
+    }
+
     try {
-      await api.delete(`/orders/${orderId}`);
+      await api.delete(`/orders/${orderToDelete}`, {
+        data: { reason: deleteReason },
+      });
       loadOrders();
       alert("Order deleted successfully");
+      setShowDeleteModal(false);
+      setDeleteReason("");
+      setOrderToDelete(null);
     } catch (error) {
-      alert("Error deleting order");
+      const errorMsg = error.response?.data?.message || "Error deleting order";
+      alert(errorMsg);
     }
   };
 
@@ -341,32 +360,65 @@ export default function OrderManagement() {
                       {new Date(order.createdAt).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => viewOrderDetails(order)}
-                          className="text-[#0d5f4e] hover:text-[#0f7a62] font-medium">
-                          View
-                        </button>
-                        {order.status === "pending" && (
-                          <>
+                      {order.status === "cancelled" ? (
+                        // Cancelled orders: minimal actions
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => viewOrderDetails(order)}
+                            className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium transition">
+                            View
+                          </button>
+                          {user?.role === "admin" && (
                             <button
-                              onClick={() => handleModifyOrder(order)}
-                              className="text-blue-600 hover:text-blue-700 font-medium">
-                              Modify
+                              onClick={() => handleDeleteOrder(order._id)}
+                              className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-medium transition">
+                              Delete
                             </button>
+                          )}
+                        </div>
+                      ) : order.status === "pending" ? (
+                        // Pending orders: full action set with better styling
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => viewOrderDetails(order)}
+                            className="px-3 py-1.5 rounded-lg bg-[#0d5f4e] bg-opacity-10 text-[#0d5f4e] hover:bg-opacity-20 font-medium transition">
+                            View
+                          </button>
+                          <button
+                            onClick={() => handleModifyOrder(order)}
+                            className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium transition">
+                            Modify
+                          </button>
+                          <button
+                            onClick={() => handleCancelOrder(order._id)}
+                            className="px-3 py-1.5 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 font-medium transition">
+                            Cancel
+                          </button>
+                          {user?.role === "admin" && (
                             <button
-                              onClick={() => handleCancelOrder(order._id)}
-                              className="text-orange-600 hover:text-orange-700 font-medium">
-                              Cancel
+                              onClick={() => handleDeleteOrder(order._id)}
+                              className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-medium transition">
+                              Delete
                             </button>
-                          </>
-                        )}
-                        <button
-                          onClick={() => handleDeleteOrder(order._id)}
-                          className="text-red-600 hover:text-red-700 font-medium">
-                          Delete
-                        </button>
-                      </div>
+                          )}
+                        </div>
+                      ) : (
+                        // Other statuses: view and delete only
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => viewOrderDetails(order)}
+                            className="px-3 py-1.5 rounded-lg bg-[#0d5f4e] bg-opacity-10 text-[#0d5f4e] hover:bg-opacity-20 font-medium transition">
+                            View
+                          </button>
+                          {user?.role === "admin" && (
+                            <button
+                              onClick={() => handleDeleteOrder(order._id)}
+                              className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-medium transition">
+                              Delete
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -537,6 +589,84 @@ export default function OrderManagement() {
           onClose={() => setModifyingOrder(null)}
           onSave={handleSaveModifiedOrder}
         />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-red-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">
+                    Delete Order
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Admin action - requires reason
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4">
+                <p className="text-sm text-yellow-800">
+                  <strong>Warning:</strong> This action cannot be undone. The
+                  order will be permanently deleted from the system.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Reason for Deletion *
+                </label>
+                <textarea
+                  value={deleteReason}
+                  onChange={(e) => setDeleteReason(e.target.value)}
+                  placeholder="Enter reason for deleting this order (minimum 5 characters)..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                  rows="4"
+                  autoFocus
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {deleteReason.length}/5 characters minimum
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteReason("");
+                  setOrderToDelete(null);
+                }}
+                className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition">
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteOrder}
+                disabled={deleteReason.trim().length < 5}
+                className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed">
+                Delete Order
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
