@@ -141,6 +141,14 @@ function App() {
             }
           />
           <Route
+            path="/order-management"
+            element={
+              <PrivateRoute roles={["admin", "manager"]}>
+                <OrderManagement />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/orders/:orderId"
             element={
               <PrivateRoute roles={["admin", "manager", "waiter"]}>

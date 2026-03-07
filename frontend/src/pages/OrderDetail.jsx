@@ -113,7 +113,7 @@ export default function OrderDetail() {
           </h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button
-            onClick={() => navigate("/order-management")}
+            onClick={() => navigate("/orders")}
             className="px-6 py-2.5 bg-[#0d5f4e] text-white rounded-xl hover:bg-[#0f7a62] font-medium transition">
             Back to Orders
           </button>
@@ -523,7 +523,7 @@ export default function OrderDetail() {
                 </button>
               )}
               <button
-                onClick={() => navigate(`/order-management?order=${order._id}`)}
+                onClick={() => navigate(`/orders?order=${order._id}`)}
                 className="w-full px-4 py-3 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 font-medium transition flex items-center justify-center gap-2">
                 <svg
                   className="w-5 h-5"

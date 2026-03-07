@@ -112,7 +112,7 @@ export default function TableMapView() {
   const handleTableClick = (table) => {
     const order = getTableOrder(table._id);
     if (order) {
-      navigate(`/order-management?order=${order._id}`);
+      navigate(`/orders?order=${order._id}`);
     } else {
       navigate(`/pos?table=${table._id}`);
     }
