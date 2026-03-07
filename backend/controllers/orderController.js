@@ -378,3 +378,49 @@ export const modifyOrder = async (req, res) => {
     });
   }
 };
+
+// @desc    Update order notes
+// @route   PATCH /api/orders/:id/notes
+// @access  Private (Staff)
+export const updateOrderNotes = async (req, res) => {
+  try {
+    const { notes } = req.body;
+
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    // Update notes
+    order.notes = notes;
+    await order.save();
+
+    const populatedOrder = await Order.findById(order._id)
+      .populate("table")
+      .populate("waiter", "name")
+      .populate("items.menuItem");
+
+    // Log notes update for audit trail
+    console.log(
+      `[ORDER NOTES UPDATE] User: ${req.user.name} (${req.user.role})`,
+    );
+    console.log(`Order: ${order.orderNumber}`);
+    console.log(`Notes: ${notes || "(removed)"}`);
+    console.log(`Timestamp: ${new Date().toISOString()}`);
+
+    res.json({
+      success: true,
+      data: populatedOrder,
+      message: "Order notes updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
