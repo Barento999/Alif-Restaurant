@@ -66,12 +66,10 @@ export const validatePromo = async (req, res) => {
 
     // Check if first order promo
     if (promo.applicableFor === "first_order") {
-      const customer = await Customer.findById(customerId);
       const { default: CustomerOrder } =
         await import("../models/CustomerOrder.js");
       const orderCount = await CustomerOrder.countDocuments({
         customer: customerId,
-        status: { $in: ["completed", "delivered"] },
       });
 
       if (orderCount > 0) {

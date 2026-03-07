@@ -18,7 +18,7 @@ const promos = [
     endDate: new Date("2026-12-31"),
     usageLimit: null,
     isActive: true,
-    applicableFor: "all", // Changed from "first_order" to "all"
+    applicableFor: "first_order",
   },
   {
     code: "FREEDEL30",
