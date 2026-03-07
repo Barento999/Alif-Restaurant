@@ -36,7 +36,7 @@ export default function CustomerProfile() {
     try {
       const token = localStorage.getItem("customerToken");
       if (!token) {
-        navigate("/customer-login");
+        navigate("/customer-auth");
         return;
       }
 
@@ -56,7 +56,7 @@ export default function CustomerProfile() {
       if (error.response?.status === 401) {
         localStorage.removeItem("customerToken");
         localStorage.removeItem("customer");
-        navigate("/customer-login");
+        navigate("/customer-auth");
       }
     } finally {
       setLoading(false);

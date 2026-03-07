@@ -96,7 +96,7 @@ export default function LandingPage() {
               </a>
             </div>
             <button
-              onClick={() => navigate("/customer-register")}
+              onClick={() => navigate("/customer-auth")}
               className="px-6 py-3 bg-[#0d5f4e] text-white rounded-lg font-semibold hover:bg-[#0f7a62] transition-all duration-300 shadow-md hover:shadow-lg">
               Reserve Table
             </button>

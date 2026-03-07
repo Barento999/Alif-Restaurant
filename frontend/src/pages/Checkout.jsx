@@ -29,7 +29,7 @@ export default function Checkout() {
   const checkAuth = async () => {
     const token = localStorage.getItem("customerToken");
     if (!token) {
-      navigate("/customer-login");
+      navigate("/customer-auth");
       return;
     }
 
@@ -68,7 +68,7 @@ export default function Checkout() {
       }
     } catch (err) {
       console.error(err);
-      navigate("/customer-login");
+      navigate("/customer-auth");
     } finally {
       setLoading(false);
     }

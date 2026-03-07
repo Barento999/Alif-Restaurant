@@ -16,7 +16,7 @@ export default function Cart() {
   const handleCheckout = () => {
     const token = localStorage.getItem("customerToken");
     if (!token) {
-      navigate("/customer-login");
+      navigate("/customer-auth");
     } else {
       navigate("/checkout");
     }
