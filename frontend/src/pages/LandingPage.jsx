@@ -817,18 +817,6 @@ export default function LandingPage() {
                     Contact
                   </a>
                 </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      const staffLoginRoute =
-                        import.meta.env.VITE_STAFF_LOGIN_ROUTE ||
-                        "/alif-mgmt-2024";
-                      navigate(staffLoginRoute);
-                    }}
-                    className="text-white/80 hover:text-[#d4a843] transition-colors">
-                    Staff Login
-                  </button>
-                </li>
               </ul>
             </div>
 
