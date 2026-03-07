@@ -1,19 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../services/api";
 
-const token = localStorage.getItem("token");
-const user = JSON.parse(localStorage.getItem("user") || "null");
+const token = sessionStorage.getItem("token");
+const user = JSON.parse(sessionStorage.getItem("user") || "null");
 
 export const login = createAsyncThunk("auth/login", async (credentials) => {
   const { data } = await api.post("/auth/login", credentials);
-  localStorage.setItem("token", data.data.token);
-  localStorage.setItem("user", JSON.stringify(data.data.user));
+  sessionStorage.setItem("token", data.data.token);
+  sessionStorage.setItem("user", JSON.stringify(data.data.user));
   return data.data;
 });
 
 export const logout = createAsyncThunk("auth/logout", async () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("user");
 });
 
 const authSlice = createSlice({
@@ -22,7 +22,7 @@ const authSlice = createSlice({
   reducers: {
     updateUser: (state, action) => {
       state.user = { ...state.user, ...action.payload };
-      localStorage.setItem("user", JSON.stringify(state.user));
+      sessionStorage.setItem("user", JSON.stringify(state.user));
     },
   },
   extraReducers: (builder) => {
