@@ -28,6 +28,8 @@ export default function OrderManagement() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [showDateFilter, setShowDateFilter] = useState(false);
+  const [selectedOrders, setSelectedOrders] = useState([]);
+  const [bulkAction, setBulkAction] = useState("");
 
   useEffect(() => {
     loadOrders();
@@ -421,6 +423,79 @@ export default function OrderManagement() {
     printWindow.document.close();
   };
 
+  // Bulk action handlers
+  const toggleSelectOrder = (orderId) => {
+    setSelectedOrders((prev) =>
+      prev.includes(orderId)
+        ? prev.filter((id) => id !== orderId)
+        : [...prev, orderId],
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedOrders.length === filteredOrders.length) {
+      setSelectedOrders([]);
+    } else {
+      setSelectedOrders(filteredOrders.map((order) => order._id));
+    }
+  };
+
+  const handleBulkAction = async () => {
+    if (selectedOrders.length === 0) {
+      alert("Please select orders first");
+      return;
+    }
+
+    if (!bulkAction) {
+      alert("Please select an action");
+      return;
+    }
+
+    const confirmMessage = `Are you sure you want to mark ${selectedOrders.length} order(s) as "${bulkAction}"?`;
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    try {
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const orderId of selectedOrders) {
+        try {
+          const order = orders.find((o) => o._id === orderId);
+
+          // Check if status change is valid
+          const validTransitions = getValidStatusTransitions(order.status);
+          if (!validTransitions.includes(bulkAction)) {
+            failCount++;
+            continue;
+          }
+
+          await dispatch(
+            updateOrderStatus({ id: orderId, status: bulkAction }),
+          ).unwrap();
+          successCount++;
+        } catch (error) {
+          failCount++;
+        }
+      }
+
+      loadOrders();
+      setSelectedOrders([]);
+      setBulkAction("");
+
+      if (failCount > 0) {
+        alert(
+          `Bulk action completed:\n${successCount} orders updated successfully\n${failCount} orders failed (invalid status transition)`,
+        );
+      } else {
+        alert(`Successfully updated ${successCount} order(s)`);
+      }
+    } catch (error) {
+      alert("Error performing bulk action");
+    }
+  };
+
   const filteredOrders = (() => {
     const orderId = searchParams.get("order");
     // If searching for a specific order, show only that order
@@ -732,12 +807,57 @@ export default function OrderManagement() {
         </>
       )}
 
+      {/* Bulk Actions Bar */}
+      {selectedOrders.length > 0 && (
+        <div className="bg-[#0d5f4e] text-white rounded-xl shadow-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <span className="font-semibold">
+                {selectedOrders.length} order(s) selected
+              </span>
+              <select
+                value={bulkAction}
+                onChange={(e) => setBulkAction(e.target.value)}
+                className="px-4 py-2 bg-white text-gray-800 rounded-lg border-0 focus:ring-2 focus:ring-[#d4a843]">
+                <option value="">Select Action</option>
+                <option value="preparing">Mark as Preparing</option>
+                <option value="ready">Mark as Ready</option>
+                <option value="served">Mark as Served</option>
+                <option value="paid">Mark as Paid</option>
+              </select>
+              <button
+                onClick={handleBulkAction}
+                disabled={!bulkAction}
+                className="px-6 py-2 bg-[#d4a843] text-white rounded-lg hover:bg-[#c49739] font-medium transition disabled:opacity-50 disabled:cursor-not-allowed">
+                Apply Action
+              </button>
+            </div>
+            <button
+              onClick={() => setSelectedOrders([])}
+              className="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg font-medium transition">
+              Clear Selection
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Orders Table */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
+                <th className="px-6 py-4 text-left">
+                  <input
+                    type="checkbox"
+                    checked={
+                      filteredOrders.length > 0 &&
+                      selectedOrders.length === filteredOrders.length
+                    }
+                    onChange={toggleSelectAll}
+                    className="w-4 h-4 text-[#0d5f4e] border-gray-300 rounded focus:ring-[#0d5f4e]"
+                  />
+                </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                   Order #
                 </th>
@@ -768,7 +888,7 @@ export default function OrderManagement() {
               {filteredOrders.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="8"
+                    colSpan="9"
                     className="px-6 py-12 text-center text-gray-500">
                     <svg
                       className="w-16 h-16 mx-auto mb-4 opacity-50"
@@ -795,8 +915,18 @@ export default function OrderManagement() {
                         ? "bg-[#d4a843] bg-opacity-20 animate-pulse"
                         : order.status === "cancelled"
                           ? "bg-red-50 opacity-75"
-                          : ""
+                          : selectedOrders.includes(order._id)
+                            ? "bg-blue-50"
+                            : ""
                     }`}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={selectedOrders.includes(order._id)}
+                        onChange={() => toggleSelectOrder(order._id)}
+                        className="w-4 h-4 text-[#0d5f4e] border-gray-300 rounded focus:ring-[#0d5f4e]"
+                      />
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`font-mono text-sm font-semibold ${
