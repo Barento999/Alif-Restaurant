@@ -16,7 +16,6 @@ const customerOrderSchema = new mongoose.Schema(
   {
     orderNumber: {
       type: String,
-      required: true,
       unique: true,
     },
     customer: {
