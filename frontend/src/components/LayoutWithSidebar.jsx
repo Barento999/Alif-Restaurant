@@ -1,18 +1,21 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../features/auth/authSlice";
 import { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
+import OrderNotifications from "./OrderNotifications";
 import api from "../services/api";
 
 export default function LayoutWithSidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [orders, setOrders] = useState([]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -25,6 +28,30 @@ export default function LayoutWithSidebar() {
     window.addEventListener("logout", handleLogoutEvent);
     return () => window.removeEventListener("logout", handleLogoutEvent);
   }, []);
+
+  // Fetch orders for notifications (only for waiters, managers, and admins)
+  useEffect(() => {
+    if (!user || !["waiter", "manager", "admin"].includes(user.role)) {
+      return;
+    }
+
+    const fetchOrders = async () => {
+      try {
+        const response = await api.get("/orders");
+        setOrders(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching orders for notifications:", error);
+      }
+    };
+
+    // Initial fetch
+    fetchOrders();
+
+    // Poll every 5 seconds for updates
+    const interval = setInterval(fetchOrders, 5000);
+
+    return () => clearInterval(interval);
+  }, [user]);
 
   // Search functionality
   useEffect(() => {
@@ -133,6 +160,11 @@ export default function LayoutWithSidebar() {
 
   return (
     <div className="min-h-screen bg-[#f5f5f0]">
+      {/* Order Notifications */}
+      {user && ["waiter", "manager", "admin"].includes(user.role) && (
+        <OrderNotifications orders={orders} />
+      )}
+
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 

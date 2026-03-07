@@ -15,6 +15,7 @@ import TableManagement from "./pages/TableManagement";
 import TableMapView from "./pages/TableMapView";
 import UserManagement from "./pages/UserManagement";
 import OrderManagement from "./pages/OrderManagement";
+import OrderDetail from "./pages/OrderDetail";
 import CustomerOrderManagement from "./pages/CustomerOrderManagement";
 import WaiterOrders from "./pages/WaiterOrders";
 import CashierOrders from "./pages/CashierOrders";
@@ -136,6 +137,14 @@ function App() {
             element={
               <PrivateRoute roles={["admin", "manager"]}>
                 <OrderManagement />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/orders/:orderId"
+            element={
+              <PrivateRoute roles={["admin", "manager", "waiter"]}>
+                <OrderDetail />
               </PrivateRoute>
             }
           />
