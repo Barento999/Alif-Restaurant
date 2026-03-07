@@ -14,6 +14,7 @@ import Inventory from "./pages/Inventory";
 import TableManagement from "./pages/TableManagement";
 import UserManagement from "./pages/UserManagement";
 import OrderManagement from "./pages/OrderManagement";
+import CustomerOrderManagement from "./pages/CustomerOrderManagement";
 import WaiterOrders from "./pages/WaiterOrders";
 import CashierOrders from "./pages/CashierOrders";
 import Profile from "./pages/Profile";
@@ -126,6 +127,14 @@ function App() {
             element={
               <PrivateRoute roles={["admin", "manager"]}>
                 <OrderManagement />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/customer-orders"
+            element={
+              <PrivateRoute roles={["admin", "manager"]}>
+                <CustomerOrderManagement />
               </PrivateRoute>
             }
           />

@@ -168,3 +168,78 @@ export const cancelCustomerOrder = async (req, res) => {
     });
   }
 };
+
+// @desc    Get all customer orders (for staff)
+// @route   GET /api/customer-orders/all
+// @access  Private (Admin/Manager)
+export const getAllCustomerOrders = async (req, res) => {
+  try {
+    const orders = await CustomerOrder.find()
+      .populate("customer", "firstName lastName email phone")
+      .populate("items.menuItem", "name category")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      data: orders,
+      count: orders.length,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// @desc    Update order status (for staff)
+// @route   PUT /api/customer-orders/:id/status
+// @access  Private (Admin/Manager)
+export const updateCustomerOrderStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const validStatuses = [
+      "pending",
+      "confirmed",
+      "preparing",
+      "out_for_delivery",
+      "delivered",
+      "cancelled",
+    ];
+
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status",
+      });
+    }
+
+    const order = await CustomerOrder.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    order.status = status;
+    await order.save();
+
+    const populatedOrder = await CustomerOrder.findById(order._id)
+      .populate("customer", "firstName lastName email phone")
+      .populate("items.menuItem", "name category");
+
+    res.json({
+      success: true,
+      data: populatedOrder,
+      message: "Order status updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
