@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getMenuItems,
+  getPublicMenu,
   createMenuItem,
   updateMenuItem,
   deleteMenuItem,
@@ -12,15 +13,17 @@ import { protect, authorize } from "../middlewares/auth.js";
 
 const router = express.Router();
 
+// Public route - get menu for customers (no auth required)
+router.get("/public", getPublicMenu);
+
+// Protected routes for staff
 router.get("/", protect, getMenuItems);
 router.post("/", protect, authorize("admin", "manager"), createMenuItem);
 router.put("/:id", protect, authorize("admin", "manager"), updateMenuItem);
 router.delete("/:id", protect, authorize("admin", "manager"), deleteMenuItem);
 
-// Public API route for menu display (no auth required)
+// API routes for importing from TheMealDB (for admin/manager to populate menu)
 router.get("/api/all", getAllMealsFromAPI);
-
-// Protected API import routes
 router.get(
   "/api/search",
   protect,

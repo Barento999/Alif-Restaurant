@@ -21,16 +21,15 @@ export default function LandingPage() {
 
   const fetchFeaturedDishes = async () => {
     try {
-      const response = await axios.get("/api/menu/api/all");
+      const response = await axios.get("/api/menu/public");
       if (response.data.success) {
-        // Get 8 random dishes
+        // Get 8 random dishes from database
         const allDishes = response.data.data;
         const shuffled = allDishes.sort(() => 0.5 - Math.random());
         setFeaturedDishes(shuffled.slice(0, 8));
       }
     } catch (error) {
       console.error("Error fetching dishes:", error);
-      // Use fallback static dishes if API fails
       setFeaturedDishes([]);
     } finally {
       setLoading(false);
@@ -353,27 +352,32 @@ export default function LandingPage() {
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {featuredDishes.map((dish) => (
                   <div
-                    key={dish.id}
+                    key={dish._id}
                     className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
                     <div className="relative overflow-hidden h-64">
                       <img
-                        src={dish.image}
+                        src={
+                          dish.image ||
+                          "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80"
+                        }
                         alt={dish.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                       <div className="absolute top-4 right-4 bg-[#d4a843] text-white px-3 py-1 rounded-full text-sm font-bold">
-                        {dish.area}
+                        ${dish.price}
                       </div>
                     </div>
                     <div className="p-6">
                       <span className="text-sm text-[#0d5f4e] font-semibold">
-                        {dish.category}
+                        {dish.category?.name || "Special"}
                       </span>
                       <h3 className="text-xl font-bold text-gray-800 mt-2 mb-3 line-clamp-1">
                         {dish.name}
                       </h3>
                       <p className="text-gray-600 text-sm line-clamp-2 mb-4">
-                        {dish.description?.substring(0, 100)}...
+                        {dish.description?.substring(0, 100) ||
+                          "Delicious dish prepared with fresh ingredients"}
+                        ...
                       </p>
                     </div>
                   </div>

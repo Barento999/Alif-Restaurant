@@ -23,7 +23,7 @@ export default function PublicMenu() {
 
   const fetchAllDishes = async () => {
     try {
-      const response = await axios.get("/api/menu/api/all");
+      const response = await axios.get("/api/menu/public");
       if (response.data.success) {
         setDishes(response.data.data);
         setFilteredDishes(response.data.data);
@@ -45,13 +45,20 @@ export default function PublicMenu() {
         (dish) =>
           dish.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           dish.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          dish.area?.toLowerCase().includes(searchTerm.toLowerCase()),
+          dish.category?.name
+            ?.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          dish.ingredients?.some((ing) =>
+            ing.toLowerCase().includes(searchTerm.toLowerCase()),
+          ),
       );
     }
 
     // Filter by category
     if (selectedCategory && selectedCategory !== "All") {
-      filtered = filtered.filter((dish) => dish.category === selectedCategory);
+      filtered = filtered.filter(
+        (dish) => dish.category?.name === selectedCategory,
+      );
     }
 
     setFilteredDishes(filtered);
@@ -180,19 +187,22 @@ export default function PublicMenu() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {currentDishes.map((dish) => (
                 <div
-                  key={dish.id}
+                  key={dish._id}
                   className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer">
                   <div className="relative overflow-hidden h-64">
                     <img
-                      src={dish.image}
+                      src={
+                        dish.image ||
+                        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80"
+                      }
                       alt={dish.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute top-4 left-4 bg-[#0d5f4e] text-white px-3 py-1 rounded-full text-sm font-bold">
-                      {dish.category}
+                      {dish.category?.name || "Special"}
                     </div>
                     <div className="absolute top-4 right-4 bg-[#d4a843] text-white px-3 py-1 rounded-full text-sm font-bold">
-                      {dish.area}
+                      ${dish.price}
                     </div>
                   </div>
                   <div className="p-6">
@@ -200,7 +210,9 @@ export default function PublicMenu() {
                       {dish.name}
                     </h3>
                     <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                      {dish.description?.substring(0, 150)}...
+                      {dish.description?.substring(0, 150) ||
+                        "Delicious dish prepared with fresh ingredients"}
+                      ...
                     </p>
                     {dish.ingredients && dish.ingredients.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-4">

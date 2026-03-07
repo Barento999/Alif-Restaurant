@@ -4,7 +4,7 @@
 
 The restaurant website now has a complete public menu system with featured dishes on the home page and a full menu page with search and pagination.
 
-**Dish Count**: The system fetches from TheMealDB API using 30 search terms + 13 letters (A-M), typically returning **250-350+ unique dishes** after removing duplicates. The exact number varies based on API availability.
+**Data Source**: All dishes are fetched from **your MongoDB database** (MenuItem collection). The number of dishes depends on what you've added to your database through the admin panel.
 
 ## Features Implemented
 
@@ -41,14 +41,20 @@ The restaurant website now has a complete public menu system with featured dishe
 
 ### 3. Backend API
 
-- **Route**: `/api/menu/api/all`
+- **Route**: `/api/menu/public`
 - **Access**: Public (no authentication required)
-- **Data Source**: TheMealDB API
-- **Caching**: 24-hour cache to improve performance
+- **Data Source**: MongoDB database (MenuItem collection)
 - **Returns**:
-  - Array of dishes with: id, name, category, area, description, image, ingredients, tags
-  - Array of available categories
-  - Cache status
+  - Array of available menu items with: \_id, name, category (populated), price, description, image, ingredients, isAvailable
+  - Array of category names
+  - Total count of dishes
+
+### 4. Admin Import Feature (Optional)
+
+- **Route**: `/api/menu/api/all` (for importing from TheMealDB)
+- **Access**: Admin/Manager only
+- **Purpose**: Allows admins to browse and import dishes from TheMealDB API to populate the database
+- **Note**: This is separate from the public menu - it's a tool for admins to add dishes
 
 ## User Flow
 
@@ -70,9 +76,21 @@ Search + Filter + Pagination (300+ dishes)
 
 ### API Endpoints
 
-- **GET** `/api/menu/api/all` - Fetch all dishes (public, no auth)
-- Returns 300+ dishes from various categories
-- Cached for 24 hours for performance
+**Public Endpoints (No Auth Required):**
+
+- **GET** `/api/menu/public` - Fetch all available dishes from database
+  - Returns dishes where `isAvailable: true`
+  - Includes populated category information
+  - Sorted alphabetically by name
+
+**Admin Endpoints (Auth Required):**
+
+- **GET** `/api/menu/api/all` - Browse dishes from TheMealDB API (for importing)
+- **POST** `/api/menu/api/import` - Import a dish from TheMealDB to database
+- **GET** `/api/menu/api/search` - Search TheMealDB API
+- **POST** `/api/menu` - Create new menu item
+- **PUT** `/api/menu/:id` - Update menu item
+- **DELETE** `/api/menu/:id` - Delete menu item
 
 ### State Management
 
@@ -91,29 +109,41 @@ Search + Filter + Pagination (300+ dishes)
 
 ### Performance Optimizations
 
-- Backend caching (24 hours)
+- Database indexing on name and category fields
+- Only fetches available items (`isAvailable: true`)
 - Pagination (12 dishes per page)
-- Image lazy loading via browser
-- Efficient filtering with useMemo potential
+- Client-side filtering for instant results
+- Populated category data in single query
 
 ## How to Use
 
 ### For Customers:
 
 1. Visit the home page
-2. Browse 8 featured dishes
+2. Browse 8 featured dishes from your menu
 3. Click "Explore Full Menu" to see all dishes
 4. Use search bar to find specific dishes
-5. Filter by category (Italian, Japanese, etc.)
+5. Filter by category
 6. Navigate through pages
 7. Click "Order Now" to proceed (requires login)
 
-### For Developers:
+### For Restaurant Owners/Admins:
 
-1. Featured dishes are randomly selected on each page load
-2. Full menu data is fetched once and cached
-3. Search and filter work client-side for instant results
-4. Pagination prevents rendering 300+ items at once
+1. **Add Dishes to Database**:
+   - Login as admin/manager
+   - Go to Menu Management page
+   - Option 1: Manually create dishes
+   - Option 2: Import from TheMealDB API (browse and import)
+2. **Manage Menu**:
+   - Edit dish details (name, price, description, image)
+   - Toggle availability (hide/show dishes)
+   - Organize by categories
+   - Add ingredients list
+
+3. **Public Display**:
+   - Only dishes marked as "available" appear on public menu
+   - Customers see real-time menu from your database
+   - Prices are displayed from your database
 
 ## Files Modified/Created
 
@@ -162,24 +192,31 @@ Search + Filter + Pagination (300+ dishes)
 
 ## API Data Structure
 
+**Response from `/api/menu/public`:**
+
 ```javascript
 {
   success: true,
   data: [
     {
-      id: "52772",
-      name: "Teriyaki Chicken Casserole",
-      category: "Chicken",
-      area: "Japanese",
-      description: "Preheat oven to 350° F...",
-      image: "https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg",
-      ingredients: ["soy sauce", "water", "brown sugar", ...],
-      tags: ["Meat", "Casserole"]
+      _id: "507f1f77bcf86cd799439011",
+      name: "Margherita Pizza",
+      category: {
+        _id: "507f1f77bcf86cd799439012",
+        name: "Italian"
+      },
+      price: 12.99,
+      description: "Classic pizza with tomato sauce, mozzarella, and basil",
+      image: "https://example.com/pizza.jpg",
+      ingredients: ["tomato sauce", "mozzarella", "basil", "olive oil"],
+      isAvailable: true,
+      createdAt: "2024-01-15T10:30:00.000Z",
+      updatedAt: "2024-01-15T10:30:00.000Z"
     },
     // ... more dishes
   ],
-  categories: ["Beef", "Chicken", "Dessert", "Lamb", ...],
-  cached: false
+  categories: ["Italian", "Japanese", "American", "Ethiopian", ...],
+  count: 45
 }
 ```
 

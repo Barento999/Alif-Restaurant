@@ -15,6 +15,28 @@ export const getMenuItems = async (req, res) => {
   }
 };
 
+// Public menu endpoint - get all available menu items
+export const getPublicMenu = async (req, res) => {
+  try {
+    const items = await MenuItem.find({ isAvailable: true })
+      .populate("category")
+      .sort({ name: 1 });
+
+    // Group by category for easier filtering
+    const categories = await Category.find();
+    const categoryNames = categories.map((cat) => cat.name);
+
+    res.json({
+      success: true,
+      data: items,
+      categories: categoryNames,
+      count: items.length,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export const createMenuItem = async (req, res) => {
   try {
     const item = await MenuItem.create(req.body);
