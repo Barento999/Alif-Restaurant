@@ -92,7 +92,7 @@ export default function PublicMenu() {
             Our Full Menu
           </h1>
           <p className="text-xl text-white/90">
-            Explore {dishes.length}+ dishes from around the world
+            Explore {dishes.length}+ international dishes from around the world
           </p>
         </div>
       </div>

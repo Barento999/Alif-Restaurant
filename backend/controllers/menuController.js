@@ -110,7 +110,7 @@ export const getAllMealsFromAPI = async (req, res) => {
       });
     }
 
-    // Fetch meals by different categories
+    // Fetch meals by different categories and search terms
     const categoryQueries = [
       "chicken",
       "beef",
@@ -122,6 +122,26 @@ export const getAllMealsFromAPI = async (req, res) => {
       "lamb",
       "pork",
       "soup",
+      "rice",
+      "fish",
+      "egg",
+      "cheese",
+      "potato",
+      "tomato",
+      "mushroom",
+      "curry",
+      "salad",
+      "bread",
+      "cake",
+      "pie",
+      "stew",
+      "roast",
+      "grill",
+      "fried",
+      "baked",
+      "sauce",
+      "noodle",
+      "bean",
     ];
 
     const allMeals = [];
@@ -162,6 +182,59 @@ export const getAllMealsFromAPI = async (req, res) => {
         }
       } catch (error) {
         console.error(`Error fetching ${query}:`, error);
+      }
+    }
+
+    // Also fetch by first letter to get more variety
+    const letters = [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m",
+    ];
+    for (const letter of letters) {
+      try {
+        const response = await fetch(
+          `https://www.themealdb.com/api/json/v1/1/search.php?f=${letter}`,
+        );
+        const data = await response.json();
+
+        if (data.meals) {
+          data.meals.forEach((meal) => {
+            // Extract ingredients
+            const ingredients = [];
+            for (let i = 1; i <= 20; i++) {
+              const ingredient = meal[`strIngredient${i}`];
+              if (ingredient && ingredient.trim()) {
+                ingredients.push(ingredient);
+              }
+            }
+
+            categorySet.add(meal.strCategory);
+
+            allMeals.push({
+              id: meal.idMeal,
+              name: meal.strMeal,
+              category: meal.strCategory,
+              area: meal.strArea,
+              description: meal.strInstructions,
+              image: meal.strMealThumb,
+              ingredients: ingredients,
+              tags: meal.strTags ? meal.strTags.split(",") : [],
+            });
+          });
+        }
+      } catch (error) {
+        console.error(`Error fetching letter ${letter}:`, error);
       }
     }
 

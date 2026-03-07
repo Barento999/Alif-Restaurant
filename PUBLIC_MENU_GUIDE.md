@@ -4,6 +4,8 @@
 
 The restaurant website now has a complete public menu system with featured dishes on the home page and a full menu page with search and pagination.
 
+**Dish Count**: The system fetches from TheMealDB API using 30 search terms + 13 letters (A-M), typically returning **250-350+ unique dishes** after removing duplicates. The exact number varies based on API availability.
+
 ## Features Implemented
 
 ### 1. Landing Page (Home) - Featured Dishes

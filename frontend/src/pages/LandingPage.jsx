@@ -400,7 +400,7 @@ export default function LandingPage() {
                   </svg>
                 </button>
                 <p className="text-gray-600 mt-4">
-                  Discover 300+ dishes from around the world
+                  Discover 250+ international dishes from around the world
                 </p>
               </div>
             </>
