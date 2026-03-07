@@ -1,12 +1,12 @@
-# 🍽️ Alif Restaurant - Complete Restaurant Management System
+# 🍽️ Alif Restaurant - World Flavors, One Place
 
 <div align="center">
 
-![Restaurant](https://img.shields.io/badge/Restaurant-Management-0d5f4e?style=for-the-badge)
+![Restaurant](https://img.shields.io/badge/Restaurant-Website-0d5f4e?style=for-the-badge)
 ![MERN Stack](https://img.shields.io/badge/MERN-Stack-61DAFB?style=for-the-badge&logo=react)
 ![License](https://img.shields.io/badge/License-MIT-d4a843?style=for-the-badge)
 
-**World Flavors, One Place** - A modern, full-stack restaurant management system with online ordering, staff portal, and real-time kitchen operations.
+**Experience International Cuisine** - A modern restaurant website with online ordering, customer accounts, and integrated staff operations portal.
 
 [Features](#-features) • [Quick Start](#-quick-start) • [Tech Stack](#-tech-stack) • [API](#-api-documentation) • [Deployment](#-deployment)
 
@@ -34,18 +34,18 @@
 
 ## 🌟 Overview
 
-Alif Restaurant is a comprehensive restaurant management system built with the MERN stack. It features a beautiful customer-facing website for online ordering and a powerful staff portal for managing all restaurant operations in real-time.
+Alif Restaurant is a modern restaurant website built with the MERN stack, offering international cuisine from Ethiopian, Italian, Japanese, American, Spanish, and Middle Eastern traditions. Customers can browse our menu, place online orders, and track deliveries. The integrated staff portal enables seamless restaurant operations.
 
-### What Makes It Special?
+### What Makes Us Special?
 
-- 🎨 **Beautiful UI/UX** - Modern, responsive design with smooth animations
-- 🛒 **Online Ordering** - Complete shopping cart and checkout system
-- 👨‍🍳 **Kitchen Display** - Real-time order updates with Socket.io
-- 📊 **Analytics** - Comprehensive reports and insights
-- 🎫 **Promo Codes** - Flexible discount system with validation
-- 🔐 **Role-Based Access** - Admin, Manager, Waiter, Cashier, Kitchen roles
-- 📱 **Mobile Responsive** - Works perfectly on all devices
-- ⚡ **Real-Time Updates** - Live order status and notifications
+- 🌍 **International Cuisine** - 100+ dishes from 6 different cuisines
+- 🎨 **Beautiful Design** - Modern, responsive website with smooth animations
+- 🛒 **Easy Online Ordering** - Browse menu, add to cart, checkout in minutes
+- 🎫 **Special Offers** - Promo codes and discounts for customers
+- 📱 **Mobile Friendly** - Order from any device, anywhere
+- 🚚 **Order Tracking** - Real-time updates on your order status
+- 👤 **Customer Accounts** - Save addresses, view order history
+- ⚡ **Fast Service** - Integrated staff portal for efficient operations
 
 ---
 
@@ -87,7 +87,9 @@ Alif Restaurant is a comprehensive restaurant management system built with the M
 
 ---
 
-### 🏢 Staff Portal
+### 🏢 Staff Operations Portal
+
+Our integrated staff portal enables efficient restaurant operations:
 
 #### Dashboard
 
@@ -215,7 +217,7 @@ Alif Restaurant is a comprehensive restaurant management system built with the M
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/alif-restaurant.git
+git clone <your-repository-url>
 cd alif-restaurant
 ```
 
@@ -1087,9 +1089,9 @@ SOFTWARE.
 
 ---
 
-## 📞 Support
+## 📞 Contact
 
-For support, email support@alifrestaurant.com or open an issue on GitHub.
+For inquiries, email support@alifrestaurant.com or visit our restaurant.
 
 ---
 
@@ -1105,8 +1107,8 @@ For support, email support@alifrestaurant.com or open an issue on GitHub.
 
 <div align="center">
 
-**Made with ❤️ by the Alif Restaurant Team**
+**Made with ❤️ for food lovers everywhere**
 
-⭐ Star this repo if you find it helpful!
+🍽️ Visit us at Alif Restaurant - Where the World Comes to Dine
 
 </div>
