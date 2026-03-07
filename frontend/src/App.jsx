@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Login from "./pages/Login";
+import CustomerLogin from "./pages/CustomerLogin";
+import CustomerRegister from "./pages/CustomerRegister";
 import Dashboard from "./pages/Dashboard";
 import POSScreen from "./pages/POSScreen";
 import KitchenScreen from "./pages/KitchenScreen";
@@ -32,6 +34,8 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/menu" element={<PublicMenu />} />
+        <Route path="/customer-login" element={<CustomerLogin />} />
+        <Route path="/customer-register" element={<CustomerRegister />} />
         <Route path="/login" element={<Login />} />
         <Route
           element={

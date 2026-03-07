@@ -231,7 +231,7 @@ export default function PublicMenu() {
                       </div>
                     )}
                     <button
-                      onClick={() => navigate("/login")}
+                      onClick={() => navigate("/customer-login")}
                       className="w-full bg-[#0d5f4e] text-white py-3 rounded-xl font-semibold hover:bg-[#0f7a62] transition-colors">
                       Order Now
                     </button>
