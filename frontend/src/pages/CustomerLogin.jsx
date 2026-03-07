@@ -37,8 +37,8 @@ export default function CustomerLogin() {
         localStorage.setItem("customerToken", response.data.data.token);
         localStorage.setItem("customer", JSON.stringify(response.data.data));
 
-        // Redirect to menu
-        navigate("/menu");
+        // Redirect to customer profile
+        navigate("/customer-profile");
       }
     } catch (err) {
       setError(
