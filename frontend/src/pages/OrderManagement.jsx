@@ -25,6 +25,9 @@ export default function OrderManagement() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [showDateFilter, setShowDateFilter] = useState(false);
 
   useEffect(() => {
     loadOrders();
@@ -191,6 +194,29 @@ export default function OrderManagement() {
         ? orders
         : orders.filter((o) => o.status === selectedStatus);
 
+    // Apply date range filter
+    if (startDate || endDate) {
+      filtered = filtered.filter((order) => {
+        const orderDate = new Date(order.createdAt);
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
+
+        // Set end date to end of day (23:59:59)
+        if (end) {
+          end.setHours(23, 59, 59, 999);
+        }
+
+        if (start && end) {
+          return orderDate >= start && orderDate <= end;
+        } else if (start) {
+          return orderDate >= start;
+        } else if (end) {
+          return orderDate <= end;
+        }
+        return true;
+      });
+    }
+
     // Apply search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
@@ -243,6 +269,32 @@ export default function OrderManagement() {
             </button>
           )}
           <button
+            onClick={() => setShowDateFilter(!showDateFilter)}
+            className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl font-medium transition ${
+              startDate || endDate
+                ? "bg-[#d4a843] text-white hover:bg-[#c49739]"
+                : "bg-white border border-gray-200 text-gray-700 hover:border-[#0d5f4e] hover:bg-gray-50"
+            }`}>
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            <span>Date Filter</span>
+            {(startDate || endDate) && (
+              <span className="bg-white bg-opacity-30 px-2 py-0.5 rounded-full text-xs">
+                Active
+              </span>
+            )}
+          </button>
+          <button
             onClick={loadOrders}
             className="flex items-center space-x-2 bg-[#0d5f4e] text-white px-6 py-2.5 rounded-xl hover:bg-[#0f7a62] font-medium transition">
             <svg
@@ -261,6 +313,77 @@ export default function OrderManagement() {
           </button>
         </div>
       </div>
+
+      {/* Date Range Filter Panel */}
+      {showDateFilter && !searchParams.get("order") && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Start Date
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
+              />
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                End Date
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                min={startDate}
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0d5f4e] focus:border-transparent"
+              />
+            </div>
+            <div className="flex gap-2 items-end">
+              <button
+                onClick={() => {
+                  setStartDate("");
+                  setEndDate("");
+                }}
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition">
+                Clear Dates
+              </button>
+              <button
+                onClick={() => {
+                  const today = new Date().toISOString().split("T")[0];
+                  setStartDate(today);
+                  setEndDate(today);
+                }}
+                className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 font-medium transition">
+                Today
+              </button>
+              <button
+                onClick={() => {
+                  const today = new Date();
+                  const weekAgo = new Date(today);
+                  weekAgo.setDate(today.getDate() - 7);
+                  setStartDate(weekAgo.toISOString().split("T")[0]);
+                  setEndDate(today.toISOString().split("T")[0]);
+                }}
+                className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 font-medium transition">
+                Last 7 Days
+              </button>
+            </div>
+          </div>
+          {(startDate || endDate) && (
+            <p className="text-sm text-gray-600 mt-3">
+              Showing orders from{" "}
+              {startDate
+                ? new Date(startDate).toLocaleDateString()
+                : "beginning"}{" "}
+              to {endDate ? new Date(endDate).toLocaleDateString() : "now"} (
+              {filteredOrders.length} orders)
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Status Filter */}
       {!searchParams.get("order") && (
