@@ -344,6 +344,161 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* How It Works Section */}
+      <div className="relative z-10 bg-[#f5f5f0] py-24">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
+              How It Works
+            </h2>
+            <p className="text-xl text-gray-600">
+              Three simple steps to enjoy world-class cuisine
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-12">
+            {[
+              {
+                step: "01",
+                title: "Browse Menu",
+                description:
+                  "Explore our diverse menu featuring dishes from Ethiopia, Italy, Japan, America, and more",
+                icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
+              },
+              {
+                step: "02",
+                title: "Place Order",
+                description:
+                  "Order online for delivery/pickup or visit our restaurant for dine-in service with our staff",
+                icon: "M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z",
+              },
+              {
+                step: "03",
+                title: "Enjoy Food",
+                description:
+                  "Receive your order fresh and hot, prepared by our expert international chefs",
+                icon: "M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+              },
+            ].map((step, index) => (
+              <div
+                key={index}
+                className="relative bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 text-center">
+                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-[#d4a843] rounded-2xl flex items-center justify-center shadow-lg">
+                  <span className="text-2xl font-black text-white">
+                    {step.step}
+                  </span>
+                </div>
+                <div className="mt-8 mb-6">
+                  <div className="w-20 h-20 bg-[#0d5f4e]/10 rounded-2xl flex items-center justify-center mx-auto">
+                    <svg
+                      className="w-10 h-10 text-[#0d5f4e]"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d={step.icon}
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                  {step.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {step.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Special Offers Section */}
+      <div className="relative z-10 bg-gradient-to-br from-[#0d5f4e] to-[#0a4a3d] py-24">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
+              Special Offers
+            </h2>
+            <p className="text-xl text-white/90">
+              Don't miss out on our exclusive deals and promotions
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="bg-white/10 backdrop-blur-sm border-2 border-white/20 p-10 rounded-3xl hover:bg-white/15 transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-[#d4a843] rounded-2xl flex items-center justify-center">
+                  <svg
+                    className="w-8 h-8 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-3xl font-black text-white">20% OFF</h3>
+                  <p className="text-white/80 font-medium">First Order</p>
+                </div>
+              </div>
+              <p className="text-white/90 text-lg mb-6">
+                New customers get 20% off their first online order. Use code{" "}
+                <span className="font-bold text-[#d4a843]">WELCOME20</span> at
+                checkout.
+              </p>
+              <button
+                onClick={() => navigate("/menu")}
+                className="w-full bg-[#d4a843] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#c49a3a] transition-all duration-300">
+                Order Now
+              </button>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-sm border-2 border-white/20 p-10 rounded-3xl hover:bg-white/15 transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-[#d4a843] rounded-2xl flex items-center justify-center">
+                  <svg
+                    className="w-8 h-8 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-3xl font-black text-white">
+                    FREE DELIVERY
+                  </h3>
+                  <p className="text-white/80 font-medium">Orders Over $30</p>
+                </div>
+              </div>
+              <p className="text-white/90 text-lg mb-6">
+                Enjoy free delivery on all orders over $30. Available within 5
+                miles of our restaurant location.
+              </p>
+              <button
+                onClick={() => navigate("/menu")}
+                className="w-full bg-white text-[#0d5f4e] py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-300">
+                Start Ordering
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Featured Dishes Section */}
       <div className="relative z-10 bg-[#f5f5f0] py-24" id="menu">
         <div className="container mx-auto px-6">
@@ -530,6 +685,105 @@ export default function LandingPage() {
                 <p className="text-gray-600 italic">"{testimonial.comment}"</p>
               </div>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ Section */}
+      <div className="relative z-10 bg-white py-24">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xl text-gray-600">
+              Everything you need to know about ordering and dining with us
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto space-y-6">
+            {[
+              {
+                question: "What cuisines do you offer?",
+                answer:
+                  "We specialize in international cuisine including Ethiopian, Italian, Japanese, American, Spanish, and Middle Eastern dishes. Our menu features over 200 authentic dishes prepared by expert chefs from around the world.",
+              },
+              {
+                question: "Do you offer delivery and pickup?",
+                answer:
+                  "Yes! You can order online through our website for both delivery and pickup. We offer free delivery on orders over $30 within 5 miles of our restaurant. You can also dine in at our restaurant for the full experience.",
+              },
+              {
+                question: "What are your operating hours?",
+                answer:
+                  "We're open daily from 11:00 AM to 11:00 PM, seven days a week. Online ordering is available during these hours, and our kitchen closes 30 minutes before closing time.",
+              },
+              {
+                question: "Do you accommodate dietary restrictions?",
+                answer:
+                  "Absolutely! We offer vegetarian, vegan, gluten-free, and halal options. Each dish on our menu is clearly labeled with dietary information. Please inform our staff of any allergies or special requirements.",
+              },
+              {
+                question: "How do I track my online order?",
+                answer:
+                  "Once you place an order, you'll receive a confirmation email with a tracking link. You can also log into your account on our website to view your order status in real-time.",
+              },
+              {
+                question: "Do you offer catering services?",
+                answer:
+                  "Yes, we provide catering services for events, parties, and corporate functions. Please contact us at least 48 hours in advance to discuss your catering needs and menu options.",
+              },
+            ].map((faq, index) => (
+              <details
+                key={index}
+                className="group bg-[#f5f5f0] rounded-2xl overflow-hidden">
+                <summary className="flex justify-between items-center cursor-pointer p-8 hover:bg-[#e8e8dc] transition-colors">
+                  <h3 className="text-xl font-bold text-gray-800 pr-8">
+                    {faq.question}
+                  </h3>
+                  <svg
+                    className="w-6 h-6 text-[#0d5f4e] transform group-open:rotate-180 transition-transform flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </summary>
+                <div className="px-8 pb-8">
+                  <p className="text-gray-600 text-lg leading-relaxed">
+                    {faq.answer}
+                  </p>
+                </div>
+              </details>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-gray-600 text-lg mb-6">
+              Still have questions? We're here to help!
+            </p>
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-[#0d5f4e] text-white rounded-xl font-bold hover:bg-[#0f7a62] transition-all duration-300 shadow-lg hover:shadow-xl">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+              Contact Us
+            </a>
           </div>
         </div>
       </div>
