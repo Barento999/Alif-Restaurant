@@ -597,6 +597,9 @@ export default function LandingPage() {
               "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80",
               "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600&q=80",
               "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
+              "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80",
+              "https://images.unsplash.com/photo-1544148103-0773bf10d330?w=600&q=80",
+              "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=600&q=80",
             ].map((img, i) => (
               <div
                 key={i}
