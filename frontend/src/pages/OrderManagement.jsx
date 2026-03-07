@@ -149,6 +149,50 @@ export default function OrderManagement() {
     return colors[status] || "bg-gray-100 text-gray-800";
   };
 
+  // Calculate time in current status
+  const getTimeInStatus = (order) => {
+    const statusTimestamp =
+      order.statusTimestamps?.[order.status] || order.createdAt;
+    const now = new Date();
+    const statusTime = new Date(statusTimestamp);
+    const diffMs = now - statusTime;
+    const diffMins = Math.floor(diffMs / 60000);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins}m`;
+    const hours = Math.floor(diffMins / 60);
+    const mins = diffMins % 60;
+    return `${hours}h ${mins}m`;
+  };
+
+  // Get color based on time urgency
+  const getTimeColor = (order) => {
+    const statusTimestamp =
+      order.statusTimestamps?.[order.status] || order.createdAt;
+    const now = new Date();
+    const statusTime = new Date(statusTimestamp);
+    const diffMins = Math.floor((now - statusTime) / 60000);
+
+    // Different thresholds for different statuses
+    const thresholds = {
+      pending: { warning: 10, urgent: 20 },
+      preparing: { warning: 15, urgent: 30 },
+      ready: { warning: 5, urgent: 10 },
+      served: { warning: 30, urgent: 60 },
+      paid: { warning: 999, urgent: 9999 },
+      cancelled: { warning: 999, urgent: 9999 },
+    };
+
+    const threshold = thresholds[order.status] || { warning: 15, urgent: 30 };
+
+    if (diffMins >= threshold.urgent) {
+      return "text-red-600 font-bold"; // Urgent
+    } else if (diffMins >= threshold.warning) {
+      return "text-orange-600 font-semibold"; // Warning
+    }
+    return "text-gray-600"; // Normal
+  };
+
   // Get valid status transitions based on current status
   const getValidStatusTransitions = (currentStatus) => {
     const statusWorkflow = {
@@ -1285,8 +1329,32 @@ export default function OrderManagement() {
                         )}
                       </select>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {new Date(order.createdAt).toLocaleString()}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm">
+                        <div className="text-gray-900">
+                          {new Date(order.createdAt).toLocaleDateString()}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {new Date(order.createdAt).toLocaleTimeString()}
+                        </div>
+                        <div className={`text-xs mt-1 ${getTimeColor(order)}`}>
+                          <span className="inline-flex items-center gap-1">
+                            <svg
+                              className="w-3 h-3"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
+                            </svg>
+                            {getTimeInStatus(order)}
+                          </span>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       {order.status === "cancelled" ? (
