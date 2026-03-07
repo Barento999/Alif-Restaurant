@@ -104,8 +104,8 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       roles: ["kitchen"],
     },
     {
-      name: "Menu",
-      path: "/menu",
+      name: "Menu Management",
+      path: "/menu-management",
       icon: (
         <svg
           className="w-5 h-5"

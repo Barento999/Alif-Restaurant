@@ -92,7 +92,7 @@ function App() {
             }
           />
           <Route
-            path="/menu"
+            path="/menu-management"
             element={
               <PrivateRoute roles={["admin", "manager"]}>
                 <MenuManagement />

@@ -27,6 +27,15 @@ export default function PublicMenu() {
     setIsLoggedIn(!!token);
   };
 
+  const handleBackClick = () => {
+    // If user is logged in, go back to profile, otherwise go to home
+    if (isLoggedIn) {
+      navigate("/customer-profile");
+    } else {
+      navigate("/");
+    }
+  };
+
   useEffect(() => {
     filterDishes();
   }, [searchTerm, selectedCategory, dishes]);
@@ -92,7 +101,7 @@ export default function PublicMenu() {
         <div className="container mx-auto px-6">
           <div className="flex justify-between items-start mb-6">
             <button
-              onClick={() => navigate("/")}
+              onClick={handleBackClick}
               className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
               <svg
                 className="w-5 h-5"
@@ -106,7 +115,7 @@ export default function PublicMenu() {
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              Back to Home
+              {isLoggedIn ? "Back to Profile" : "Back to Home"}
             </button>
 
             {isLoggedIn && (
