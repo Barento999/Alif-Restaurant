@@ -12,17 +12,17 @@ import { protect, authorize } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-// Staff routes (admin/manager only)
+// Staff routes (admin/manager/kitchen can view and update)
 router.get(
   "/all",
   protect,
-  authorize("admin", "manager"),
+  authorize("admin", "manager", "kitchen"),
   getAllCustomerOrders,
 );
 router.put(
   "/:id/status",
   protect,
-  authorize("admin", "manager"),
+  authorize("admin", "manager", "kitchen"),
   updateCustomerOrderStatus,
 );
 

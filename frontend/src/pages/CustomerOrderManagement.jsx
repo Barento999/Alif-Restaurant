@@ -323,9 +323,7 @@ export default function CustomerOrderManagement() {
               {/* Status Actions */}
               {order.status !== "delivered" && order.status !== "cancelled" && (
                 <div className="border-t border-gray-200 pt-4">
-                  <h4 className="font-semibold text-gray-800 mb-3">
-                    Update Status
-                  </h4>
+                  <h4 className="font-semibold text-gray-800 mb-3">Actions</h4>
                   <div className="flex flex-wrap gap-2">
                     {order.status === "pending" && (
                       <>
@@ -334,7 +332,7 @@ export default function CustomerOrderManagement() {
                             updateOrderStatus(order._id, "confirmed")
                           }
                           className="px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors">
-                          Confirm Order
+                          📤 Send to Kitchen
                         </button>
                         <button
                           onClick={() =>
@@ -346,22 +344,14 @@ export default function CustomerOrderManagement() {
                       </>
                     )}
                     {order.status === "confirmed" && (
-                      <button
-                        onClick={() =>
-                          updateOrderStatus(order._id, "preparing")
-                        }
-                        className="px-4 py-2 bg-purple-500 text-white rounded-lg font-semibold hover:bg-purple-600 transition-colors">
-                        Start Preparing
-                      </button>
+                      <p className="text-blue-600 font-semibold">
+                        ✅ Sent to Kitchen - Waiting for preparation
+                      </p>
                     )}
                     {order.status === "preparing" && (
-                      <button
-                        onClick={() =>
-                          updateOrderStatus(order._id, "out_for_delivery")
-                        }
-                        className="px-4 py-2 bg-indigo-500 text-white rounded-lg font-semibold hover:bg-indigo-600 transition-colors">
-                        Out for Delivery
-                      </button>
+                      <p className="text-purple-600 font-semibold">
+                        🍳 Kitchen is preparing this order...
+                      </p>
                     )}
                     {order.status === "out_for_delivery" && (
                       <button
@@ -369,7 +359,7 @@ export default function CustomerOrderManagement() {
                           updateOrderStatus(order._id, "delivered")
                         }
                         className="px-4 py-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors">
-                        Mark as Delivered
+                        ✓ Mark as Delivered
                       </button>
                     )}
                   </div>

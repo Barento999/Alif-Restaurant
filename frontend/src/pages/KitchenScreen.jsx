@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchOrders,
@@ -7,42 +7,91 @@ import {
   updateOrderRealtime,
 } from "../features/orders/orderSlice";
 import { io } from "socket.io-client";
+import axios from "axios";
 
 export default function KitchenScreen() {
   const dispatch = useDispatch();
   const { orders } = useSelector((state) => state.orders);
+  const { token } = useSelector((state) => state.auth);
+  const [customerOrders, setCustomerOrders] = useState([]);
 
   useEffect(() => {
-    // Fetch all orders and filter on frontend
+    // Fetch restaurant orders
     dispatch(fetchOrders());
+
+    // Fetch customer orders
+    if (token) {
+      fetchCustomerOrders();
+    }
 
     const socket = io("http://localhost:5000");
     socket.on("newOrder", (order) => dispatch(addOrderRealtime(order)));
     socket.on("orderStatusUpdate", (order) =>
       dispatch(updateOrderRealtime(order)),
     );
+    socket.on("newCustomerOrder", (order) => {
+      setCustomerOrders((prev) => [order, ...prev]);
+    });
+    socket.on("customerOrderStatusUpdate", (order) => {
+      setCustomerOrders((prev) =>
+        prev.map((o) => (o._id === order._id ? order : o)),
+      );
+    });
 
     return () => socket.disconnect();
-  }, [dispatch]);
+  }, [dispatch, token]);
+
+  const fetchCustomerOrders = async () => {
+    try {
+      const response = await axios.get("/api/customer-orders/all", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.data.success) {
+        setCustomerOrders(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching customer orders:", error);
+    }
+  };
 
   const handleStatusChange = (id, status) => {
     dispatch(updateOrderStatus({ id, status }));
+  };
+
+  const handleCustomerOrderStatusChange = async (id, status) => {
+    try {
+      const response = await axios.put(
+        `/api/customer-orders/${id}/status`,
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (response.data.success) {
+        setCustomerOrders((prev) =>
+          prev.map((o) => (o._id === id ? response.data.data : o)),
+        );
+      }
+    } catch (error) {
+      console.error("Error updating customer order:", error);
+    }
   };
 
   const activeOrders = orders.filter((o) =>
     ["pending", "preparing"].includes(o.status),
   );
 
-  console.log("=== KITCHEN SCREEN DEBUG ===");
-  console.log("Total orders in Redux:", orders.length);
-  console.log("Active orders (pending/preparing):", activeOrders.length);
-  console.log(
-    "Orders:",
-    orders.map((o) => ({ orderNumber: o.orderNumber, status: o.status })),
+  const activeCustomerOrders = customerOrders.filter((o) =>
+    ["confirmed", "preparing"].includes(o.status),
   );
 
-  const pendingOrders = activeOrders.filter((o) => o.status === "pending");
-  const preparingOrders = activeOrders.filter((o) => o.status === "preparing");
+  const allActiveOrders = [...activeOrders, ...activeCustomerOrders];
+
+  const pendingCount =
+    activeOrders.filter((o) => o.status === "pending").length +
+    activeCustomerOrders.filter((o) => o.status === "confirmed").length;
+
+  const preparingCount =
+    activeOrders.filter((o) => o.status === "preparing").length +
+    activeCustomerOrders.filter((o) => o.status === "preparing").length;
 
   return (
     <div className="space-y-6">
@@ -50,15 +99,15 @@ export default function KitchenScreen() {
         <h1 className="text-3xl font-bold text-gray-800">Kitchen Dashboard</h1>
         <div className="flex items-center space-x-4">
           <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-xl font-semibold">
-            Pending: {pendingOrders.length}
+            Pending: {pendingCount}
           </div>
           <div className="bg-[#0d5f4e] text-white px-4 py-2 rounded-xl font-semibold">
-            Preparing: {preparingOrders.length}
+            Preparing: {preparingCount}
           </div>
         </div>
       </div>
 
-      {activeOrders.length === 0 ? (
+      {allActiveOrders.length === 0 ? (
         <div className="bg-white rounded-xl shadow-lg p-12 text-center">
           <svg
             className="w-24 h-24 mx-auto text-gray-400 mb-4"
@@ -79,31 +128,33 @@ export default function KitchenScreen() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Restaurant Orders */}
           {activeOrders.map((order) => (
             <div
               key={order._id}
-              className={`bg-white rounded-xl shadow-lg p-6 border-l-4 ${
+              className={`bg-white rounded-xl shadow-lg p-6 border-l-4 relative ${
                 order.status === "pending"
                   ? "border-yellow-500"
                   : "border-[#0d5f4e]"
               } transform transition-all hover:scale-105`}>
+              <span
+                className={`absolute -top-3 -right-3 px-4 py-2 rounded-xl text-white font-bold text-sm whitespace-nowrap shadow-lg ${
+                  order.status === "pending" ? "bg-yellow-500" : "bg-[#0d5f4e]"
+                }`}>
+                {order.status === "pending" ? "PENDING" : "PREPARING"}
+              </span>
               <div className="flex justify-between items-start mb-4">
-                <div>
+                <div className="flex-1">
                   <h3 className="text-2xl font-bold text-gray-800">
                     {order.orderNumber}
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded inline-block mt-1">
+                    DINE-IN
+                  </span>
+                  <p className="text-sm text-gray-500 mt-1">
                     {new Date(order.createdAt).toLocaleTimeString()}
                   </p>
                 </div>
-                <span
-                  className={`px-3 py-1 rounded-xl text-white font-semibold ${
-                    order.status === "pending"
-                      ? "bg-yellow-500"
-                      : "bg-[#0d5f4e]"
-                  }`}>
-                  {order.status.toUpperCase()}
-                </span>
               </div>
 
               <div className="bg-gray-50 rounded-lg p-3 mb-4 border border-gray-200">
@@ -214,6 +265,140 @@ export default function KitchenScreen() {
                       />
                     </svg>
                     <span>Mark Ready</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {/* Customer Orders (Online/Delivery) */}
+          {activeCustomerOrders.map((order) => (
+            <div
+              key={order._id}
+              className={`bg-white rounded-xl shadow-lg p-6 border-l-4 relative ${
+                order.status === "confirmed"
+                  ? "border-yellow-500"
+                  : "border-[#0d5f4e]"
+              } transform transition-all hover:scale-105`}>
+              <span
+                className={`absolute -top-3 -right-3 px-4 py-2 rounded-xl text-white font-bold text-sm whitespace-nowrap shadow-lg ${
+                  order.status === "confirmed"
+                    ? "bg-yellow-500"
+                    : "bg-[#0d5f4e]"
+                }`}>
+                {order.status === "confirmed" ? "CONFIRMED" : "PREPARING"}
+              </span>
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-gray-800">
+                    {order.orderNumber}
+                  </h3>
+                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded inline-block mt-1">
+                    DELIVERY
+                  </span>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {new Date(order.createdAt).toLocaleTimeString()}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 rounded-lg p-3 mb-4 border border-gray-200">
+                <p className="text-sm text-gray-600 mb-1">Customer</p>
+                <p className="text-lg font-bold text-gray-800">
+                  {order.customer?.firstName} {order.customer?.lastName}
+                </p>
+                <p className="text-sm text-gray-600">{order.contactPhone}</p>
+              </div>
+
+              <div className="space-y-2 mb-4">
+                <p className="text-sm font-semibold text-gray-600 mb-2">
+                  Items:
+                </p>
+                {order.items?.map((item, i) => (
+                  <div
+                    key={i}
+                    className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                    <div className="flex items-center gap-3 p-2">
+                      {item.image && (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start">
+                          <span className="text-gray-800 font-medium">
+                            {item.name}
+                          </span>
+                          <span className="bg-[#d4a843] text-white px-2 py-1 rounded-full text-sm font-bold ml-2">
+                            x{item.quantity}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {order.notes && (
+                <div className="bg-yellow-50 border-l-4 border-yellow-500 p-3 mb-4 rounded">
+                  <p className="text-sm text-yellow-800">
+                    <span className="font-semibold">Note:</span> {order.notes}
+                  </p>
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                {order.status === "confirmed" && (
+                  <button
+                    onClick={() =>
+                      handleCustomerOrderStatusChange(order._id, "preparing")
+                    }
+                    className="flex-1 bg-[#0d5f4e] text-white py-3 rounded-xl font-semibold hover:bg-[#0f7a62] transition-all flex items-center justify-center space-x-2">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span>Start Cooking</span>
+                  </button>
+                )}
+                {order.status === "preparing" && (
+                  <button
+                    onClick={() =>
+                      handleCustomerOrderStatusChange(
+                        order._id,
+                        "out_for_delivery",
+                      )
+                    }
+                    className="flex-1 bg-[#d4a843] text-white py-3 rounded-xl font-semibold hover:bg-[#c09838] transition-all flex items-center justify-center space-x-2">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                      />
+                    </svg>
+                    <span>Ready for Delivery</span>
                   </button>
                 )}
               </div>
