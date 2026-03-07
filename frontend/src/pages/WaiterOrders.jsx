@@ -8,7 +8,7 @@ import {
   cancelOrder,
   modifyOrder,
 } from "../features/orders/orderSlice";
-import { fetchMenuItems } from "../features/menu/menuSlice";
+import { fetchMenu } from "../features/menu/menuSlice";
 import { io } from "socket.io-client";
 import ModifyOrderModal from "../components/ModifyOrderModal";
 
@@ -21,7 +21,7 @@ export default function WaiterOrders() {
 
   useEffect(() => {
     dispatch(fetchOrders());
-    dispatch(fetchMenuItems());
+    dispatch(fetchMenu());
 
     // Setup Socket.io for real-time updates
     const socket = io("http://localhost:5000");

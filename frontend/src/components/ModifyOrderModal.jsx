@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 export default function ModifyOrderModal({ order, onClose, onSave }) {
-  const { menuItems } = useSelector((state) => state.menu);
+  const menuItems = useSelector((state) => state.menu.items);
   const [items, setItems] = useState([]);
 
   useEffect(() => {
