@@ -5,7 +5,9 @@ import axios from "axios";
 export default function CustomerProfile() {
   const navigate = useNavigate();
   const [customer, setCustomer] = useState(null);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [ordersLoading, setOrdersLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,6 +25,12 @@ export default function CustomerProfile() {
   useEffect(() => {
     fetchCustomerProfile();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === "orders" && orders.length === 0) {
+      fetchOrders();
+    }
+  }, [activeTab]);
 
   const fetchCustomerProfile = async () => {
     try {
@@ -53,6 +61,76 @@ export default function CustomerProfile() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchOrders = async () => {
+    setOrdersLoading(true);
+    try {
+      const token = localStorage.getItem("customerToken");
+      const response = await axios.get("/api/customers/orders", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.success) {
+        setOrders(response.data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to cancel this order?")) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("customerToken");
+      const response = await axios.put(
+        `/api/customers/orders/${orderId}/cancel`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      if (response.data.success) {
+        setMessage({ type: "success", text: "Order cancelled successfully" });
+        fetchOrders(); // Refresh orders
+        setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+      }
+    } catch (error) {
+      setMessage({
+        type: "error",
+        text: error.response?.data?.message || "Failed to cancel order",
+      });
+    }
+  };
+
+  const getStatusColor = (status) => {
+    const colors = {
+      pending: "bg-yellow-100 text-yellow-800",
+      confirmed: "bg-blue-100 text-blue-800",
+      preparing: "bg-purple-100 text-purple-800",
+      out_for_delivery: "bg-indigo-100 text-indigo-800",
+      delivered: "bg-green-100 text-green-800",
+      cancelled: "bg-red-100 text-red-800",
+    };
+    return colors[status] || "bg-gray-100 text-gray-800";
+  };
+
+  const getStatusText = (status) => {
+    const texts = {
+      pending: "Pending",
+      confirmed: "Confirmed",
+      preparing: "Preparing",
+      out_for_delivery: "Out for Delivery",
+      delivered: "Delivered",
+      cancelled: "Cancelled",
+    };
+    return texts[status] || status;
   };
 
   const handleLogout = () => {
@@ -479,31 +557,150 @@ export default function CustomerProfile() {
                   <h2 className="text-2xl font-bold text-gray-800 mb-6">
                     My Orders
                   </h2>
-                  <div className="text-center py-12">
-                    <svg
-                      className="w-24 h-24 text-gray-300 mx-auto mb-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                      />
-                    </svg>
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">
-                      No orders yet
-                    </h3>
-                    <p className="text-gray-600 mb-6">
-                      Start ordering from our delicious menu!
-                    </p>
-                    <button
-                      onClick={() => navigate("/menu")}
-                      className="px-8 py-3 bg-[#0d5f4e] text-white rounded-lg font-semibold hover:bg-[#0f7a62] transition-colors">
-                      Browse Menu
-                    </button>
-                  </div>
+                  {ordersLoading ? (
+                    <div className="text-center py-12">
+                      <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#0d5f4e] mx-auto"></div>
+                    </div>
+                  ) : orders.length > 0 ? (
+                    <div className="space-y-6">
+                      {orders.map((order) => (
+                        <div
+                          key={order._id}
+                          className="border-2 border-gray-200 rounded-xl p-6 hover:border-[#0d5f4e] transition-colors">
+                          <div className="flex justify-between items-start mb-4">
+                            <div>
+                              <h3 className="text-lg font-bold text-gray-800">
+                                Order #{order.orderNumber}
+                              </h3>
+                              <p className="text-sm text-gray-600">
+                                {new Date(order.createdAt).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  },
+                                )}
+                              </p>
+                            </div>
+                            <span
+                              className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(order.status)}`}>
+                              {getStatusText(order.status)}
+                            </span>
+                          </div>
+
+                          <div className="border-t border-gray-200 pt-4 mb-4">
+                            <h4 className="font-semibold text-gray-800 mb-3">
+                              Items:
+                            </h4>
+                            <div className="space-y-2">
+                              {order.items.map((item, index) => (
+                                <div
+                                  key={index}
+                                  className="flex justify-between text-sm">
+                                  <span className="text-gray-700">
+                                    {item.name} × {item.quantity}
+                                  </span>
+                                  <span className="font-semibold text-gray-800">
+                                    ${(item.price * item.quantity).toFixed(2)}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="border-t border-gray-200 pt-4 mb-4">
+                            <div className="flex justify-between text-sm mb-2">
+                              <span className="text-gray-600">Subtotal:</span>
+                              <span className="text-gray-800">
+                                ${order.subtotal.toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm mb-2">
+                              <span className="text-gray-600">
+                                Delivery Fee:
+                              </span>
+                              <span className="text-gray-800">
+                                ${order.deliveryFee.toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm mb-2">
+                              <span className="text-gray-600">Tax:</span>
+                              <span className="text-gray-800">
+                                ${order.tax.toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between font-bold text-lg pt-2 border-t">
+                              <span className="text-gray-800">Total:</span>
+                              <span className="text-[#0d5f4e]">
+                                ${order.total.toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="border-t border-gray-200 pt-4">
+                            <p className="text-sm text-gray-600 mb-1">
+                              <span className="font-semibold">
+                                Delivery Address:
+                              </span>{" "}
+                              {order.deliveryAddress.street},{" "}
+                              {order.deliveryAddress.city},{" "}
+                              {order.deliveryAddress.state}{" "}
+                              {order.deliveryAddress.zipCode}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              <span className="font-semibold">Phone:</span>{" "}
+                              {order.contactPhone}
+                            </p>
+                            {order.notes && (
+                              <p className="text-sm text-gray-600 mt-2">
+                                <span className="font-semibold">Notes:</span>{" "}
+                                {order.notes}
+                              </p>
+                            )}
+                          </div>
+
+                          {["pending", "confirmed"].includes(order.status) && (
+                            <div className="mt-4 pt-4 border-t border-gray-200">
+                              <button
+                                onClick={() => handleCancelOrder(order._id)}
+                                className="px-6 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition-colors">
+                                Cancel Order
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <svg
+                        className="w-24 h-24 text-gray-300 mx-auto mb-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                        />
+                      </svg>
+                      <h3 className="text-xl font-bold text-gray-800 mb-2">
+                        No orders yet
+                      </h3>
+                      <p className="text-gray-600 mb-6">
+                        Start ordering from our delicious menu!
+                      </p>
+                      <button
+                        onClick={() => navigate("/menu")}
+                        className="px-8 py-3 bg-[#0d5f4e] text-white rounded-lg font-semibold hover:bg-[#0f7a62] transition-colors">
+                        Browse Menu
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 

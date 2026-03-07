@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useCart } from "../context/CartContext";
+import Cart from "../components/Cart";
 
 export default function PublicMenu() {
   const navigate = useNavigate();
+  const { addToCart, setIsCartOpen } = useCart();
   const [dishes, setDishes] = useState([]);
   const [filteredDishes, setFilteredDishes] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -11,11 +14,18 @@ export default function PublicMenu() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const dishesPerPage = 12;
 
   useEffect(() => {
     fetchAllDishes();
+    checkLoginStatus();
   }, []);
+
+  const checkLoginStatus = () => {
+    const token = localStorage.getItem("customerToken");
+    setIsLoggedIn(!!token);
+  };
 
   useEffect(() => {
     filterDishes();
@@ -75,26 +85,56 @@ export default function PublicMenu() {
 
   return (
     <div className="min-h-screen bg-[#f5f5f0]">
+      <Cart />
+
       {/* Header */}
       <div className="bg-[#0d5f4e] text-white py-20">
         <div className="container mx-auto px-6">
-          <button
-            onClick={() => navigate("/")}
-            className="mb-6 flex items-center gap-2 text-white/80 hover:text-white transition-colors">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Back to Home
-          </button>
+          <div className="flex justify-between items-start mb-6">
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Back to Home
+            </button>
+
+            {isLoggedIn && (
+              <button
+                onClick={() => setIsCartOpen(true)}
+                className="relative px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg font-semibold transition-colors flex items-center gap-2">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
+                </svg>
+                Cart
+                {useCart().getCartCount() > 0 && (
+                  <span className="absolute -top-2 -right-2 w-6 h-6 bg-[#d4a843] rounded-full flex items-center justify-center text-sm font-bold">
+                    {useCart().getCartCount()}
+                  </span>
+                )}
+              </button>
+            )}
+          </div>
+
           <h1 className="text-5xl lg:text-6xl font-black mb-4">
             Our Full Menu
           </h1>
@@ -230,11 +270,31 @@ export default function PublicMenu() {
                         )}
                       </div>
                     )}
-                    <button
-                      onClick={() => navigate("/customer-login")}
-                      className="w-full bg-[#0d5f4e] text-white py-3 rounded-xl font-semibold hover:bg-[#0f7a62] transition-colors">
-                      Order Now
-                    </button>
+                    {isLoggedIn ? (
+                      <button
+                        onClick={() => addToCart(dish)}
+                        className="w-full bg-[#0d5f4e] text-white py-3 rounded-xl font-semibold hover:bg-[#0f7a62] transition-colors flex items-center justify-center gap-2">
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                          />
+                        </svg>
+                        Add to Cart
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => navigate("/customer-login")}
+                        className="w-full bg-[#0d5f4e] text-white py-3 rounded-xl font-semibold hover:bg-[#0f7a62] transition-colors">
+                        Login to Order
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
