@@ -129,7 +129,7 @@ export default function LandingPage() {
 
             <div className="flex flex-wrap gap-5 pt-4">
               <button
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/menu")}
                 className="px-10 py-5 bg-[#0d5f4e] text-white rounded-xl font-bold text-xl hover:bg-[#0f7a62] transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 flex items-center gap-3">
                 View Menu
                 <svg
@@ -533,7 +533,7 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-wrap justify-center gap-6">
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/customer-auth")}
               className="px-12 py-5 bg-[#d4a843] text-white rounded-xl font-bold text-xl hover:bg-[#c49a3a] transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 flex items-center gap-3">
               <svg
                 className="w-6 h-6"
@@ -812,7 +812,12 @@ export default function LandingPage() {
                 </li>
                 <li>
                   <button
-                    onClick={() => navigate("/login")}
+                    onClick={() => {
+                      const staffLoginRoute =
+                        import.meta.env.VITE_STAFF_LOGIN_ROUTE ||
+                        "/alif-mgmt-2024";
+                      navigate(staffLoginRoute);
+                    }}
                     className="text-white/80 hover:text-[#d4a843] transition-colors">
                     Staff Login
                   </button>

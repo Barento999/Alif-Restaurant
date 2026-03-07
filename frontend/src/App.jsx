@@ -25,14 +25,18 @@ import LayoutWithSidebar from "./components/LayoutWithSidebar";
 
 const PrivateRoute = ({ children, roles }) => {
   const { user, token } = useSelector((state) => state.auth);
+  const staffLoginRoute =
+    import.meta.env.VITE_STAFF_LOGIN_ROUTE || "/alif-mgmt-2024";
 
-  if (!token) return <Navigate to="/login" />;
+  if (!token) return <Navigate to={staffLoginRoute} />;
   if (roles && !roles.includes(user?.role)) return <Navigate to="/dashboard" />;
 
   return children;
 };
 
 function App() {
+  const staffLoginRoute = import.meta.env.VITE_STAFF_LOGIN_ROUTE;
+
   return (
     <BrowserRouter>
       <Routes>
@@ -43,7 +47,10 @@ function App() {
         <Route path="/customer-register" element={<CustomerAuth />} />
         <Route path="/customer-profile" element={<CustomerProfile />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/login" element={<Login />} />
+        <Route path={staffLoginRoute} element={<Login />} />
+        <Route path="/staff-portal" element={<Navigate to="/" replace />} />
+        <Route path="/admin-login" element={<Navigate to="/" replace />} />
+        <Route path="/login" element={<Navigate to="/" replace />} />
         <Route
           element={
             <PrivateRoute>

@@ -13,8 +13,10 @@ export default function Layout() {
 
   useEffect(() => {
     const handleLogout = () => {
+      const staffLoginRoute =
+        import.meta.env.VITE_STAFF_LOGIN_ROUTE || "/alif-mgmt-2024";
       dispatch(logout());
-      navigate("/login");
+      navigate(staffLoginRoute);
     };
 
     window.addEventListener("logout", handleLogout);

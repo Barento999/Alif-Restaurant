@@ -157,7 +157,7 @@ export default function CustomerLogin() {
             <p className="text-sm text-gray-600">
               Are you a staff member?{" "}
               <Link
-                to="/login"
+                to={import.meta.env.VITE_STAFF_LOGIN_ROUTE || "/alif-mgmt-2024"}
                 className="text-[#0d5f4e] font-semibold hover:text-[#0f7a62] transition-colors">
                 Staff Login
               </Link>

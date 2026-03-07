@@ -18,8 +18,10 @@ export default function LayoutWithSidebar() {
   const [orders, setOrders] = useState([]);
 
   const handleLogout = () => {
+    const staffLoginRoute =
+      import.meta.env.VITE_STAFF_LOGIN_ROUTE || "/alif-mgmt-2024";
     dispatch(logout());
-    navigate("/login");
+    navigate(staffLoginRoute);
   };
 
   // Listen for logout event from sidebar
