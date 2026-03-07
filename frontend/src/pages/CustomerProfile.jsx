@@ -220,8 +220,8 @@ export default function CustomerProfile() {
 
   return (
     <div className="min-h-screen bg-[#f5f5f0]">
-      {/* Header */}
-      <div className="bg-[#0d5f4e] text-white py-8">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 bg-[#0d5f4e] text-white py-8 z-50 shadow-lg">
         <div className="container mx-auto px-6">
           <div className="flex justify-between items-center">
             <div>
@@ -246,7 +246,9 @@ export default function CustomerProfile() {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-8">
+      {/* Add padding to account for fixed header */}
+      <div className="pt-32">
+        <div className="container mx-auto px-6 py-8">
         {/* Message */}
         {message.text && (
           <div
@@ -260,9 +262,9 @@ export default function CustomerProfile() {
         )}
 
         <div className="grid lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
+          {/* Fixed Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="lg:sticky lg:top-36 bg-white rounded-2xl shadow-lg p-6">
               {/* Profile Summary */}
               <div className="text-center mb-6 pb-6 border-b">
                 <div className="w-20 h-20 bg-gradient-to-br from-[#0d5f4e] to-[#d4a843] rounded-full flex items-center justify-center mx-auto mb-4">
