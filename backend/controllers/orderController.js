@@ -66,27 +66,68 @@ export const getOrders = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true },
-    )
+
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    const currentStatus = order.status;
+
+    // Define valid status transitions
+    const statusWorkflow = {
+      pending: ["preparing", "cancelled"],
+      preparing: ["ready", "cancelled"],
+      ready: ["served"],
+      served: ["paid"],
+      paid: [], // Terminal state - cannot change
+      cancelled: [], // Terminal state - cannot change
+    };
+
+    // Check if status change is allowed
+    const allowedTransitions = statusWorkflow[currentStatus];
+
+    // Prevent changes from terminal states
+    if (allowedTransitions.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot change status from "${currentStatus}". This is a final state.`,
+      });
+    }
+
+    // Check if the new status is a valid transition
+    if (!allowedTransitions.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid status transition from "${currentStatus}" to "${status}". Allowed: ${allowedTransitions.join(", ")}`,
+      });
+    }
+
+    // Update status (timestamp will be set by pre-save middleware)
+    order.status = status;
+    await order.save();
+
+    // Free table when paid
+    if (status === "paid") {
+      await Table.findByIdAndUpdate(order.table, { status: "available" });
+    }
+
+    // Free table when cancelled
+    if (status === "cancelled") {
+      await Table.findByIdAndUpdate(order.table, { status: "available" });
+    }
+
+    const populatedOrder = await Order.findById(order._id)
       .populate("table")
       .populate("waiter", "name")
       .populate("items.menuItem");
 
-    if (!order)
-      return res
-        .status(404)
-        .json({ success: false, message: "Order not found" });
+    req.io.emit("orderStatusUpdate", populatedOrder);
 
-    if (status === "paid") {
-      await Table.findByIdAndUpdate(order.table._id, { status: "available" });
-    }
-
-    req.io.emit("orderStatusUpdate", order);
-
-    res.json({ success: true, data: order });
+    res.json({ success: true, data: populatedOrder });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

@@ -33,10 +33,31 @@ const orderSchema = new mongoose.Schema(
       enum: ["pending", "preparing", "ready", "served", "paid", "cancelled"],
       default: "pending",
     },
+    // Status timestamps for tracking workflow
+    statusTimestamps: {
+      pending: { type: Date },
+      preparing: { type: Date },
+      ready: { type: Date },
+      served: { type: Date },
+      paid: { type: Date },
+      cancelled: { type: Date },
+    },
     notes: String,
   },
   { timestamps: true },
 );
+
+// Middleware to set status timestamp when status changes
+orderSchema.pre("save", function (next) {
+  if (this.isModified("status")) {
+    // Set timestamp for the new status
+    if (!this.statusTimestamps) {
+      this.statusTimestamps = {};
+    }
+    this.statusTimestamps[this.status] = new Date();
+  }
+  next();
+});
 
 orderSchema.index({ orderNumber: 1, status: 1, createdAt: -1 });
 

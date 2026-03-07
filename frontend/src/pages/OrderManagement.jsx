@@ -58,12 +58,27 @@ export default function OrderManagement() {
     }
   };
 
-  const handleStatusChange = async (orderId, newStatus) => {
+  const handleStatusChange = async (orderId, newStatus, currentStatus) => {
+    // Check if it's a terminal state
+    if (currentStatus === "paid" || currentStatus === "cancelled") {
+      alert(
+        `Cannot change status from "${currentStatus}". This is a final state.`,
+      );
+      return;
+    }
+
     try {
-      await dispatch(updateOrderStatus({ id: orderId, status: newStatus }));
+      const result = await dispatch(
+        updateOrderStatus({ id: orderId, status: newStatus }),
+      ).unwrap();
       loadOrders();
     } catch (error) {
-      alert("Error updating order status");
+      const errorMsg =
+        error.message ||
+        error.response?.data?.message ||
+        "Error updating order status";
+      alert(errorMsg);
+      loadOrders(); // Reload to reset the dropdown
     }
   };
 
@@ -108,6 +123,19 @@ export default function OrderManagement() {
       cancelled: "bg-red-100 text-red-800",
     };
     return colors[status] || "bg-gray-100 text-gray-800";
+  };
+
+  // Get valid status transitions based on current status
+  const getValidStatusTransitions = (currentStatus) => {
+    const statusWorkflow = {
+      pending: ["pending", "preparing", "cancelled"],
+      preparing: ["preparing", "ready", "cancelled"],
+      ready: ["ready", "served"],
+      served: ["served", "paid"],
+      paid: ["paid"], // Terminal state
+      cancelled: ["cancelled"], // Terminal state
+    };
+    return statusWorkflow[currentStatus] || [currentStatus];
   };
 
   const statusOptions = [
@@ -346,14 +374,29 @@ export default function OrderManagement() {
                       <select
                         value={order.status}
                         onChange={(e) =>
-                          handleStatusChange(order._id, e.target.value)
+                          handleStatusChange(
+                            order._id,
+                            e.target.value,
+                            order.status,
+                          )
                         }
-                        className={`px-3 py-1 rounded-full text-xs font-semibold capitalize bg-gray-50 border border-gray-200 ${getStatusColor(order.status)}`}>
-                        {statusOptions.map((status) => (
-                          <option key={status} value={status}>
-                            {status}
-                          </option>
-                        ))}
+                        disabled={
+                          order.status === "paid" ||
+                          order.status === "cancelled"
+                        }
+                        className={`px-3 py-1 rounded-full text-xs font-semibold capitalize bg-gray-50 border border-gray-200 ${getStatusColor(order.status)} ${
+                          order.status === "paid" ||
+                          order.status === "cancelled"
+                            ? "cursor-not-allowed opacity-75"
+                            : "cursor-pointer"
+                        }`}>
+                        {getValidStatusTransitions(order.status).map(
+                          (status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          ),
+                        )}
                       </select>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
@@ -491,6 +534,33 @@ export default function OrderManagement() {
                   </p>
                 </div>
               </div>
+
+              {/* Status Timeline */}
+              {selectedOrder.statusTimestamps && (
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-3">
+                    Status Timeline
+                  </h3>
+                  <div className="space-y-2">
+                    {Object.entries(selectedOrder.statusTimestamps)
+                      .filter(([_, timestamp]) => timestamp)
+                      .sort((a, b) => new Date(a[1]) - new Date(b[1]))
+                      .map(([status, timestamp]) => (
+                        <div
+                          key={status}
+                          className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusColor(status)}`}>
+                            {status}
+                          </span>
+                          <span className="text-sm text-gray-600 dark:text-gray-300">
+                            {new Date(timestamp).toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
 
               {/* Items */}
               <div>
