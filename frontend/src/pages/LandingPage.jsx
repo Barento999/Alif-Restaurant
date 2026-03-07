@@ -535,12 +535,12 @@ export default function LandingPage() {
             Ready to Experience World Flavors?
           </h2>
           <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-            Book your table now and embark on a culinary journey around the
-            world
+            Order online for delivery or visit our restaurant for an
+            unforgettable dining experience
           </p>
           <div className="flex flex-wrap justify-center gap-6">
             <button
-              onClick={() => navigate("/customer-auth")}
+              onClick={() => navigate("/menu")}
               className="px-12 py-5 bg-[#d4a843] text-white rounded-xl font-bold text-xl hover:bg-[#c49a3a] transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 flex items-center gap-3">
               <svg
                 className="w-6 h-6"
@@ -551,10 +551,10 @@ export default function LandingPage() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                 />
               </svg>
-              Reserve Your Table
+              Order Online Now
             </button>
             <button className="px-12 py-5 bg-white text-[#0d5f4e] rounded-xl font-bold text-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-2xl flex items-center gap-3">
               <svg
@@ -693,7 +693,7 @@ export default function LandingPage() {
                     info@alifrestaurant.com
                   </p>
                   <p className="text-gray-600 text-lg">
-                    reservations@alifrestaurant.com
+                    support@alifrestaurant.com
                   </p>
                 </div>
               </div>
@@ -741,7 +741,7 @@ export default function LandingPage() {
                   </label>
                   <textarea
                     rows="5"
-                    placeholder="Tell us about your reservation or inquiry..."
+                    placeholder="Tell us about your inquiry or feedback..."
                     className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:border-[#0d5f4e] focus:outline-none transition-colors resize-none"></textarea>
                 </div>
                 <button
