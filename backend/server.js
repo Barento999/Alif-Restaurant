@@ -16,6 +16,7 @@ import userRoutes from "./routes/userRoutes.js";
 import inventoryRoutes from "./routes/inventoryRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
 import customerOrderRoutes from "./routes/customerOrderRoutes.js";
+import promoRoutes from "./routes/promoRoutes.js";
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/customer-orders", customerOrderRoutes);
+app.use("/api/promos", promoRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "Server is running" });

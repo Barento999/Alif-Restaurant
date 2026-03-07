@@ -13,6 +13,7 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const { token } = useSelector((state) => state.auth);
   const [featuredDishes, setFeaturedDishes] = useState([]);
+  const [promos, setPromos] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,6 +24,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     fetchFeaturedDishes();
+    fetchActivePromos();
   }, []);
 
   const fetchFeaturedDishes = async () => {
@@ -39,6 +41,18 @@ export default function LandingPage() {
       setFeaturedDishes([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchActivePromos = async () => {
+    try {
+      const response = await axios.get("/api/promos/active");
+      if (response.data.success) {
+        setPromos(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching promos:", error);
+      setPromos([]);
     }
   };
 
@@ -429,72 +443,141 @@ export default function LandingPage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="bg-white/10 backdrop-blur-sm border-2 border-white/20 p-10 rounded-3xl hover:bg-white/15 transition-all duration-300">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-[#d4a843] rounded-2xl flex items-center justify-center">
-                  <svg
-                    className="w-8 h-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+            {promos.length > 0 ? (
+              promos.slice(0, 2).map((promo) => (
+                <div
+                  key={promo._id}
+                  className="bg-white/10 backdrop-blur-sm border-2 border-white/20 p-10 rounded-3xl hover:bg-white/15 transition-all duration-300">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-[#d4a843] rounded-2xl flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d={
+                            promo.type === "percentage"
+                              ? "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                              : "M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+                          }
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-3xl font-black text-white">
+                        {promo.type === "percentage"
+                          ? `${promo.value}% OFF`
+                          : promo.type === "fixed"
+                            ? `$${promo.value} OFF`
+                            : "FREE DELIVERY"}
+                      </h3>
+                      <p className="text-white/80 font-medium">
+                        {promo.applicableFor === "first_order"
+                          ? "First Order"
+                          : promo.minOrderAmount > 0
+                            ? `Orders Over $${promo.minOrderAmount}`
+                            : "All Orders"}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-white/90 text-lg mb-6">
+                    {promo.description}
+                    {promo.code && (
+                      <>
+                        {" "}
+                        Use code{" "}
+                        <span className="font-bold text-[#d4a843]">
+                          {promo.code}
+                        </span>{" "}
+                        at checkout.
+                      </>
+                    )}
+                  </p>
+                  <button
+                    onClick={() => navigate("/menu")}
+                    className="w-full bg-[#d4a843] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#c49a3a] transition-all duration-300">
+                    Order Now
+                  </button>
                 </div>
-                <div>
-                  <h3 className="text-3xl font-black text-white">20% OFF</h3>
-                  <p className="text-white/80 font-medium">First Order</p>
+              ))
+            ) : (
+              <>
+                <div className="bg-white/10 backdrop-blur-sm border-2 border-white/20 p-10 rounded-3xl hover:bg-white/15 transition-all duration-300">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-[#d4a843] rounded-2xl flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-3xl font-black text-white">
+                        20% OFF
+                      </h3>
+                      <p className="text-white/80 font-medium">First Order</p>
+                    </div>
+                  </div>
+                  <p className="text-white/90 text-lg mb-6">
+                    New customers get 20% off their first online order. Use code{" "}
+                    <span className="font-bold text-[#d4a843]">WELCOME20</span>{" "}
+                    at checkout.
+                  </p>
+                  <button
+                    onClick={() => navigate("/menu")}
+                    className="w-full bg-[#d4a843] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#c49a3a] transition-all duration-300">
+                    Order Now
+                  </button>
                 </div>
-              </div>
-              <p className="text-white/90 text-lg mb-6">
-                New customers get 20% off their first online order. Use code{" "}
-                <span className="font-bold text-[#d4a843]">WELCOME20</span> at
-                checkout.
-              </p>
-              <button
-                onClick={() => navigate("/menu")}
-                className="w-full bg-[#d4a843] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#c49a3a] transition-all duration-300">
-                Order Now
-              </button>
-            </div>
 
-            <div className="bg-white/10 backdrop-blur-sm border-2 border-white/20 p-10 rounded-3xl hover:bg-white/15 transition-all duration-300">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-[#d4a843] rounded-2xl flex items-center justify-center">
-                  <svg
-                    className="w-8 h-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-                    />
-                  </svg>
+                <div className="bg-white/10 backdrop-blur-sm border-2 border-white/20 p-10 rounded-3xl hover:bg-white/15 transition-all duration-300">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-[#d4a843] rounded-2xl flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-3xl font-black text-white">
+                        FREE DELIVERY
+                      </h3>
+                      <p className="text-white/80 font-medium">
+                        Orders Over $30
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-white/90 text-lg mb-6">
+                    Enjoy free delivery on all orders over $30. Available within
+                    5 miles of our restaurant location.
+                  </p>
+                  <button
+                    onClick={() => navigate("/menu")}
+                    className="w-full bg-white text-[#0d5f4e] py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-300">
+                    Start Ordering
+                  </button>
                 </div>
-                <div>
-                  <h3 className="text-3xl font-black text-white">
-                    FREE DELIVERY
-                  </h3>
-                  <p className="text-white/80 font-medium">Orders Over $30</p>
-                </div>
-              </div>
-              <p className="text-white/90 text-lg mb-6">
-                Enjoy free delivery on all orders over $30. Available within 5
-                miles of our restaurant location.
-              </p>
-              <button
-                onClick={() => navigate("/menu")}
-                className="w-full bg-white text-[#0d5f4e] py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-300">
-                Start Ordering
-              </button>
-            </div>
+              </>
+            )}
           </div>
         </div>
       </div>
