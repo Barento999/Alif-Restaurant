@@ -6,6 +6,7 @@ import {
   cancelCustomerOrder,
   getAllCustomerOrders,
   updateCustomerOrderStatus,
+  deleteCustomerOrder,
 } from "../controllers/customerOrderController.js";
 import { protectCustomer } from "../middlewares/customerAuth.js";
 import { protect, authorize } from "../middlewares/auth.js";
@@ -25,6 +26,7 @@ router.put(
   authorize("admin", "manager", "kitchen"),
   updateCustomerOrderStatus,
 );
+router.delete("/:id", protect, authorize("admin"), deleteCustomerOrder);
 
 // Customer routes (protected by customer auth)
 router.post("/", protectCustomer, createCustomerOrder);

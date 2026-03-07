@@ -243,3 +243,40 @@ export const updateCustomerOrderStatus = async (req, res) => {
     });
   }
 };
+
+// @desc    Delete order (for staff)
+// @route   DELETE /api/customer-orders/:id
+// @access  Private (Admin only)
+export const deleteCustomerOrder = async (req, res) => {
+  try {
+    const order = await CustomerOrder.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    // Only allow deletion of cancelled or delivered orders
+    if (!["cancelled", "delivered"].includes(order.status)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Can only delete cancelled or delivered orders. Please cancel the order first.",
+      });
+    }
+
+    await CustomerOrder.findByIdAndDelete(req.params.id);
+
+    res.json({
+      success: true,
+      message: "Order deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
