@@ -134,6 +134,25 @@ export default function CustomerAuth() {
       <div
         className="h-screen flex overflow-hidden relative bg-gray-100"
         style={{ perspective: "2000px" }}>
+        {/* Back to Home Button - Fixed Position */}
+        <button
+          onClick={() => navigate("/")}
+          className="absolute top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 bg-white/90 hover:bg-white text-gray-700 hover:text-[#0d5f4e] rounded-lg shadow-lg hover:shadow-xl transition-all backdrop-blur-sm">
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Back to Home
+        </button>
+
         {/* Login View - Form Left, Description Right */}
         <div
           className={`absolute inset-0 flex transition-all duration-1000 ease-in-out transform-gpu ${
