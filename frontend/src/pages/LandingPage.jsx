@@ -2,6 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import ET from "country-flag-icons/react/3x2/ET";
+import IT from "country-flag-icons/react/3x2/IT";
+import JP from "country-flag-icons/react/3x2/JP";
+import US from "country-flag-icons/react/3x2/US";
+import ES from "country-flag-icons/react/3x2/ES";
+import SA from "country-flag-icons/react/3x2/SA";
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -824,12 +830,24 @@ export default function LandingPage() {
             <div>
               <h4 className="text-xl font-bold mb-6">Our Cuisines</h4>
               <ul className="space-y-3">
-                <li className="text-white/80">🇪🇹 Ethiopian</li>
-                <li className="text-white/80">🇮🇹 Italian</li>
-                <li className="text-white/80">🇯🇵 Japanese</li>
-                <li className="text-white/80">🇺🇸 American</li>
-                <li className="text-white/80">🇪🇸 Spanish</li>
-                <li className="text-white/80">🇸🇦 Middle Eastern</li>
+                <li className="text-white/80 flex items-center gap-3">
+                  <ET className="w-6 h-4 rounded shadow-sm" /> Ethiopian
+                </li>
+                <li className="text-white/80 flex items-center gap-3">
+                  <IT className="w-6 h-4 rounded shadow-sm" /> Italian
+                </li>
+                <li className="text-white/80 flex items-center gap-3">
+                  <JP className="w-6 h-4 rounded shadow-sm" /> Japanese
+                </li>
+                <li className="text-white/80 flex items-center gap-3">
+                  <US className="w-6 h-4 rounded shadow-sm" /> American
+                </li>
+                <li className="text-white/80 flex items-center gap-3">
+                  <ES className="w-6 h-4 rounded shadow-sm" /> Spanish
+                </li>
+                <li className="text-white/80 flex items-center gap-3">
+                  <SA className="w-6 h-4 rounded shadow-sm" /> Middle Eastern
+                </li>
               </ul>
             </div>
 
