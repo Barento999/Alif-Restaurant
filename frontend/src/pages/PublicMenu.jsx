@@ -6,7 +6,7 @@ import Cart from "../components/Cart";
 
 export default function PublicMenu() {
   const navigate = useNavigate();
-  const { addToCart, setIsCartOpen } = useCart();
+  const { addToCart, setIsCartOpen, getCartCount } = useCart();
   const [dishes, setDishes] = useState([]);
   const [filteredDishes, setFilteredDishes] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -126,9 +126,9 @@ export default function PublicMenu() {
                   />
                 </svg>
                 Cart
-                {useCart().getCartCount() > 0 && (
+                {getCartCount() > 0 && (
                   <span className="absolute -top-2 -right-2 w-6 h-6 bg-[#d4a843] rounded-full flex items-center justify-center text-sm font-bold">
-                    {useCart().getCartCount()}
+                    {getCartCount()}
                   </span>
                 )}
               </button>
