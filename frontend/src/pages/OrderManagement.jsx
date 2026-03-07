@@ -469,7 +469,7 @@ export default function OrderManagement() {
         </table>
 
         <div class="footer">
-          <p>Restaurant Management System - Order Report</p>
+          <p>Alif Restaurant - Order Report</p>
         </div>
 
         <div class="no-print" style="margin-top: 30px; text-align: center;">

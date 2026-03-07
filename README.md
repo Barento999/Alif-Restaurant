@@ -1,6 +1,6 @@
-# 🍽️ Restaurant Management System (RMS)
+# 🍽️ Alif Restaurant - Full Stack Application
 
-A full-stack, production-ready Restaurant Management System built with the MERN stack featuring role-based access control, real-time kitchen updates, POS billing, inventory management, and comprehensive reporting.
+A full-stack, production-ready restaurant application built with the MERN stack featuring online ordering, table reservations, real-time kitchen updates, POS system, inventory management, and comprehensive staff management tools.
 
 ## ✨ Features
 

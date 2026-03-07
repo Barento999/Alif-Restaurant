@@ -296,7 +296,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             </div>
             <div>
               <p className="text-xl font-bold text-white">Alif Restaurant</p>
-              <p className="text-sm text-[#8fb8ad]">Management Suite</p>
+              <p className="text-sm text-[#8fb8ad]">Staff Portal</p>
             </div>
           </div>
           <button
