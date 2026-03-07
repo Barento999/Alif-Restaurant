@@ -181,6 +181,246 @@ export default function OrderManagement() {
     }
   };
 
+  // Export to CSV
+  const exportToCSV = () => {
+    if (filteredOrders.length === 0) {
+      alert("No orders to export");
+      return;
+    }
+
+    // CSV headers
+    const headers = [
+      "Order Number",
+      "Table",
+      "Waiter",
+      "Items Count",
+      "Subtotal",
+      "Tax",
+      "Total",
+      "Status",
+      "Created At",
+      "Notes",
+    ];
+
+    // CSV rows
+    const rows = filteredOrders.map((order) => [
+      order.orderNumber,
+      order.table?.tableNumber || "N/A",
+      order.waiter?.name || "N/A",
+      order.items?.length || 0,
+      `$${order.subtotal?.toFixed(2)}`,
+      `$${order.tax?.toFixed(2)}`,
+      `$${order.total?.toFixed(2)}`,
+      order.status,
+      new Date(order.createdAt).toLocaleString(),
+      order.notes || "",
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ].join("\n");
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `orders_${new Date().toISOString().split("T")[0]}.csv`,
+    );
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Export to PDF
+  const exportToPDF = () => {
+    if (filteredOrders.length === 0) {
+      alert("No orders to export");
+      return;
+    }
+
+    // Create a printable HTML content
+    const printWindow = window.open("", "_blank");
+    const totalRevenue = filteredOrders.reduce(
+      (sum, order) => sum + (order.total || 0),
+      0,
+    );
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Orders Report</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            color: #333;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #0d5f4e;
+            padding-bottom: 20px;
+          }
+          .header h1 {
+            color: #0d5f4e;
+            margin: 0;
+          }
+          .summary {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+          }
+          .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+          }
+          .summary-item {
+            text-align: center;
+          }
+          .summary-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+          }
+          .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0d5f4e;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+          }
+          th {
+            background: #0d5f4e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            text-transform: uppercase;
+          }
+          td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+          }
+          tr:hover {
+            background: #f9f9f9;
+          }
+          .status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+          }
+          .status-pending { background: #fef3c7; color: #92400e; }
+          .status-preparing { background: #dbeafe; color: #1e40af; }
+          .status-ready { background: #d1fae5; color: #065f46; }
+          .status-served { background: #e9d5ff; color: #6b21a8; }
+          .status-paid { background: #e5e7eb; color: #374151; }
+          .status-cancelled { background: #fee2e2; color: #991b1b; }
+          .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+          }
+          @media print {
+            body { padding: 0; }
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Orders Report</h1>
+          <p>Generated on ${new Date().toLocaleString()}</p>
+          ${
+            startDate || endDate
+              ? `<p>Period: ${startDate ? new Date(startDate).toLocaleDateString() : "Beginning"} - ${endDate ? new Date(endDate).toLocaleDateString() : "Now"}</p>`
+              : ""
+          }
+        </div>
+        
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="summary-item">
+              <div class="summary-label">Total Orders</div>
+              <div class="summary-value">${filteredOrders.length}</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">Total Revenue</div>
+              <div class="summary-value">$${totalRevenue.toFixed(2)}</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">Average Order</div>
+              <div class="summary-value">$${(totalRevenue / filteredOrders.length).toFixed(2)}</div>
+            </div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Table</th>
+              <th>Waiter</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date/Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filteredOrders
+              .map(
+                (order) => `
+              <tr>
+                <td><strong>${order.orderNumber}</strong></td>
+                <td>${order.table?.tableNumber || "N/A"}</td>
+                <td>${order.waiter?.name || "N/A"}</td>
+                <td>${order.items?.length || 0}</td>
+                <td><strong>$${order.total?.toFixed(2)}</strong></td>
+                <td><span class="status status-${order.status}">${order.status}</span></td>
+                <td>${new Date(order.createdAt).toLocaleString()}</td>
+              </tr>
+            `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+
+        <div class="footer">
+          <p>Restaurant Management System - Order Report</p>
+        </div>
+
+        <div class="no-print" style="margin-top: 30px; text-align: center;">
+          <button onclick="window.print()" style="padding: 10px 20px; background: #0d5f4e; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; margin-right: 10px;">
+            Print / Save as PDF
+          </button>
+          <button onclick="window.close()" style="padding: 10px 20px; background: #6b7280; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">
+            Close
+          </button>
+        </div>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  };
+
   const filteredOrders = (() => {
     const orderId = searchParams.get("order");
     // If searching for a specific order, show only that order
@@ -246,6 +486,44 @@ export default function OrderManagement() {
           )}
         </div>
         <div className="flex gap-3">
+          {/* Export Buttons */}
+          <button
+            onClick={exportToCSV}
+            disabled={filteredOrders.length === 0}
+            className="flex items-center space-x-2 bg-green-600 text-white px-6 py-2.5 rounded-xl hover:bg-green-700 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed">
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <span>Export CSV</span>
+          </button>
+          <button
+            onClick={exportToPDF}
+            disabled={filteredOrders.length === 0}
+            className="flex items-center space-x-2 bg-red-600 text-white px-6 py-2.5 rounded-xl hover:bg-red-700 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed">
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+              />
+            </svg>
+            <span>Export PDF</span>
+          </button>
+
           {searchParams.get("order") && (
             <button
               onClick={() => {
