@@ -146,8 +146,8 @@ export default function CustomerAuth() {
             backfaceVisibility: "hidden",
           }}>
           {/* Left Side - Login Form */}
-          <div className="w-1/2 bg-gradient-to-br from-[#f8f9fa] to-[#e9ecef] flex items-center justify-center p-8 overflow-y-auto">
-            <div className="w-full max-w-xl bg-white rounded-2xl shadow-2xl p-10 border border-gray-100 my-8">
+          <div className="w-1/2 bg-gradient-to-br from-[#f8f9fa] to-[#e9ecef] flex items-center justify-center p-8">
+            <div className="w-full max-w-xl bg-white rounded-2xl shadow-2xl p-10 border border-gray-100">
               <div className="text-center mb-8">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#0d5f4e] to-[#0a4a3d] rounded-2xl mb-4 shadow-lg">
                   <svg
@@ -335,25 +335,11 @@ export default function CustomerAuth() {
                   Create Your Account →
                 </button>
               </div>
-
-              <div className="mt-6 pt-6 border-t border-gray-100 text-center space-x-4">
-                <Link
-                  to="/login"
-                  className="text-sm text-gray-500 hover:text-[#0d5f4e] font-medium transition-colors">
-                  Staff Portal
-                </Link>
-                <span className="text-gray-300">•</span>
-                <Link
-                  to="/"
-                  className="text-sm text-gray-500 hover:text-[#0d5f4e] font-medium transition-colors">
-                  Back to Home
-                </Link>
-              </div>
             </div>
           </div>
 
           {/* Right Side - Description for Login */}
-          <div className="w-1/2 bg-gradient-to-br from-[#0d5f4e] to-[#0a4a3d] flex items-center justify-center p-8 overflow-y-auto">
+          <div className="w-1/2 bg-gradient-to-br from-[#0d5f4e] to-[#0a4a3d] flex items-center justify-center p-8">
             <div className="max-w-lg text-white">
               <div className="flex items-center mb-10">
                 <div className="w-16 h-16 bg-[#d4a843] rounded-xl flex items-center justify-center mr-4">
@@ -468,7 +454,7 @@ export default function CustomerAuth() {
             backfaceVisibility: "hidden",
           }}>
           {/* Left Side - Description for Registration */}
-          <div className="w-1/2 bg-gradient-to-br from-[#0d5f4e] to-[#0a4a3d] flex items-center justify-center p-8 overflow-y-auto">
+          <div className="w-1/2 bg-gradient-to-br from-[#0d5f4e] to-[#0a4a3d] flex items-center justify-center p-8">
             <div className="max-w-lg text-white">
               <div className="flex items-center mb-10">
                 <div className="w-16 h-16 bg-[#d4a843] rounded-xl flex items-center justify-center mr-4">
@@ -570,8 +556,8 @@ export default function CustomerAuth() {
           </div>
 
           {/* Right Side - Registration Form */}
-          <div className="w-1/2 bg-gradient-to-br from-[#f8f9fa] to-[#e9ecef] flex items-center justify-center p-8 overflow-y-auto">
-            <div className="w-full max-w-xl bg-white rounded-2xl shadow-2xl p-10 border border-gray-100 my-8">
+          <div className="w-1/2 bg-gradient-to-br from-[#f8f9fa] to-[#e9ecef] flex items-center justify-center p-8">
+            <div className="w-full max-w-xl bg-white rounded-2xl shadow-2xl p-10 border border-gray-100">
               <div className="text-center mb-8">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#0d5f4e] to-[#0a4a3d] rounded-2xl mb-4 shadow-lg">
                   <svg
@@ -891,20 +877,6 @@ export default function CustomerAuth() {
                   className="mt-3 text-[#0d5f4e] font-bold hover:text-[#0a4a3d] transition-colors text-sm">
                   Sign In Instead →
                 </button>
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-gray-100 text-center space-x-3">
-                <Link
-                  to="/login"
-                  className="text-sm text-gray-500 hover:text-[#0d5f4e] font-medium transition-colors">
-                  Staff Portal
-                </Link>
-                <span className="text-gray-300">•</span>
-                <Link
-                  to="/"
-                  className="text-sm text-gray-500 hover:text-[#0d5f4e] font-medium transition-colors">
-                  Back to Home
-                </Link>
               </div>
             </div>
           </div>
