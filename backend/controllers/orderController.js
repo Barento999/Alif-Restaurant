@@ -302,35 +302,69 @@ export const modifyOrder = async (req, res) => {
       });
     }
 
-    // Can only modify pending orders
+    // Can only modify pending orders (before kitchen starts preparing)
     if (order.status !== "pending") {
       return res.status(400).json({
         success: false,
-        message: "Can only modify pending orders (before kitchen starts)",
+        message:
+          "Cannot modify order once kitchen has started preparing. Only pending orders can be modified.",
       });
     }
 
-    // Update items and recalculate totals
-    order.items = items;
+    // Store previous state for modification history
+    const previousItems = [...order.items];
+    const previousTotal = order.total;
+
+    // Calculate new totals
     const subtotal = items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0,
     );
+    const tax = subtotal * 0.1;
+    const newTotal = subtotal + tax;
+
+    // Add to modification history
+    if (!order.modificationHistory) {
+      order.modificationHistory = [];
+    }
+
+    order.modificationHistory.push({
+      modifiedBy: req.user._id,
+      modifiedAt: new Date(),
+      previousItems: previousItems,
+      newItems: items,
+      previousTotal: previousTotal,
+      newTotal: newTotal,
+      reason: "Order items modified",
+    });
+
+    // Update items and totals
+    order.items = items;
     order.subtotal = subtotal;
-    order.tax = subtotal * 0.1;
-    order.total = subtotal + order.tax;
+    order.tax = tax;
+    order.total = newTotal;
 
     await order.save();
 
     const populatedOrder = await Order.findById(order._id)
       .populate("table")
       .populate("waiter", "name")
-      .populate("items.menuItem");
+      .populate("items.menuItem")
+      .populate("modificationHistory.modifiedBy", "name");
 
     // Emit socket event
     if (req.io) {
       req.io.emit("orderStatusUpdate", populatedOrder);
     }
+
+    // Log modification for audit trail
+    console.log(
+      `[ORDER MODIFICATION] User: ${req.user.name} (${req.user.role})`,
+    );
+    console.log(`Order: ${order.orderNumber}`);
+    console.log(`Previous Total: $${previousTotal.toFixed(2)}`);
+    console.log(`New Total: $${newTotal.toFixed(2)}`);
+    console.log(`Timestamp: ${new Date().toISOString()}`);
 
     res.json({
       success: true,

@@ -42,6 +42,21 @@ const orderSchema = new mongoose.Schema(
       paid: { type: Date },
       cancelled: { type: Date },
     },
+    // Modification history tracking
+    modificationHistory: [
+      {
+        modifiedBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        modifiedAt: { type: Date, default: Date.now },
+        previousItems: [orderItemSchema],
+        newItems: [orderItemSchema],
+        previousTotal: { type: Number },
+        newTotal: { type: Number },
+        reason: { type: String },
+      },
+    ],
     notes: String,
   },
   { timestamps: true },
