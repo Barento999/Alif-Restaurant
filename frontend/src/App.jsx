@@ -12,6 +12,7 @@ import MenuManagement from "./pages/MenuManagement";
 import Reports from "./pages/Reports";
 import Inventory from "./pages/Inventory";
 import TableManagement from "./pages/TableManagement";
+import TableMapView from "./pages/TableMapView";
 import UserManagement from "./pages/UserManagement";
 import OrderManagement from "./pages/OrderManagement";
 import CustomerOrderManagement from "./pages/CustomerOrderManagement";
@@ -103,6 +104,14 @@ function App() {
             element={
               <PrivateRoute roles={["admin", "manager"]}>
                 <TableManagement />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/table-map"
+            element={
+              <PrivateRoute roles={["admin", "manager", "waiter"]}>
+                <TableMapView />
               </PrivateRoute>
             }
           />
