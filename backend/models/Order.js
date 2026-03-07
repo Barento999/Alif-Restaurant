@@ -58,6 +58,11 @@ const orderSchema = new mongoose.Schema(
       },
     ],
     notes: String,
+    priority: {
+      type: String,
+      enum: ["normal", "high", "urgent"],
+      default: "normal",
+    },
   },
   { timestamps: true },
 );

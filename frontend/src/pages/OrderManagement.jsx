@@ -35,6 +35,8 @@ export default function OrderManagement() {
   const [reassigningOrder, setReassigningOrder] = useState(null);
   const [selectedWaiter, setSelectedWaiter] = useState("");
   const [waiters, setWaiters] = useState([]);
+  const [priorityOrder, setPriorityOrder] = useState(null);
+  const [selectedPriority, setSelectedPriority] = useState("");
 
   useEffect(() => {
     loadOrders();
@@ -546,6 +548,28 @@ export default function OrderManagement() {
     } catch (error) {
       alert(
         "Error reassigning order: " +
+          (error.response?.data?.message || error.message),
+      );
+    }
+  };
+
+  const handleSetPriority = (order) => {
+    setPriorityOrder(order);
+    setSelectedPriority(order.priority || "normal");
+  };
+
+  const handleSavePriority = async () => {
+    try {
+      await api.patch(`/orders/${priorityOrder._id}/priority`, {
+        priority: selectedPriority,
+      });
+      loadOrders();
+      setPriorityOrder(null);
+      setSelectedPriority("");
+      alert("Order priority updated successfully");
+    } catch (error) {
+      alert(
+        "Error updating priority: " +
           (error.response?.data?.message || error.message),
       );
     }
@@ -1259,6 +1283,18 @@ export default function OrderManagement() {
                           }`}>
                           {order.orderNumber}
                         </span>
+                        {order.priority && order.priority !== "normal" && (
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${
+                              order.priority === "urgent"
+                                ? "bg-red-100 text-red-800 animate-pulse"
+                                : "bg-orange-100 text-orange-800"
+                            }`}>
+                            {order.priority === "urgent"
+                              ? "🔥 URGENT"
+                              : "⚡ HIGH"}
+                          </span>
+                        )}
                         {order.notes && (
                           <span
                             title={order.notes}
@@ -1377,11 +1413,18 @@ export default function OrderManagement() {
                           </button>
                           {(user?.role === "admin" ||
                             user?.role === "manager") && (
-                            <button
-                              onClick={() => handleReassignOrder(order)}
-                              className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition">
-                              Reassign
-                            </button>
+                            <>
+                              <button
+                                onClick={() => handleReassignOrder(order)}
+                                className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition">
+                                Reassign
+                              </button>
+                              <button
+                                onClick={() => handleSetPriority(order)}
+                                className="px-3 py-1.5 rounded-lg bg-orange-50 text-orange-700 hover:bg-orange-100 font-medium transition">
+                                Priority
+                              </button>
+                            </>
                           )}
                           {user?.role === "admin" && (
                             <button
@@ -1411,11 +1454,18 @@ export default function OrderManagement() {
                           </button>
                           {(user?.role === "admin" ||
                             user?.role === "manager") && (
-                            <button
-                              onClick={() => handleReassignOrder(order)}
-                              className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition">
-                              Reassign
-                            </button>
+                            <>
+                              <button
+                                onClick={() => handleReassignOrder(order)}
+                                className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition">
+                                Reassign
+                              </button>
+                              <button
+                                onClick={() => handleSetPriority(order)}
+                                className="px-3 py-1.5 rounded-lg bg-orange-50 text-orange-700 hover:bg-orange-100 font-medium transition">
+                                Priority
+                              </button>
+                            </>
                           )}
                           <button
                             onClick={() => handleModifyOrder(order)}
@@ -1455,11 +1505,18 @@ export default function OrderManagement() {
                           </button>
                           {(user?.role === "admin" ||
                             user?.role === "manager") && (
-                            <button
-                              onClick={() => handleReassignOrder(order)}
-                              className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition">
-                              Reassign
-                            </button>
+                            <>
+                              <button
+                                onClick={() => handleReassignOrder(order)}
+                                className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition">
+                                Reassign
+                              </button>
+                              <button
+                                onClick={() => handleSetPriority(order)}
+                                className="px-3 py-1.5 rounded-lg bg-orange-50 text-orange-700 hover:bg-orange-100 font-medium transition">
+                                Priority
+                              </button>
+                            </>
                           )}
                           {user?.role === "admin" && (
                             <button
@@ -1958,6 +2015,151 @@ export default function OrderManagement() {
                 disabled={!selectedWaiter}
                 className="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed">
                 Reassign Order
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Set Priority Modal */}
+      {priorityOrder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-orange-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">
+                    Set Order Priority
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {priorityOrder.orderNumber} - Table{" "}
+                    {priorityOrder.table?.tableNumber}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4">
+                <p className="text-sm text-blue-800">
+                  <strong>Current Priority:</strong>{" "}
+                  <span className="capitalize font-semibold">
+                    {priorityOrder.priority || "normal"}
+                  </span>
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  Select Priority Level *
+                </label>
+                <div className="space-y-3">
+                  {/* Normal Priority */}
+                  <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition hover:bg-gray-50 ${selectedPriority === 'normal' ? 'border-gray-400 bg-gray-50' : 'border-gray-200'}">
+                    <input
+                      type="radio"
+                      name="priority"
+                      value="normal"
+                      checked={selectedPriority === "normal"}
+                      onChange={(e) => setSelectedPriority(e.target.value)}
+                      className="w-4 h-4 text-gray-600 focus:ring-gray-500"
+                    />
+                    <div className="ml-3 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base font-semibold text-gray-800">
+                          Normal
+                        </span>
+                        <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs font-medium">
+                          Default
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Standard processing order
+                      </p>
+                    </div>
+                  </label>
+
+                  {/* High Priority */}
+                  <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition hover:bg-orange-50 ${selectedPriority === 'high' ? 'border-orange-400 bg-orange-50' : 'border-gray-200'}">
+                    <input
+                      type="radio"
+                      name="priority"
+                      value="high"
+                      checked={selectedPriority === "high"}
+                      onChange={(e) => setSelectedPriority(e.target.value)}
+                      className="w-4 h-4 text-orange-600 focus:ring-orange-500"
+                    />
+                    <div className="ml-3 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base font-semibold text-orange-800">
+                          ⚡ High Priority
+                        </span>
+                      </div>
+                      <p className="text-sm text-orange-700 mt-1">
+                        Expedite this order - process faster
+                      </p>
+                    </div>
+                  </label>
+
+                  {/* Urgent Priority */}
+                  <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition hover:bg-red-50 ${selectedPriority === 'urgent' ? 'border-red-400 bg-red-50' : 'border-gray-200'}">
+                    <input
+                      type="radio"
+                      name="priority"
+                      value="urgent"
+                      checked={selectedPriority === "urgent"}
+                      onChange={(e) => setSelectedPriority(e.target.value)}
+                      className="w-4 h-4 text-red-600 focus:ring-red-500"
+                    />
+                    <div className="ml-3 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base font-semibold text-red-800">
+                          🔥 URGENT
+                        </span>
+                        <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded text-xs font-bold animate-pulse">
+                          PRIORITY
+                        </span>
+                      </div>
+                      <p className="text-sm text-red-700 mt-1">
+                        Critical - immediate attention required
+                      </p>
+                    </div>
+                  </label>
+                </div>
+                <p className="text-xs text-gray-500 mt-3">
+                  Priority flags help kitchen staff identify orders that need
+                  immediate attention
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex gap-3">
+              <button
+                onClick={() => {
+                  setPriorityOrder(null);
+                  setSelectedPriority("");
+                }}
+                className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition">
+                Cancel
+              </button>
+              <button
+                onClick={handleSavePriority}
+                className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium transition">
+                Update Priority
               </button>
             </div>
           </div>

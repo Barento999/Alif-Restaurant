@@ -9,6 +9,7 @@ import {
   modifyOrder,
   updateOrderNotes,
   reassignOrder,
+  updateOrderPriority,
 } from "../controllers/orderController.js";
 import { protect, authorize } from "../middlewares/auth.js";
 
@@ -19,6 +20,12 @@ router.get("/", protect, getOrders);
 router.get("/:id", protect, getOrderById);
 router.patch("/:id/status", protect, updateOrderStatus);
 router.patch("/:id/notes", protect, updateOrderNotes);
+router.patch(
+  "/:id/priority",
+  protect,
+  authorize("admin", "manager"),
+  updateOrderPriority,
+);
 router.patch(
   "/:id/reassign",
   protect,

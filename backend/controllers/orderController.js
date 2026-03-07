@@ -485,3 +485,63 @@ export const reassignOrder = async (req, res) => {
     });
   }
 };
+
+// @desc    Update order priority
+// @route   PATCH /api/orders/:id/priority
+// @access  Private (Manager/Admin)
+export const updateOrderPriority = async (req, res) => {
+  try {
+    const { priority } = req.body;
+
+    if (!priority || !["normal", "high", "urgent"].includes(priority)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a valid priority (normal, high, urgent)",
+      });
+    }
+
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    const previousPriority = order.priority || "normal";
+
+    // Update priority
+    order.priority = priority;
+    await order.save();
+
+    const populatedOrder = await Order.findById(order._id)
+      .populate("table")
+      .populate("waiter", "name")
+      .populate("items.menuItem");
+
+    // Log priority change for audit trail
+    console.log(
+      `[ORDER PRIORITY UPDATE] User: ${req.user.name} (${req.user.role})`,
+    );
+    console.log(`Order: ${order.orderNumber}`);
+    console.log(`Priority: ${previousPriority} → ${priority}`);
+    console.log(`Timestamp: ${new Date().toISOString()}`);
+
+    // Emit socket event
+    if (req.io) {
+      req.io.emit("orderPriorityUpdate", populatedOrder);
+    }
+
+    res.json({
+      success: true,
+      data: populatedOrder,
+      message: "Order priority updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
