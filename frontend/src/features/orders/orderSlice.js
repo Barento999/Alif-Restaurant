@@ -22,6 +22,19 @@ export const updateOrderStatus = createAsyncThunk(
   },
 );
 
+export const cancelOrder = createAsyncThunk("orders/cancel", async (id) => {
+  const { data } = await api.put(`/orders/${id}/cancel`);
+  return data.data;
+});
+
+export const modifyOrder = createAsyncThunk(
+  "orders/modify",
+  async ({ id, items }) => {
+    const { data } = await api.put(`/orders/${id}/modify`, { items });
+    return data.data;
+  },
+);
+
 const orderSlice = createSlice({
   name: "orders",
   initialState: { orders: [], loading: false, error: null },
@@ -43,6 +56,18 @@ const orderSlice = createSlice({
         state.orders.unshift(action.payload);
       })
       .addCase(updateOrderStatus.fulfilled, (state, action) => {
+        const index = state.orders.findIndex(
+          (o) => o._id === action.payload._id,
+        );
+        if (index !== -1) state.orders[index] = action.payload;
+      })
+      .addCase(cancelOrder.fulfilled, (state, action) => {
+        const index = state.orders.findIndex(
+          (o) => o._id === action.payload._id,
+        );
+        if (index !== -1) state.orders[index] = action.payload;
+      })
+      .addCase(modifyOrder.fulfilled, (state, action) => {
         const index = state.orders.findIndex(
           (o) => o._id === action.payload._id,
         );

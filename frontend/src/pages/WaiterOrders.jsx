@@ -5,17 +5,23 @@ import {
   updateOrderStatus,
   addOrderRealtime,
   updateOrderRealtime,
+  cancelOrder,
+  modifyOrder,
 } from "../features/orders/orderSlice";
+import { fetchMenuItems } from "../features/menu/menuSlice";
 import { io } from "socket.io-client";
+import ModifyOrderModal from "../components/ModifyOrderModal";
 
 export default function WaiterOrders() {
   const dispatch = useDispatch();
   const { orders } = useSelector((state) => state.orders);
   const { user } = useSelector((state) => state.auth);
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [modifyingOrder, setModifyingOrder] = useState(null);
 
   useEffect(() => {
     dispatch(fetchOrders());
+    dispatch(fetchMenuItems());
 
     // Setup Socket.io for real-time updates
     const socket = io("http://localhost:5000");
@@ -78,6 +84,36 @@ export default function WaiterOrders() {
       alert(
         "Error updating order status: " + (error.message || "Unknown error"),
       );
+    }
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to cancel this order?")) {
+      return;
+    }
+    try {
+      await dispatch(cancelOrder(orderId)).unwrap();
+      alert("Order cancelled successfully");
+      await dispatch(fetchOrders());
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+      alert("Error: " + (error.message || "Failed to cancel order"));
+    }
+  };
+
+  const handleModifyOrder = (order) => {
+    setModifyingOrder(order);
+  };
+
+  const handleSaveModifiedOrder = async (items) => {
+    try {
+      await dispatch(modifyOrder({ id: modifyingOrder._id, items })).unwrap();
+      alert("Order updated successfully");
+      setModifyingOrder(null);
+      await dispatch(fetchOrders());
+    } catch (error) {
+      console.error("Error modifying order:", error);
+      alert("Error: " + (error.message || "Failed to modify order"));
     }
   };
 
@@ -236,26 +272,69 @@ export default function WaiterOrders() {
                 </div>
               )}
 
-              {/* Action Button - Only show if order is ready */}
-              {order.status === "ready" && (
-                <button
-                  onClick={() => handleMarkServed(order._id)}
-                  className="w-full bg-[#0d5f4e] text-white py-2.5 rounded-xl font-semibold hover:bg-[#0f7a62] transition flex items-center justify-center space-x-2 text-sm">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  <span>Mark as Served</span>
-                </button>
-              )}
+              {/* Action Buttons */}
+              <div className="space-y-2">
+                {/* Pending orders - Show Cancel and Modify */}
+                {order.status === "pending" && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleModifyOrder(order)}
+                      className="flex-1 bg-blue-500 text-white py-2 rounded-xl font-semibold hover:bg-blue-600 transition flex items-center justify-center space-x-1 text-sm">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
+                      <span>Modify</span>
+                    </button>
+                    <button
+                      onClick={() => handleCancelOrder(order._id)}
+                      className="flex-1 bg-red-500 text-white py-2 rounded-xl font-semibold hover:bg-red-600 transition flex items-center justify-center space-x-1 text-sm">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                      <span>Cancel</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Ready orders - Show Mark as Served */}
+                {order.status === "ready" && (
+                  <button
+                    onClick={() => handleMarkServed(order._id)}
+                    className="w-full bg-[#0d5f4e] text-white py-2.5 rounded-xl font-semibold hover:bg-[#0f7a62] transition flex items-center justify-center space-x-2 text-sm">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>Mark as Served</span>
+                  </button>
+                )}
+              </div>
 
               {/* Status Info */}
               {order.status === "pending" && (
@@ -282,6 +361,15 @@ export default function WaiterOrders() {
           ))
         )}
       </div>
+
+      {/* Modify Order Modal */}
+      {modifyingOrder && (
+        <ModifyOrderModal
+          order={modifyingOrder}
+          onClose={() => setModifyingOrder(null)}
+          onSave={handleSaveModifiedOrder}
+        />
+      )}
     </div>
   );
 }

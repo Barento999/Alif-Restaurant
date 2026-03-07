@@ -5,6 +5,8 @@ import {
   updateOrderStatus,
   deleteOrder,
   getOrderById,
+  cancelOrder,
+  modifyOrder,
 } from "../controllers/orderController.js";
 import { protect, authorize } from "../middlewares/auth.js";
 
@@ -14,6 +16,8 @@ router.post("/", protect, createOrder);
 router.get("/", protect, getOrders);
 router.get("/:id", protect, getOrderById);
 router.patch("/:id/status", protect, updateOrderStatus);
+router.put("/:id/cancel", protect, cancelOrder);
+router.put("/:id/modify", protect, modifyOrder);
 router.delete("/:id", protect, authorize("admin", "manager"), deleteOrder);
 
 export default router;
