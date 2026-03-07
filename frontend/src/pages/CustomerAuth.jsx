@@ -100,18 +100,18 @@ export default function CustomerAuth() {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-[#0d5f4e] via-[#0d5f4e] to-[#0a4a3d] flex items-center justify-center py-4 px-4 relative overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-[#0d5f4e] via-[#0d5f4e] to-[#0a4a3d] flex items-center justify-center py-2 px-4 relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute w-96 h-96 bg-[#d4a843] rounded-full blur-3xl opacity-10 -top-48 -left-48"></div>
         <div className="absolute w-96 h-96 bg-[#d4a843] rounded-full blur-3xl opacity-10 -bottom-48 -right-48"></div>
       </div>
 
       <div className="max-w-6xl w-full relative z-10">
-        <div className="text-center mb-4">
-          <div className="flex justify-center mb-2">
-            <div className="w-16 h-16 bg-[#d4a843] rounded-2xl flex items-center justify-center shadow-2xl">
+        <div className="text-center mb-3">
+          <div className="flex justify-center mb-1.5">
+            <div className="w-14 h-14 bg-[#d4a843] rounded-2xl flex items-center justify-center shadow-2xl">
               <svg
-                className="w-10 h-10 text-white"
+                className="w-9 h-9 text-white"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24">
@@ -124,10 +124,10 @@ export default function CustomerAuth() {
               </svg>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-1">
+          <h1 className="text-2xl font-bold text-white mb-0.5">
             Alif Restaurant
           </h1>
-          <p className="text-[#8fb8ad] text-base">
+          <p className="text-[#8fb8ad] text-sm">
             {isLogin ? "Welcome Back" : "Join Us Today"}
           </p>
         </div>
@@ -145,11 +145,11 @@ export default function CustomerAuth() {
                 backfaceVisibility: "hidden",
                 WebkitBackfaceVisibility: "hidden",
               }}>
-              <div className="grid md:grid-cols-2 gap-6 items-center">
+              <div className="grid md:grid-cols-2 gap-5 items-center">
                 {/* Description Left */}
-                <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-6 text-white">
-                  <h2 className="text-2xl font-bold mb-4">Welcome Back!</h2>
-                  <div className="space-y-3">
+                <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-5 text-white">
+                  <h2 className="text-xl font-bold mb-3">Welcome Back!</h2>
+                  <div className="space-y-2.5">
                     {[
                       {
                         icon: "M5 13l4 4L19 7",
@@ -189,34 +189,34 @@ export default function CustomerAuth() {
                       </div>
                     ))}
                   </div>
-                  <div className="mt-6 pt-6 border-t border-white/20">
-                    <p className="text-white/80 mb-3 text-sm">
+                  <div className="mt-5 pt-5 border-t border-white/20">
+                    <p className="text-white/80 mb-2.5 text-sm">
                       Don't have an account?
                     </p>
                     <button
                       onClick={handleFlip}
-                      className="px-5 py-2.5 bg-[#d4a843] text-white rounded-xl font-semibold hover:bg-[#c49739] transition-all duration-300 shadow-lg text-sm">
+                      className="px-4 py-2 bg-[#d4a843] text-white rounded-xl font-semibold hover:bg-[#c49739] transition-all duration-300 shadow-lg text-sm">
                       Create Account
                     </button>
                   </div>
                 </div>
 
                 {/* Login Form Right */}
-                <div className="bg-white rounded-3xl shadow-2xl p-6">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-1 text-center">
+                <div className="bg-white rounded-3xl shadow-2xl p-5">
+                  <h2 className="text-xl font-bold text-gray-800 mb-1 text-center">
                     Sign In
                   </h2>
-                  <p className="text-gray-600 mb-4 text-center text-sm">
+                  <p className="text-gray-600 mb-3 text-center text-xs">
                     Access your account
                   </p>
 
                   {error && (
-                    <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-3 rounded-xl">
-                      <p className="text-sm text-red-700">{error}</p>
+                    <div className="mb-3 bg-red-50 border-l-4 border-red-500 p-2.5 rounded-xl">
+                      <p className="text-xs text-red-700">{error}</p>
                     </div>
                   )}
 
-                  <form onSubmit={handleLoginSubmit} className="space-y-4">
+                  <form onSubmit={handleLoginSubmit} className="space-y-3">
                     <div>
                       <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                         Email Address
@@ -490,7 +490,7 @@ export default function CustomerAuth() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-white/80 mt-4">
+        <p className="text-center text-xs text-white/80 mt-2">
           © 2026 Alif Restaurant. All rights reserved.
         </p>
       </div>
