@@ -12,7 +12,7 @@ const orderItemSchema = new mongoose.Schema({
 
 const orderSchema = new mongoose.Schema(
   {
-    orderNumber: { type: String, required: true, unique: true },
+    orderNumber: { type: String, required: true },
     table: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Table",
@@ -79,6 +79,8 @@ orderSchema.pre("save", function (next) {
   next();
 });
 
-orderSchema.index({ orderNumber: 1, status: 1, createdAt: -1 });
+// Compound index for efficient queries
+orderSchema.index({ orderNumber: 1 }, { unique: true });
+orderSchema.index({ status: 1, createdAt: -1 });
 
 export default mongoose.model("Order", orderSchema);

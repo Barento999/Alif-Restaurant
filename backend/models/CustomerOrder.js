@@ -16,7 +16,6 @@ const customerOrderSchema = new mongoose.Schema(
   {
     orderNumber: {
       type: String,
-      unique: true,
     },
     customer: {
       type: mongoose.Schema.Types.ObjectId,
@@ -97,8 +96,9 @@ customerOrderSchema.pre("save", async function (next) {
   next();
 });
 
+// Indexes for efficient queries
+customerOrderSchema.index({ orderNumber: 1 }, { unique: true });
 customerOrderSchema.index({ customer: 1, createdAt: -1 });
-customerOrderSchema.index({ orderNumber: 1 });
 customerOrderSchema.index({ status: 1 });
 
 export default mongoose.model("CustomerOrder", customerOrderSchema);
