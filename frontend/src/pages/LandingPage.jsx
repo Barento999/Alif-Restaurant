@@ -9,202 +9,6 @@ import US from "country-flag-icons/react/3x2/US";
 import ES from "country-flag-icons/react/3x2/ES";
 import SA from "country-flag-icons/react/3x2/SA";
 
-// Testimonial Carousel Component
-function TestimonialCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Food Enthusiast",
-      rating: 5,
-      comment:
-        "The Ethiopian dishes are absolutely authentic! Best injera I've had outside of Ethiopia. The atmosphere is elegant and the service is impeccable.",
-      image:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80",
-    },
-    {
-      name: "Michael Chen",
-      role: "Regular Customer",
-      rating: 5,
-      comment:
-        "Amazing variety of international cuisines. The sushi is fresh, the pasta is perfect, and the lamb chops are to die for. This is my go-to restaurant!",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
-    },
-    {
-      name: "Emma Williams",
-      role: "Family Diner",
-      rating: 5,
-      comment:
-        "Perfect for family gatherings! Everyone can find something they love. The kids enjoyed the burgers while we explored the international menu. Highly recommend!",
-      image:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80",
-    },
-  ];
-
-  const totalItems = testimonials.length;
-
-  // Auto-play functionality
-  useEffect(() => {
-    if (!isPaused) {
-      const interval = setInterval(() => {
-        handleNext();
-      }, 5000); // Change every 5 seconds
-
-      return () => clearInterval(interval);
-    }
-  }, [isPaused, currentIndex]);
-
-  const handleNext = () => {
-    if (!isAnimating) {
-      setIsAnimating(true);
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % totalItems);
-        setIsAnimating(false);
-      }, 500);
-    }
-  };
-
-  const handlePrev = () => {
-    if (!isAnimating) {
-      setIsAnimating(true);
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev - 1 + totalItems) % totalItems);
-        setIsAnimating(false);
-      }, 500);
-    }
-  };
-
-  const handleDotClick = (index) => {
-    if (!isAnimating && index !== currentIndex) {
-      setIsAnimating(true);
-      setTimeout(() => {
-        setCurrentIndex(index);
-        setIsAnimating(false);
-      }, 500);
-    }
-  };
-
-  const currentTestimonial = testimonials[currentIndex];
-
-  return (
-    <div
-      className="relative"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}>
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div
-          className={`max-w-2xl w-full transition-all duration-500 ${
-            isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
-          }`}>
-          <div className="bg-white p-10 rounded-3xl shadow-2xl">
-            <div className="flex items-center gap-6 mb-8">
-              <img
-                src={currentTestimonial.image}
-                alt={currentTestimonial.name}
-                className="w-24 h-24 rounded-full object-cover ring-4 ring-[#d4a843]"
-              />
-              <div>
-                <h4 className="text-2xl font-bold text-gray-800">
-                  {currentTestimonial.name}
-                </h4>
-                <p className="text-lg text-gray-600">
-                  {currentTestimonial.role}
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-2 mb-6 justify-center">
-              {[...Array(currentTestimonial.rating)].map((_, i) => (
-                <svg
-                  key={i}
-                  className="w-7 h-7 text-[#d4a843]"
-                  fill="currentColor"
-                  viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <p className="text-gray-700 text-lg italic text-center leading-relaxed">
-              "{currentTestimonial.comment}"
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Arrows */}
-      <div className="flex justify-center items-center gap-6 mt-10">
-        <button
-          onClick={handlePrev}
-          disabled={isAnimating}
-          className="w-14 h-14 rounded-full bg-[#0d5f4e] text-white hover:bg-[#0f7a62] transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed">
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-        </button>
-
-        {/* Page Indicators */}
-        <div className="flex gap-3">
-          {testimonials.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => handleDotClick(i)}
-              disabled={isAnimating}
-              className={`rounded-full transition-all duration-300 ${
-                i === currentIndex
-                  ? "bg-[#0d5f4e] w-10 h-4"
-                  : "bg-gray-300 hover:bg-gray-400 w-4 h-4"
-              } disabled:cursor-not-allowed`}
-            />
-          ))}
-        </div>
-
-        <button
-          onClick={handleNext}
-          disabled={isAnimating}
-          className="w-14 h-14 rounded-full bg-[#0d5f4e] text-white hover:bg-[#0f7a62] transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed">
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
-  );
-}
-            viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
-  );
-}
-
 export default function LandingPage() {
   const navigate = useNavigate();
   const { token } = useSelector((state) => state.auth);
@@ -907,7 +711,67 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <TestimonialCarousel />
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Sarah Johnson",
+                role: "Food Enthusiast",
+                rating: 5,
+                comment:
+                  "The Ethiopian dishes are absolutely authentic! Best injera I've had outside of Ethiopia. The atmosphere is elegant and the service is impeccable.",
+                image:
+                  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80",
+              },
+              {
+                name: "Michael Chen",
+                role: "Regular Customer",
+                rating: 5,
+                comment:
+                  "Amazing variety of international cuisines. The sushi is fresh, the pasta is perfect, and the lamb chops are to die for. This is my go-to restaurant!",
+                image:
+                  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
+              },
+              {
+                name: "Emma Williams",
+                role: "Family Diner",
+                rating: 5,
+                comment:
+                  "Perfect for family gatherings! Everyone can find something they love. The kids enjoyed the burgers while we explored the international menu. Highly recommend!",
+                image:
+                  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80",
+              },
+            ].map((testimonial, i) => (
+              <div
+                key={i}
+                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-4 mb-6">
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
+                  <div>
+                    <h4 className="text-lg font-bold text-gray-800">
+                      {testimonial.name}
+                    </h4>
+                    <p className="text-sm text-gray-600">{testimonial.role}</p>
+                  </div>
+                </div>
+                <div className="flex gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className="w-5 h-5 text-[#d4a843]"
+                      fill="currentColor"
+                      viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-gray-600 italic">"{testimonial.comment}"</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
