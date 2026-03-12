@@ -1044,24 +1044,24 @@ export default function LandingPage() {
       </div>
 
       {/* Contact Section */}
-      <div className="relative z-10 bg-white py-24" id="contact">
+      <div className="relative z-10 bg-white py-16" id="contact">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-3">
               Visit Us Today
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-lg text-gray-600">
               We're here to serve you the best international cuisine
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-8">
             {/* Contact Info */}
-            <div className="space-y-8">
-              <div className="flex items-start gap-6 bg-[#f5f5f0] p-8 rounded-2xl">
-                <div className="w-14 h-14 bg-[#0d5f4e] rounded-xl flex items-center justify-center flex-shrink-0">
+            <div className="space-y-5">
+              <div className="flex items-start gap-4 bg-[#f5f5f0] p-5 rounded-xl">
+                <div className="w-12 h-12 bg-[#0d5f4e] rounded-lg flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-7 h-7 text-white"
+                    className="w-6 h-6 text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24">
@@ -1080,20 +1080,20 @@ export default function LandingPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  <h3 className="text-lg font-bold text-gray-800 mb-1">
                     Location
                   </h3>
-                  <p className="text-gray-600 text-lg">
+                  <p className="text-gray-600 text-sm">
                     123 Main Street, Downtown
                   </p>
-                  <p className="text-gray-600 text-lg">City, State 12345</p>
+                  <p className="text-gray-600 text-sm">City, State 12345</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-6 bg-[#f5f5f0] p-8 rounded-2xl">
-                <div className="w-14 h-14 bg-[#0d5f4e] rounded-xl flex items-center justify-center flex-shrink-0">
+              <div className="flex items-start gap-4 bg-[#f5f5f0] p-5 rounded-xl">
+                <div className="w-12 h-12 bg-[#0d5f4e] rounded-lg flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-7 h-7 text-white"
+                    className="w-6 h-6 text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24">
@@ -1106,18 +1106,18 @@ export default function LandingPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  <h3 className="text-lg font-bold text-gray-800 mb-1">
                     Phone
                   </h3>
-                  <p className="text-gray-600 text-lg">(555) 123-4567</p>
-                  <p className="text-gray-600 text-lg">(555) 987-6543</p>
+                  <p className="text-gray-600 text-sm">(555) 123-4567</p>
+                  <p className="text-gray-600 text-sm">(555) 987-6543</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-6 bg-[#f5f5f0] p-8 rounded-2xl">
-                <div className="w-14 h-14 bg-[#0d5f4e] rounded-xl flex items-center justify-center flex-shrink-0">
+              <div className="flex items-start gap-4 bg-[#f5f5f0] p-5 rounded-xl">
+                <div className="w-12 h-12 bg-[#0d5f4e] rounded-lg flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-7 h-7 text-white"
+                    className="w-6 h-6 text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24">
@@ -1130,18 +1130,18 @@ export default function LandingPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  <h3 className="text-lg font-bold text-gray-800 mb-1">
                     Hours
                   </h3>
-                  <p className="text-gray-600 text-lg">Monday - Sunday</p>
-                  <p className="text-gray-600 text-lg">11:00 AM - 11:00 PM</p>
+                  <p className="text-gray-600 text-sm">Monday - Sunday</p>
+                  <p className="text-gray-600 text-sm">11:00 AM - 11:00 PM</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-6 bg-[#f5f5f0] p-8 rounded-2xl">
-                <div className="w-14 h-14 bg-[#0d5f4e] rounded-xl flex items-center justify-center flex-shrink-0">
+              <div className="flex items-start gap-4 bg-[#f5f5f0] p-5 rounded-xl">
+                <div className="w-12 h-12 bg-[#0d5f4e] rounded-lg flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-7 h-7 text-white"
+                    className="w-6 h-6 text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24">
@@ -1154,13 +1154,13 @@ export default function LandingPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  <h3 className="text-lg font-bold text-gray-800 mb-1">
                     Email
                   </h3>
-                  <p className="text-gray-600 text-lg">
+                  <p className="text-gray-600 text-sm">
                     info@alifrestaurant.com
                   </p>
-                  <p className="text-gray-600 text-lg">
+                  <p className="text-gray-600 text-sm">
                     support@alifrestaurant.com
                   </p>
                 </div>
@@ -1168,53 +1168,53 @@ export default function LandingPage() {
             </div>
 
             {/* Contact Form */}
-            <div className="bg-[#f5f5f0] p-10 rounded-3xl">
-              <h3 className="text-3xl font-bold text-gray-800 mb-8">
+            <div className="bg-[#f5f5f0] p-6 rounded-2xl">
+              <h3 className="text-2xl font-bold text-gray-800 mb-5">
                 Send Us a Message
               </h3>
-              <form className="space-y-6">
+              <form className="space-y-4">
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2">
+                  <label className="block text-gray-700 font-semibold mb-1.5 text-sm">
                     Your Name
                   </label>
                   <input
                     type="text"
                     placeholder="John Doe"
-                    className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:border-[#0d5f4e] focus:outline-none transition-colors"
+                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#0d5f4e] focus:outline-none transition-colors text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2">
+                  <label className="block text-gray-700 font-semibold mb-1.5 text-sm">
                     Email Address
                   </label>
                   <input
                     type="email"
                     placeholder="john@example.com"
-                    className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:border-[#0d5f4e] focus:outline-none transition-colors"
+                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#0d5f4e] focus:outline-none transition-colors text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2">
+                  <label className="block text-gray-700 font-semibold mb-1.5 text-sm">
                     Phone Number
                   </label>
                   <input
                     type="tel"
                     placeholder="(555) 123-4567"
-                    className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:border-[#0d5f4e] focus:outline-none transition-colors"
+                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#0d5f4e] focus:outline-none transition-colors text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2">
+                  <label className="block text-gray-700 font-semibold mb-1.5 text-sm">
                     Message
                   </label>
                   <textarea
-                    rows="5"
+                    rows="4"
                     placeholder="Tell us about your inquiry or feedback..."
-                    className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:border-[#0d5f4e] focus:outline-none transition-colors resize-none"></textarea>
+                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#0d5f4e] focus:outline-none transition-colors resize-none text-sm"></textarea>
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-[#0d5f4e] text-white py-5 rounded-xl font-bold text-lg hover:bg-[#0f7a62] transition-all duration-300 shadow-lg hover:shadow-xl">
+                  className="w-full bg-[#0d5f4e] text-white py-3.5 rounded-lg font-bold text-base hover:bg-[#0f7a62] transition-all duration-300 shadow-lg hover:shadow-xl">
                   Send Message
                 </button>
               </form>
