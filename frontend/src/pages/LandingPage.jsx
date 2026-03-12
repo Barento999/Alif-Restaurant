@@ -62,47 +62,77 @@ function TestimonialSlider() {
   };
 
   return (
-    <div className="relative max-w-3xl mx-auto">
+    <div className="relative max-w-4xl mx-auto px-4">
       {/* Testimonial Cards */}
-      <div className="relative overflow-hidden" style={{ minHeight: "350px" }}>
+      <div className="relative overflow-hidden" style={{ minHeight: "400px" }}>
         {testimonials.map((testimonial, index) => (
           <div
             key={index}
             className={`absolute inset-0 transition-all duration-700 ease-in-out ${
               index === currentIndex
-                ? "opacity-100 translate-x-0"
+                ? "opacity-100 translate-x-0 scale-100"
                 : index < currentIndex
-                  ? "opacity-0 -translate-x-full"
-                  : "opacity-0 translate-x-full"
+                  ? "opacity-0 -translate-x-full scale-95"
+                  : "opacity-0 translate-x-full scale-95"
             }`}>
-            <div className="bg-white p-10 rounded-3xl shadow-2xl">
-              <div className="flex items-center gap-6 mb-8">
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  className="w-24 h-24 rounded-full object-cover ring-4 ring-[#d4a843]"
-                />
-                <div>
-                  <h4 className="text-2xl font-bold text-gray-800">
-                    {testimonial.name}
-                  </h4>
-                  <p className="text-lg text-gray-600">{testimonial.role}</p>
+            <div className="relative bg-gradient-to-br from-white to-gray-50 p-12 rounded-3xl shadow-2xl border border-gray-100">
+              {/* Quote Icon */}
+              <div className="absolute top-8 left-8 text-[#d4a843] opacity-20">
+                <svg
+                  className="w-16 h-16"
+                  fill="currentColor"
+                  viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+              </div>
+
+              {/* Content */}
+              <div className="relative z-10">
+                {/* Stars */}
+                <div className="flex gap-1 mb-6 justify-center">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className="w-6 h-6 text-[#d4a843] drop-shadow-sm"
+                      fill="currentColor"
+                      viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+
+                {/* Comment */}
+                <p className="text-gray-700 text-xl font-medium text-center leading-relaxed mb-8 px-4">
+                  "{testimonial.comment}"
+                </p>
+
+                {/* Divider */}
+                <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#d4a843] to-transparent mx-auto mb-8"></div>
+
+                {/* Author */}
+                <div className="flex items-center justify-center gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-[#d4a843] rounded-full blur-md opacity-30"></div>
+                    <img
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      className="relative w-20 h-20 rounded-full object-cover ring-4 ring-white shadow-lg"
+                    />
+                  </div>
+                  <div className="text-left">
+                    <h4 className="text-xl font-bold text-gray-800">
+                      {testimonial.name}
+                    </h4>
+                    <p className="text-base text-gray-600 font-medium">
+                      {testimonial.role}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div className="flex gap-2 mb-6 justify-center">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <svg
-                    key={i}
-                    className="w-7 h-7 text-[#d4a843]"
-                    fill="currentColor"
-                    viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
-              </div>
-              <p className="text-gray-700 text-lg italic text-center leading-relaxed">
-                "{testimonial.comment}"
-              </p>
+
+              {/* Decorative Elements */}
+              <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-[#d4a843]/5 to-transparent rounded-3xl"></div>
+              <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-[#0d5f4e]/5 to-transparent rounded-3xl"></div>
             </div>
           </div>
         ))}
@@ -111,16 +141,16 @@ function TestimonialSlider() {
       {/* Navigation Arrows */}
       <button
         onClick={goToPrev}
-        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-16 w-14 h-14 rounded-full bg-[#0d5f4e] text-white hover:bg-[#0f7a62] transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-110 z-10">
+        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-20 w-16 h-16 rounded-full bg-gradient-to-br from-[#0d5f4e] to-[#0a4a3d] text-white hover:from-[#0f7a62] hover:to-[#0d5f4e] transition-all duration-300 flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-110 z-10 group">
         <svg
-          className="w-6 h-6"
+          className="w-7 h-7 group-hover:-translate-x-1 transition-transform"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
+            strokeWidth={2.5}
             d="M15 19l-7-7 7-7"
           />
         </svg>
@@ -128,31 +158,31 @@ function TestimonialSlider() {
 
       <button
         onClick={goToNext}
-        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-16 w-14 h-14 rounded-full bg-[#0d5f4e] text-white hover:bg-[#0f7a62] transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-110 z-10">
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-20 w-16 h-16 rounded-full bg-gradient-to-br from-[#0d5f4e] to-[#0a4a3d] text-white hover:from-[#0f7a62] hover:to-[#0d5f4e] transition-all duration-300 flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-110 z-10 group">
         <svg
-          className="w-6 h-6"
+          className="w-7 h-7 group-hover:translate-x-1 transition-transform"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
+            strokeWidth={2.5}
             d="M9 5l7 7-7 7"
           />
         </svg>
       </button>
 
       {/* Dots Indicator */}
-      <div className="flex justify-center gap-3 mt-8">
+      <div className="flex justify-center gap-3 mt-10">
         {testimonials.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
             className={`rounded-full transition-all duration-300 ${
               index === currentIndex
-                ? "bg-[#0d5f4e] w-10 h-4"
-                : "bg-gray-300 hover:bg-gray-400 w-4 h-4"
+                ? "bg-gradient-to-r from-[#0d5f4e] to-[#0a4a3d] w-12 h-4 shadow-lg"
+                : "bg-gray-300 hover:bg-gray-400 w-4 h-4 hover:scale-110"
             }`}
           />
         ))}
