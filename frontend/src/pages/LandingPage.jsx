@@ -9,6 +9,174 @@ import US from "country-flag-icons/react/3x2/US";
 import ES from "country-flag-icons/react/3x2/ES";
 import SA from "country-flag-icons/react/3x2/SA";
 
+// Testimonial Carousel Component
+function TestimonialCarousel() {
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const testimonials = [
+    {
+      name: "Sarah Johnson",
+      role: "Food Enthusiast",
+      rating: 5,
+      comment:
+        "The Ethiopian dishes are absolutely authentic! Best injera I've had outside of Ethiopia. The atmosphere is elegant and the service is impeccable.",
+      image:
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80",
+    },
+    {
+      name: "Michael Chen",
+      role: "Regular Customer",
+      rating: 5,
+      comment:
+        "Amazing variety of international cuisines. The sushi is fresh, the pasta is perfect, and the lamb chops are to die for. This is my go-to restaurant!",
+      image:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
+    },
+    {
+      name: "Emma Williams",
+      role: "Family Diner",
+      rating: 5,
+      comment:
+        "Perfect for family gatherings! Everyone can find something they love. The kids enjoyed the burgers while we explored the international menu. Highly recommend!",
+      image:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80",
+    },
+    {
+      name: "David Martinez",
+      role: "Business Professional",
+      rating: 5,
+      comment:
+        "Great place for business lunches. The service is quick, food is excellent, and the ambiance is perfect for meetings. The Spanish tapas are outstanding!",
+      image:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
+    },
+    {
+      name: "Lisa Anderson",
+      role: "Vegetarian Foodie",
+      rating: 5,
+      comment:
+        "So many vegetarian options! The Middle Eastern mezze platter is incredible. Finally, a restaurant that caters to vegetarians without compromising on flavor.",
+      image:
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80",
+    },
+    {
+      name: "James Wilson",
+      role: "Date Night Regular",
+      rating: 5,
+      comment:
+        "My girlfriend and I come here for every special occasion. The romantic atmosphere, excellent wine selection, and diverse menu make it perfect for date nights!",
+      image:
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80",
+    },
+  ];
+
+  const itemsPerPage = 3;
+  const totalPages = Math.ceil(testimonials.length / itemsPerPage);
+
+  const nextPage = () => {
+    setCurrentPage((prev) => (prev + 1) % totalPages);
+  };
+
+  const prevPage = () => {
+    setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
+  };
+
+  const currentTestimonials = testimonials.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage,
+  );
+
+  return (
+    <div className="relative">
+      <div className="grid md:grid-cols-3 gap-8">
+        {currentTestimonials.map((testimonial, i) => (
+          <div
+            key={i}
+            className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-4 mb-6">
+              <img
+                src={testimonial.image}
+                alt={testimonial.name}
+                className="w-16 h-16 rounded-full object-cover"
+              />
+              <div>
+                <h4 className="text-lg font-bold text-gray-800">
+                  {testimonial.name}
+                </h4>
+                <p className="text-sm text-gray-600">{testimonial.role}</p>
+              </div>
+            </div>
+            <div className="flex gap-1 mb-4">
+              {[...Array(testimonial.rating)].map((_, i) => (
+                <svg
+                  key={i}
+                  className="w-5 h-5 text-[#d4a843]"
+                  fill="currentColor"
+                  viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+            <p className="text-gray-600 italic">"{testimonial.comment}"</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Navigation Arrows */}
+      <div className="flex justify-center items-center gap-4 mt-12">
+        <button
+          onClick={prevPage}
+          className="w-12 h-12 rounded-full bg-[#0d5f4e] text-white hover:bg-[#0f7a62] transition-colors flex items-center justify-center shadow-lg hover:shadow-xl">
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
+
+        {/* Page Indicators */}
+        <div className="flex gap-2">
+          {[...Array(totalPages)].map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i)}
+              className={`w-3 h-3 rounded-full transition-all ${
+                i === currentPage
+                  ? "bg-[#0d5f4e] w-8"
+                  : "bg-gray-300 hover:bg-gray-400"
+              }`}
+            />
+          ))}
+        </div>
+
+        <button
+          onClick={nextPage}
+          className="w-12 h-12 rounded-full bg-[#0d5f4e] text-white hover:bg-[#0f7a62] transition-colors flex items-center justify-center shadow-lg hover:shadow-xl">
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const navigate = useNavigate();
   const { token } = useSelector((state) => state.auth);
@@ -711,67 +879,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Sarah Johnson",
-                role: "Food Enthusiast",
-                rating: 5,
-                comment:
-                  "The Ethiopian dishes are absolutely authentic! Best injera I've had outside of Ethiopia. The atmosphere is elegant and the service is impeccable.",
-                image:
-                  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80",
-              },
-              {
-                name: "Michael Chen",
-                role: "Regular Customer",
-                rating: 5,
-                comment:
-                  "Amazing variety of international cuisines. The sushi is fresh, the pasta is perfect, and the lamb chops are to die for. This is my go-to restaurant!",
-                image:
-                  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
-              },
-              {
-                name: "Emma Williams",
-                role: "Family Diner",
-                rating: 5,
-                comment:
-                  "Perfect for family gatherings! Everyone can find something they love. The kids enjoyed the burgers while we explored the international menu. Highly recommend!",
-                image:
-                  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80",
-              },
-            ].map((testimonial, i) => (
-              <div
-                key={i}
-                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="flex items-center gap-4 mb-6">
-                  <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
-                  <div>
-                    <h4 className="text-lg font-bold text-gray-800">
-                      {testimonial.name}
-                    </h4>
-                    <p className="text-sm text-gray-600">{testimonial.role}</p>
-                  </div>
-                </div>
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className="w-5 h-5 text-[#d4a843]"
-                      fill="currentColor"
-                      viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-gray-600 italic">"{testimonial.comment}"</p>
-              </div>
-            ))}
-          </div>
+          <TestimonialCarousel />
         </div>
       </div>
 
