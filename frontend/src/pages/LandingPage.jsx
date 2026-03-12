@@ -12,6 +12,7 @@ import SA from "country-flag-icons/react/3x2/SA";
 // Testimonial Carousel Component
 function TestimonialCarousel() {
   const [currentPage, setCurrentPage] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   const testimonials = [
     {
@@ -73,6 +74,17 @@ function TestimonialCarousel() {
   const itemsPerPage = 3;
   const totalPages = Math.ceil(testimonials.length / itemsPerPage);
 
+  // Auto-play functionality
+  useEffect(() => {
+    if (!isPaused) {
+      const interval = setInterval(() => {
+        setCurrentPage((prev) => (prev + 1) % totalPages);
+      }, 5000); // Change every 5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [isPaused, totalPages]);
+
   const nextPage = () => {
     setCurrentPage((prev) => (prev + 1) % totalPages);
   };
@@ -87,7 +99,10 @@ function TestimonialCarousel() {
   );
 
   return (
-    <div className="relative">
+    <div
+      className="relative"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}>
       <div className="grid md:grid-cols-3 gap-8">
         {currentTestimonials.map((testimonial, i) => (
           <div
