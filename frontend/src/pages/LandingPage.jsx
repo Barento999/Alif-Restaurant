@@ -11,7 +11,7 @@ import SA from "country-flag-icons/react/3x2/SA";
 
 // Testimonial Carousel Component
 function TestimonialCarousel() {
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
   const testimonials = [
@@ -42,106 +42,118 @@ function TestimonialCarousel() {
       image:
         "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80",
     },
-    {
-      name: "David Martinez",
-      role: "Business Professional",
-      rating: 5,
-      comment:
-        "Great place for business lunches. The service is quick, food is excellent, and the ambiance is perfect for meetings. The Spanish tapas are outstanding!",
-      image:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
-    },
-    {
-      name: "Lisa Anderson",
-      role: "Vegetarian Foodie",
-      rating: 5,
-      comment:
-        "So many vegetarian options! The Middle Eastern mezze platter is incredible. Finally, a restaurant that caters to vegetarians without compromising on flavor.",
-      image:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80",
-    },
-    {
-      name: "James Wilson",
-      role: "Date Night Regular",
-      rating: 5,
-      comment:
-        "My girlfriend and I come here for every special occasion. The romantic atmosphere, excellent wine selection, and diverse menu make it perfect for date nights!",
-      image:
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80",
-    },
   ];
 
-  const itemsPerPage = 3;
-  const totalPages = Math.ceil(testimonials.length / itemsPerPage);
+  const totalItems = testimonials.length;
 
   // Auto-play functionality
   useEffect(() => {
     if (!isPaused) {
       const interval = setInterval(() => {
-        setCurrentPage((prev) => (prev + 1) % totalPages);
+        setCurrentIndex((prev) => (prev + 1) % totalItems);
       }, 5000); // Change every 5 seconds
 
       return () => clearInterval(interval);
     }
-  }, [isPaused, totalPages]);
+  }, [isPaused, totalItems]);
 
-  const nextPage = () => {
-    setCurrentPage((prev) => (prev + 1) % totalPages);
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % totalItems);
   };
 
-  const prevPage = () => {
-    setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + totalItems) % totalItems);
   };
 
-  const currentTestimonials = testimonials.slice(
-    currentPage * itemsPerPage,
-    (currentPage + 1) * itemsPerPage,
-  );
+  const getVisibleTestimonials = () => {
+    const prev = (currentIndex - 1 + totalItems) % totalItems;
+    const next = (currentIndex + 1) % totalItems;
+    return [prev, currentIndex, next];
+  };
+
+  const visibleIndices = getVisibleTestimonials();
 
   return (
     <div
-      className="relative"
+      className="relative overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}>
-      <div className="grid md:grid-cols-3 gap-8">
-        {currentTestimonials.map((testimonial, i) => (
-          <div
-            key={i}
-            className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="flex items-center gap-4 mb-6">
-              <img
-                src={testimonial.image}
-                alt={testimonial.name}
-                className="w-16 h-16 rounded-full object-cover"
-              />
-              <div>
-                <h4 className="text-lg font-bold text-gray-800">
-                  {testimonial.name}
-                </h4>
-                <p className="text-sm text-gray-600">{testimonial.role}</p>
+      <div className="flex items-center justify-center gap-6 py-8">
+        {visibleIndices.map((index, position) => {
+          const testimonial = testimonials[index];
+          const isCenter = position === 1;
+
+          return (
+            <div
+              key={index}
+              className={`transition-all duration-700 ease-in-out ${
+                isCenter
+                  ? "scale-110 z-20 opacity-100"
+                  : "scale-90 z-10 opacity-60"
+              } ${
+                position === 0 ? "md:block hidden" : ""
+              } ${
+                position === 2 ? "md:block hidden" : ""
+              }`}
+              style={{
+                transform: isCenter
+                  ? "translateY(0)"
+                  : "translateY(20px)",
+              }}>
+              <div
+                className={`bg-white p-8 rounded-2xl shadow-lg transition-all duration-700 ${
+                  isCenter
+                    ? "shadow-2xl border-2 border-[#d4a843]"
+                    : "shadow-md"
+                } w-80`}>
+                <div className="flex items-center gap-4 mb-6">
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className={`rounded-full object-cover transition-all duration-700 ${
+                      isCenter ? "w-20 h-20" : "w-16 h-16"
+                    }`}
+                  />
+                  <div>
+                    <h4
+                      className={`font-bold text-gray-800 transition-all duration-700 ${
+                        isCenter ? "text-xl" : "text-lg"
+                      }`}>
+                      {testimonial.name}
+                    </h4>
+                    <p className="text-sm text-gray-600">{testimonial.role}</p>
+                  </div>
+                </div>
+                <div className="flex gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className={`text-[#d4a843] transition-all duration-700 ${
+                        isCenter ? "w-6 h-6" : "w-5 h-5"
+                      }`}
+                      fill="currentColor"
+                      viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p
+                  className={`text-gray-600 italic transition-all duration-700 ${
+                    isCenter ? "text-base" : "text-sm"
+                  }`}>
+                  "{testimonial.comment}"
+                </p>
               </div>
             </div>
-            <div className="flex gap-1 mb-4">
-              {[...Array(testimonial.rating)].map((_, i) => (
-                <svg
-                  key={i}
-                  className="w-5 h-5 text-[#d4a843]"
-                  fill="currentColor"
-                  viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <p className="text-gray-600 italic">"{testimonial.comment}"</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Navigation Arrows */}
-      <div className="flex justify-center items-center gap-4 mt-12">
+      <div className="flex justify-center items-center gap-4 mt-8">
         <button
-          onClick={prevPage}
-          className="w-12 h-12 rounded-full bg-[#0d5f4e] text-white hover:bg-[#0f7a62] transition-colors flex items-center justify-center shadow-lg hover:shadow-xl">
+          onClick={prevSlide}
+          className="w-12 h-12 rounded-full bg-[#0d5f4e] text-white hover:bg-[#0f7a62] transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-110">
           <svg
             className="w-6 h-6"
             fill="none"
@@ -158,26 +170,39 @@ function TestimonialCarousel() {
 
         {/* Page Indicators */}
         <div className="flex gap-2">
-          {[...Array(totalPages)].map((_, i) => (
+          {testimonials.map((_, i) => (
             <button
               key={i}
-              onClick={() => setCurrentPage(i)}
-              className={`w-3 h-3 rounded-full transition-all ${
-                i === currentPage
-                  ? "bg-[#0d5f4e] w-8"
-                  : "bg-gray-300 hover:bg-gray-400"
+              onClick={() => setCurrentIndex(i)}
+              className={`rounded-full transition-all duration-300 ${
+                i === currentIndex
+                  ? "bg-[#0d5f4e] w-8 h-3"
+                  : "bg-gray-300 hover:bg-gray-400 w-3 h-3"
               }`}
             />
           ))}
         </div>
 
         <button
-          onClick={nextPage}
-          className="w-12 h-12 rounded-full bg-[#0d5f4e] text-white hover:bg-[#0f7a62] transition-colors flex items-center justify-center shadow-lg hover:shadow-xl">
+          onClick={nextSlide}
+          className="w-12 h-12 rounded-full bg-[#0d5f4e] text-white hover:bg-[#0f7a62] transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-110">
           <svg
             className="w-6 h-6"
             fill="none"
             stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+}
             viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
